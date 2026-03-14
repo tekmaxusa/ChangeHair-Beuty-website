@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", serif;
+  --font-sans: "Inter", sans-serif;
+  
+  --color-salon-cream: #fdfbf7;
+  --color-salon-beige: #f5f2ed;
+  --color-salon-gold: #c5a059;
+  --color-salon-ink: #1a1a1a;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    @apply bg-salon-cream text-salon-ink font-sans;
+  }
+  h1, h2, h3, h4 {
+    @apply font-serif;
+  }
+}
+
+.glass-nav {
+  @apply bg-salon-cream/80 backdrop-blur-md border-b border-salon-ink/5;
+}
+
+.gold-button {
+  @apply bg-salon-gold text-white px-8 py-3 rounded-none transition-all duration-300 hover:bg-salon-ink hover:tracking-widest uppercase text-sm font-medium;
+}
+
+.writing-vertical {
+  writing-mode: vertical-rl;
+}

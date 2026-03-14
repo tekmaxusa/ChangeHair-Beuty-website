@@ -1,0 +1,5 @@
+{
+  "name": "Pika Pika Hair Salon",
+  "description": "Premium Korean hair salon in Plano, TX, specializing in digital perms, head spa, and SMP.",
+  "requestFramePermissions": ["geolocation"]
+}
