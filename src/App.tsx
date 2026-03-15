@@ -28,6 +28,8 @@ import gallery7 from './assets/gallery/gallery-7.png';
 import gallery8 from './assets/gallery/gallery-8.png';
 import gallery9 from './assets/gallery/gallery-9.png';
 import smpBeforeAfter from './assets/smp-before-after.png';
+import signatureColor from './assets/signature-color.png';
+import signaturePerm from './assets/signature-perm.png';
 
 // --- Types ---
 interface ServiceItem {
@@ -47,56 +49,42 @@ interface Testimonial {
   text: string;
 }
 
-// --- Data ---
+// --- Data --- (Price list: Change Hair & Beauty)
 const SERVICE_MENU: ServiceCategory[] = [
   {
-    category: 'HAIRCUT & PERM',
+    category: 'CUT',
     items: [
-      { name: 'Director Cut', price: '$95' },
-      { name: 'Senior Stylist Cut', price: '$85' },
-      { name: "Men's Cut", price: '$75' },
-      { name: 'Digital Perm', price: '$250+' },
-      { name: 'Down Perm', price: '$60+' },
+      { name: 'Women', price: '$35+' },
+      { name: 'Men', price: '$25+' },
+      { name: 'Kids', price: '$25+' },
     ]
   },
   {
-    category: 'HAIR COLORING',
+    category: 'COLOR',
     items: [
-      { name: 'Single Process', price: '$120+' },
-      { name: 'Double Process', price: '$220+' },
-      { name: 'Balayage / Ombre', price: '$250+' },
-      { name: 'Highlight (Full)', price: '$200+' },
+      { name: 'Root', price: '$80+' },
+      { name: 'Manicure', price: '$80+' },
+      { name: 'Highlight (F)', price: '$200+' },
+      { name: 'Highlight (M)', price: '$150+' },
     ]
   },
   {
-    category: 'HAIR TREATMENTS',
+    category: 'PERM',
     items: [
-      { name: 'Keratin Treatment', price: '$250+' },
-      { name: 'Milbon Treatment', price: '$80+' },
-      { name: 'Moisture Mask', price: '$40+' },
+      { name: "Men's Iron Perm", price: '$130+' },
+      { name: "Basic Women's Perm", price: '$100+' },
+      { name: 'Set / Digital', price: '$200+' },
+      { name: 'Magic Setting', price: '$250+' },
+      { name: 'Japanese Magic Straight', price: '$230+' },
     ]
   },
   {
-    category: 'HEAD SPA',
+    category: 'STYLE',
     items: [
-      { name: 'Signature Head Spa', price: '$120' },
-      { name: 'Scalp Deep Cleansing', price: '$80' },
-      { name: 'Stress Relief Massage', price: '$60' },
-    ]
-  },
-  {
-    category: 'HAIR EXTENSIONS',
-    items: [
-      { name: 'Premium Extensions', price: 'Consultation' },
-      { name: 'Volume Boost', price: 'Consultation' },
-    ]
-  },
-  {
-    category: 'SCALP MICRO PIGMENTATION (SMP)',
-    items: [
-      { name: 'Hairline Restoration', price: 'Consultation' },
-      { name: 'Density Fill', price: 'Consultation' },
-      { name: 'Scar Camouflage', price: 'Consultation' },
+      { name: 'Shampoo', price: '$20+' },
+      { name: 'Blow Dry', price: '$35+' },
+      { name: 'Upstyle', price: '$130+' },
+      { name: 'Makeup', price: '$150+' },
     ]
   }
 ];
@@ -159,15 +147,12 @@ const GALLERY_ITEMS: { url: string; img: string }[] = [
   { url: GALLERY_POST_URLS[8], img: gallery9 },
 ];
 
-// Booking modal: categories match "Available Services" popup
+// Booking modal: categories match "Our Services" / price list
 const BOOKING_CATEGORIES = [
-  { id: 'styling', name: 'Hair Styling', services: [{ name: 'Director Cut', price: '$95' }, { name: 'Senior Stylist Cut', price: '$85' }] },
-  { id: 'perm', name: 'Perm', services: [{ name: "Men's Cut", price: '$75' }, { name: 'Digital Perm', price: '$250+' }, { name: 'Down Perm', price: '$60+' }] },
-  { id: 'coloring', name: 'Coloring', services: [{ name: 'Single Process', price: '$120+' }, { name: 'Double Process', price: '$220+' }, { name: 'Balayage / Ombre', price: '$250+' }] },
-  { id: 'treatment', name: 'Hair Treatment', services: [{ name: 'Keratin Treatment', price: '$250+' }, { name: 'Milbon Treatment', price: '$80+' }, { name: 'Moisture Mask', price: '$40+' }] },
-  { id: 'headspa', name: 'Head Spa', services: [{ name: 'Signature Head Spa', price: '$120' }] },
-  { id: 'extension', name: 'Hair Extension', services: [{ name: 'Premium Extensions', price: 'Consultation' }] },
-  { id: 'smp', name: 'SMP', services: [{ name: 'Hairline Restoration', price: 'Consultation' }] },
+  { id: 'cut', name: 'Cut', services: [{ name: 'Women', price: '$35+' }, { name: 'Men', price: '$25+' }, { name: 'Kids', price: '$25+' }] },
+  { id: 'color', name: 'Color', services: [{ name: 'Root', price: '$80+' }, { name: 'Manicure', price: '$80+' }, { name: 'Highlight (F)', price: '$200+' }, { name: 'Highlight (M)', price: '$150+' }] },
+  { id: 'perm', name: 'Perm', services: [{ name: "Men's Iron Perm", price: '$130+' }, { name: "Basic Women's Perm", price: '$100+' }, { name: 'Set / Digital', price: '$200+' }, { name: 'Magic Setting', price: '$250+' }, { name: 'Japanese Magic Straight', price: '$230+' }] },
+  { id: 'style', name: 'Style', services: [{ name: 'Shampoo', price: '$20+' }, { name: 'Blow Dry', price: '$35+' }, { name: 'Upstyle', price: '$130+' }, { name: 'Makeup', price: '$150+' }] },
 ];
 
 const TIME_SLOTS = ['10:00 am', '10:30 am', '11:00 am', '11:30 am', '12:00 pm', '12:30 pm', '1:00 pm', '1:30 pm', '2:00 pm', '2:30 pm', '3:00 pm', '3:30 pm', '4:00 pm', '4:30 pm', '5:00 pm', '5:30 pm', '6:00 pm'];
@@ -512,11 +497,10 @@ const BlogPostContent = ({ id }: { id: string }) => {
 const Hero = ({ onOpenBooking }: { onOpenBooking: () => void }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
   const slides = [
-    "Transform Your Hair with Our Signature Keratin Treatments",
-    "Stay Trendy with the Latest Korean Hair Styles",
-    "Experience Ultimate Relaxation with Our Head Spa Services",
-    "Add Volume and Length with Our Premium Extensions",
-    "Achieve a Natural Look with Our Expert SMP Services"
+    "Precision Cuts — Women, Men & Kids",
+    "Professional Color — Root, Highlights & More",
+    "Perms & Japanese Magic Straight — Lasting Style",
+    "Style & Finish — Blow Dry, Upstyle & Makeup"
   ];
 
   useEffect(() => {
@@ -619,20 +603,20 @@ const SignatureServices = ({ onOpenBooking }: { onOpenBooking: () => void }) => 
     <div className="max-w-7xl mx-auto">
       <div className="text-center mb-24">
         <p className="text-[10px] uppercase tracking-[0.3em] text-salon-gold mb-4">Signature Services</p>
-        <h2 className="text-4xl font-serif">Excellence in K-Beauty</h2>
+        <h2 className="text-4xl font-serif">Cut · Color · Perm · Style</h2>
       </div>
 
       <div className="space-y-32">
-        {/* Digital Perm */}
+        {/* Cut */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="order-2 lg:order-1">
             <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-4">Signature Service</p>
-            <h3 className="text-3xl md:text-4xl font-serif mb-8">Korean Digital Perm</h3>
+            <h3 className="text-3xl md:text-4xl font-serif mb-8">Cut</h3>
             <p className="text-sm md:text-base opacity-70 leading-loose mb-8">
-              Our signature Digital Perm creates soft, natural-looking waves that are incredibly easy to manage. Unlike traditional perms, this technique uses thermal heat to "set" the curl, resulting in a look that is more defined when dry.
+              Precision cuts for everyone. Our stylists deliver tailored cuts for women, men, and kids—clean lines, modern shapes, and a look that suits you.
             </p>
             <ul className="space-y-4 mb-10">
-              {['Natural, bouncy waves', 'Long-lasting results (3-6 months)', 'Minimal daily styling required', 'Tailored to your hair texture'].map((item, i) => (
+              {['Women $35+', 'Men $25+', 'Kids $25+'].map((item, i) => (
                 <li key={i} className="flex items-center text-sm opacity-80">
                   <Sparkles className="w-4 h-4 text-salon-gold mr-3" />
                   {item}
@@ -642,47 +626,45 @@ const SignatureServices = ({ onOpenBooking }: { onOpenBooking: () => void }) => 
             <button type="button" onClick={onOpenBooking} className="gold-button">Book Appointment</button>
           </div>
           <div className="order-1 lg:order-2">
-            <img src="https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=800&auto=format&fit=crop" alt="Digital Perm" className="w-full aspect-video object-cover shadow-2xl" referrerPolicy="no-referrer" />
+            <img src="https://images.unsplash.com/photo-1562322140-8baeececf3df?q=80&w=800&auto=format&fit=crop" alt="Hair cut" className="w-full aspect-video object-cover shadow-2xl rounded-lg" referrerPolicy="no-referrer" />
           </div>
         </div>
 
-        {/* Head Spa */}
+        {/* Color */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div>
-            <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800&auto=format&fit=crop" alt="Head Spa" className="w-full aspect-video object-cover shadow-2xl" referrerPolicy="no-referrer" />
+            <img src={signatureColor} alt="Hair color" className="w-full aspect-video object-cover shadow-2xl rounded-lg" />
           </div>
           <div>
-            <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-4">Wellness & Care</p>
-            <h3 className="text-3xl md:text-4xl font-serif mb-8">Premium Scalp Care</h3>
+            <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-4">Color</p>
+            <h3 className="text-3xl md:text-4xl font-serif mb-8">Color</h3>
             <p className="text-sm md:text-base opacity-70 leading-loose mb-8">
-              Indulge in our signature Head Spa treatment, a holistic approach to scalp health and relaxation. We combine deep cleansing, specialized massage techniques, and nutrient-rich treatments to rejuvenate your scalp and hair from the roots.
+              From root touch-ups to full highlights, we bring out your best with professional color. Root, manicure, and highlight services for a fresh, vibrant look.
             </p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-10">
-              <div>
-                <h4 className="font-serif text-lg mb-2">Deep Cleansing</h4>
-                <p className="text-xs opacity-60">Removes impurities and excess oil for a healthy scalp environment.</p>
-              </div>
-              <div>
-                <h4 className="font-serif text-lg mb-2">Stress Relief</h4>
-                <p className="text-xs opacity-60">Relaxing massage techniques to reduce tension and improve circulation.</p>
-              </div>
-            </div>
+            <ul className="space-y-4 mb-10">
+              {['Root $80+', 'Manicure $80+', 'Highlight (F) $200+', 'Highlight (M) $150+'].map((item, i) => (
+                <li key={i} className="flex items-center text-sm opacity-80">
+                  <Sparkles className="w-4 h-4 text-salon-gold mr-3" />
+                  {item}
+                </li>
+              ))}
+            </ul>
             <button type="button" onClick={onOpenBooking} className="gold-button">Book Appointment</button>
           </div>
         </div>
 
-        {/* SMP */}
+        {/* Perm */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
           <div className="order-2 lg:order-1">
-            <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-4">Advanced Solutions</p>
-            <h3 className="text-3xl md:text-4xl font-serif mb-8">Scalp Micro Pigmentation (SMP)</h3>
+            <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-4">Perm</p>
+            <h3 className="text-3xl md:text-4xl font-serif mb-8">Perm</h3>
             <p className="text-sm md:text-base opacity-70 leading-loose mb-8">
-              SMP is a non-surgical, life-changing treatment where natural pigments are applied at the epidermal level of the scalp to replicate the natural appearance of real hair follicles. Perfect for thinning hair, receding hairlines, or scalp scars.
+              From men's iron perm to Japanese magic straight, we offer a range of perm and straightening services. Set/Digital and Magic Setting for lasting waves or sleek, smooth results.
             </p>
             <ul className="space-y-4 mb-10">
-              {['Immediate results with a natural, fuller look', 'Safe, non-invasive, and minimal downtime', 'Customized pigment matching for a seamless blend'].map((item, i) => (
+              {["Men's Iron Perm $130+", "Basic Women's Perm $100+", 'Set / Digital $200+', 'Magic Setting $250+', 'Japanese Magic Straight $230+'].map((item, i) => (
                 <li key={i} className="flex items-center text-sm opacity-80">
-                  <ShieldCheck className="w-4 h-4 text-salon-gold mr-3" />
+                  <Sparkles className="w-4 h-4 text-salon-gold mr-3" />
                   {item}
                 </li>
               ))}
@@ -690,7 +672,30 @@ const SignatureServices = ({ onOpenBooking }: { onOpenBooking: () => void }) => 
             <button type="button" onClick={onOpenBooking} className="gold-button">Book Appointment</button>
           </div>
           <div className="order-1 lg:order-2">
-            <img src={smpBeforeAfter} alt="SMP hairline and scalp results" className="w-full aspect-video object-cover shadow-2xl rounded-lg" />
+            <img src={signaturePerm} alt="Perm" className="w-full aspect-video object-cover shadow-2xl rounded-lg" />
+          </div>
+        </div>
+
+        {/* Style */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+          <div>
+            <img src="https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800&auto=format&fit=crop" alt="Style" className="w-full aspect-video object-cover shadow-2xl rounded-lg" referrerPolicy="no-referrer" />
+          </div>
+          <div>
+            <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-4">Style</p>
+            <h3 className="text-3xl md:text-4xl font-serif mb-8">Style</h3>
+            <p className="text-sm md:text-base opacity-70 leading-loose mb-8">
+              Shampoo, blow dry, upstyle, and makeup. Perfect for events, daily refresh, or a full glam look. Let us finish your look with care and precision.
+            </p>
+            <ul className="space-y-4 mb-10">
+              {['Shampoo $20+', 'Blow Dry $35+', 'Upstyle $130+', 'Makeup $150+'].map((item, i) => (
+                <li key={i} className="flex items-center text-sm opacity-80">
+                  <Sparkles className="w-4 h-4 text-salon-gold mr-3" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+            <button type="button" onClick={onOpenBooking} className="gold-button">Book Appointment</button>
           </div>
         </div>
       </div>
@@ -925,13 +930,10 @@ const Booking = () => {
                   onChange={(e) => setFormData({...formData, service: e.target.value})}
                 >
                   <option value="">Select</option>
-                  <option value="Cut">Haircut</option>
+                  <option value="Cut">Cut</option>
                   <option value="Color">Color</option>
                   <option value="Perm">Perm</option>
-                  <option value="Treatment">Treatment</option>
-                  <option value="Head Spa">Head Spa</option>
-                  <option value="Extensions">Extensions</option>
-                  <option value="SMP">SMP</option>
+                  <option value="Style">Style</option>
                 </select>
               </div>
             </div>
