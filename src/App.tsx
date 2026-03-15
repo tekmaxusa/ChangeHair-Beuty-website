@@ -124,6 +124,7 @@ const TESTIMONIALS: Testimonial[] = [
 
 const INSTAGRAM_URL = 'https://www.instagram.com/changehairbeauty/';
 const FACEBOOK_URL = 'https://www.facebook.com/changehairbeauty/';
+const TAWK_CHAT_URL = 'https://tawk.to/chat/69b675beb2bda41c36e81e18/';
 const GALLERY_POST_URLS = [
   'https://www.instagram.com/changehairbeauty/p/CH3c-r8peN8/',
   'https://www.instagram.com/changehairbeauty/p/CH3cqVMpawA/',
@@ -997,8 +998,13 @@ const Contact = () => (
               <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-4 flex items-center">
                 <Phone className="w-3 h-3 mr-2" /> Contact
               </p>
-              <div className="text-sm opacity-70 leading-relaxed">
+              <div className="text-sm opacity-70 leading-relaxed space-y-2">
                 <p>Phone: {LOCATION_PHONE}</p>
+                <p>
+                  <a href={TAWK_CHAT_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-salon-gold transition-colors cursor-pointer">
+                    <MessageSquare className="w-3 h-3" /> Live chat
+                  </a>
+                </p>
               </div>
             </div>
           </div>
@@ -1028,7 +1034,8 @@ const Footer = () => (
         <span className="text-[8px] tracking-[0.4em] -mt-1 opacity-50">{' & BEAUTY'}</span>
       </a>
       
-      <div className="flex space-x-12">
+      <div className="flex space-x-12 items-center">
+        <a href={TAWK_CHAT_URL} target="_blank" rel="noopener noreferrer" className="hover:text-salon-gold transition-colors" title="Live chat"><MessageSquare className="w-5 h-5" /></a>
         <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="hover:text-salon-gold transition-colors"><Instagram className="w-5 h-5" /></a>
         <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="hover:text-salon-gold transition-colors"><Facebook className="w-5 h-5" /></a>
       </div>
