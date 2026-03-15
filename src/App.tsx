@@ -27,6 +27,7 @@ import gallery6 from './assets/gallery/gallery-6.png';
 import gallery7 from './assets/gallery/gallery-7.png';
 import gallery8 from './assets/gallery/gallery-8.png';
 import gallery9 from './assets/gallery/gallery-9.png';
+import smpBeforeAfter from './assets/smp-before-after.png';
 
 // --- Types ---
 interface ServiceItem {
@@ -652,7 +653,7 @@ const SignatureServices = ({ onOpenBooking }: { onOpenBooking: () => void }) => 
             <button type="button" onClick={onOpenBooking} className="gold-button">Book Appointment</button>
           </div>
           <div className="order-1 lg:order-2">
-            <img src="/smp-before-after.png" alt="SMP before and after results" className="w-full aspect-video object-cover shadow-2xl" onError={(e) => { const t = e.target as HTMLImageElement; t.onerror = null; t.src = 'https://images.unsplash.com/photo-1595476108010-b4d1f80d915d?q=80&w=800&auto=format&fit=crop'; }} />
+            <img src={smpBeforeAfter} alt="SMP before and after results" className="w-full aspect-video object-cover shadow-2xl rounded-lg" />
           </div>
         </div>
       </div>
