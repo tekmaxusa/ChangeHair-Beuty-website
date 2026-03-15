@@ -102,25 +102,61 @@ const SERVICE_MENU: ServiceCategory[] = [
 ];
 
 const TESTIMONIALS: Testimonial[] = [
-  { id: 1, name: "Sarah J.", text: "The best digital perm I've ever had! It looks so natural and my hair feels healthier than before." },
-  { id: 2, name: "David K.", text: "Finally found a place that knows how to do a proper down perm. Cleanest fade and styling in Plano." },
-  { id: 3, name: "Michelle L.", text: "The head spa was incredibly relaxing. It's my monthly self-care ritual now. Highly recommend!" },
-  { id: 4, name: "Grace P.", text: "Expert stylists who really listen. My ash tone color came out exactly how I wanted it." },
-  { id: 5, name: "Kevin T.", text: "Modern, clean, and professional. The atmosphere is just like salon in Korea." },
-  { id: 6, name: "Emily W.", text: "Amazing service from start to finish. The online booking is so convenient!" },
+  {
+    id: 1,
+    name: "Jimmy Nguyen",
+    text: "This place is so amazing. I met with Miss Young, I think she's the owner there. I asked for a hair cut and for a short men's curly hair perm and she did absolutely amazing! The timing was way quicker than I expected but she was so friendly and suggested I try a down curl pattern and it definitely fits my appearance well! I asked for a fade and she did a great job on my fade too! I will definitely be coming back!"
+  },
+  {
+    id: 2,
+    name: "Cathy Ngo",
+    text: "Change Hair & Beauty has a new owner, her name is Soyoung (Young) and I've been following her for the past few years ever since she was located at Pika Pika in Plano. She has always taken good care of my hair for a very fair price and it was all done within 30mins! I truly underestimated her skills. If she saw that my hair needed some extra maintenance, she would be honest about it and provide solutions. She even gifted a hair essence for my dry ends. They also have punch cards where your 3rd haircut will get 20% off! I can't wait to see how far her business will grow."
+  },
+  {
+    id: 3,
+    name: "Aaborr Len",
+    text: "I had a great experience here! I got my hair trimmed, coloured, and a keratin treatment and I'm so happy with the results. Young was lovely and very professional. Booking was easy, and when I had an inconvenience, she did her best to adjust the appointment and fit me in, which I really appreciated. Her pricing is also very reasonable for the quality she provides. Highly recommend!"
+  },
+  {
+    id: 4,
+    name: "Y P",
+    text: "I stopped by Zion Market recently and was looking for a hair salon to get my husband's hair cut when we happened to walk past this place and decided to go in. I'm so glad we did. The hair stylist cut my husband's hair quickly and beautifully. Because we were so happy with the result, I brought my daughter back for a haircut as well. She absolutely loves it. They are incredibly kind and professional, and their prices are amazing — $25 for men's cuts and $35 for women's cuts. I highly recommend this place!"
+  },
+  {
+    id: 5,
+    name: "Justin Nguyen",
+    text: "Really amazing haircut! Been going to Kim for many years and she opened a new place! Every time I go, the quality is always consistent and you can see the confidence in her work. She really makes sure that the haircut is up to standard. On the plus side, it's great pricing for that level of quality! Definitely recommend!!"
+  },
+  {
+    id: 6,
+    name: "Monica Nguyen",
+    text: "This is the hair salon to go to if you're in the area! Ask for Young and she will carefully take care of your haircut. She has been my hair stylist for 5+ years now, because I love the fact she takes the time to ask what I want and looks at all the references I have. I have never had a bad haircut with her when it comes to my long, thick hair. I will always come back to have her cut and wash my hair. The salon is very clean and spacious as well, so you can bring your family there too."
+  },
 ];
 
-const INSTAGRAM_FOLLOW_URL = 'https://www.instagram.com/p/DVrabw2gUct/';
+const INSTAGRAM_URL = 'https://www.instagram.com/changehairbeauty/';
+const FACEBOOK_URL = 'https://www.facebook.com/changehairbeauty/';
+const GALLERY_POST_URLS = [
+  'https://www.instagram.com/changehairbeauty/p/CH3c-r8peN8/',
+  'https://www.instagram.com/changehairbeauty/p/CH3cqVMpawA/',
+  'https://www.instagram.com/changehairbeauty/p/CH3cWLZp9Gp/',
+  'https://www.instagram.com/changehairbeauty/p/CGQgoGvJfgB/',
+  'https://www.instagram.com/changehairbeauty/p/CFxehDtpY6A/',
+  'https://www.instagram.com/changehairbeauty/p/CFvDxL3pa-e/',
+  'https://www.instagram.com/changehairbeauty/p/CFsStwdpLss/',
+  'https://www.instagram.com/changehairbeauty/p/CDFsOsfhIK0/',
+  'https://www.instagram.com/changehairbeauty/p/CDFq_-nBtrZ/',
+];
 const GALLERY_ITEMS: { url: string; img: string }[] = [
-  { url: 'https://www.instagram.com/p/DVrabw2gUct/', img: gallery1 },
-  { url: 'https://www.instagram.com/reel/DVrFvjViS7z/', img: gallery2 },
-  { url: 'https://www.instagram.com/p/DVrFbtwCdQN/', img: gallery3 },
-  { url: 'https://www.instagram.com/reel/DVmeHaiiULb/', img: gallery4 },
-  { url: 'https://www.instagram.com/reel/DVjsbeQAVy4/', img: gallery5 },
-  { url: 'https://www.instagram.com/reel/DVjsHRJAS-A/', img: gallery6 },
-  { url: 'https://www.instagram.com/p/DVe4YaCDBP-/', img: gallery7 },
-  { url: 'https://www.instagram.com/p/DVe4TCzjAMd/', img: gallery8 },
-  { url: 'https://www.instagram.com/reel/DVCnIOKDIPR/', img: gallery9 },
+  { url: GALLERY_POST_URLS[0], img: gallery1 },
+  { url: GALLERY_POST_URLS[1], img: gallery2 },
+  { url: GALLERY_POST_URLS[2], img: gallery3 },
+  { url: GALLERY_POST_URLS[3], img: gallery4 },
+  { url: GALLERY_POST_URLS[4], img: gallery5 },
+  { url: GALLERY_POST_URLS[5], img: gallery6 },
+  { url: GALLERY_POST_URLS[6], img: gallery7 },
+  { url: GALLERY_POST_URLS[7], img: gallery8 },
+  { url: GALLERY_POST_URLS[8], img: gallery9 },
 ];
 
 // Booking modal: categories match "Available Services" popup
@@ -135,9 +171,21 @@ const BOOKING_CATEGORIES = [
 ];
 
 const TIME_SLOTS = ['10:00 am', '10:30 am', '11:00 am', '11:30 am', '12:00 pm', '12:30 pm', '1:00 pm', '1:30 pm', '2:00 pm', '2:30 pm', '3:00 pm', '3:30 pm', '4:00 pm', '4:30 pm', '5:00 pm', '5:30 pm', '6:00 pm'];
-const AGENT_NAME = 'Dee Yu';
-const LOCATION_NAME = 'Main Location';
-const LOCATION_ADDRESS = '3420 K Ave, Ste 214, Plano TX 75074';
+const AGENT_NAME = 'Change Hair & Beauty';
+const LOCATION_NAME = 'The Vista';
+const LOCATION_ADDRESS = '2405 S Stemmons Fwy Ste 1126, Lewisville, TX 75067';
+const LOCATION_PHONE = '+1 214-488-1122';
+const LOCATION_HOURS = [
+  'Saturday: 10 AM – 7 PM',
+  'Sunday: 1 – 6 PM',
+  'Monday: Closed',
+  'Tuesday: 10 AM – 7 PM',
+  'Wednesday: 10 AM – 7 PM',
+  'Thursday: 10 AM – 7 PM',
+  'Friday: 10 AM – 7 PM',
+];
+const MAP_EMBED_URL = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3350.789!2d-97.006!3d33.046!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x864c3e5d8e8e8e8e%3A0x0!2s2405%20S%20Stemmons%20Fwy%20%231126%2C%20Lewisville%2C%20TX%2075067!5e0!3m2!1sen!2sus';
+const MAP_SEARCH_URL = 'https://www.google.com/maps/search/2405+S+Stemmons+Fwy+Ste+1126+Lewisville+TX+75067';
 
 const BLOG_POSTS = [
   { id: 'diy-shampoo-bleaching', title: 'DIY Shampoo Recipes to Restore Your Hair After Bleaching and Dyeing', date: 'November 1, 2024', author: 'devzons', summary: 'Bleaching and dyeing your hair can dramatically transform your look, but these processes often leave your locks feeling dry, brittle, and damaged. To help restore your hair\'s health and vitality, it\'s essential to provide it with the right care and nourishment. In this post, we\'ll share easy-to-make DIY shampoo recipes using natural ingredients that aid in recovering and strengthening your hair after bleaching and dyeing.' },
@@ -160,13 +208,13 @@ const Navbar = ({ onDashboardClick, showDashboard, onBlogClick, showBlog, onBack
 
   const navLinks = (
     <>
-      <button type="button" onClick={() => { onDashboardClick(); setIsMenuOpen(false); }} className={`text-[10px] uppercase tracking-[0.2em] transition-colors ${showDashboard ? 'text-salon-gold' : 'hover:text-salon-gold'}`}>
+      <button type="button" onClick={() => { onDashboardClick(); setIsMenuOpen(false); }} className={`text-xs uppercase tracking-[0.2em] transition-colors cursor-pointer ${showDashboard ? 'text-salon-gold' : 'hover:text-salon-gold'}`}>
         Client Dashboard
       </button>
-      <button type="button" onClick={() => { onBlogClick(); setIsMenuOpen(false); }} className={`text-[10px] uppercase tracking-[0.2em] transition-colors ${showBlog ? 'text-salon-gold' : 'hover:text-salon-gold'}`}>
+      <button type="button" onClick={() => { onBlogClick(); setIsMenuOpen(false); }} className={`text-xs uppercase tracking-[0.2em] transition-colors cursor-pointer ${showBlog ? 'text-salon-gold' : 'hover:text-salon-gold'}`}>
         Blog
       </button>
-      <button type="button" className="text-[10px] uppercase tracking-[0.2em] border border-salon-ink px-6 py-2 hover:bg-salon-ink hover:text-white transition-all" onClick={() => { onOpenBooking(); setIsMenuOpen(false); }}>
+      <button type="button" className="text-xs uppercase tracking-[0.2em] border border-salon-ink px-6 py-2 hover:bg-salon-ink hover:text-white transition-all cursor-pointer" onClick={() => { onOpenBooking(); setIsMenuOpen(false); }}>
         Book Appointment
       </button>
     </>
@@ -175,9 +223,9 @@ const Navbar = ({ onDashboardClick, showDashboard, onBlogClick, showBlog, onBack
   return (
     <nav className={`fixed w-full z-50 transition-all duration-700 ${isScrolled || showDashboard || showBlog ? 'bg-white/95 backdrop-blur-sm py-4 shadow-sm' : 'bg-transparent py-8'}`}>
       <div className="max-w-7xl mx-auto px-8 flex justify-between items-center">
-        <button type="button" onClick={onBack} className="text-xl font-serif tracking-[0.3em] uppercase flex flex-col items-center text-left">
-          <span className="text-salon-ink">PIKA PIKA</span>
-          <span className="text-[8px] tracking-[0.5em] -mt-1 opacity-50">HAIR SALON</span>
+        <button type="button" onClick={onBack} className="text-xl font-serif tracking-[0.2em] uppercase flex flex-col items-center text-left cursor-pointer">
+          <span className="text-salon-ink">CHANGE HAIR</span>
+          <span className="text-[8px] tracking-[0.4em] -mt-1 opacity-50">{' & BEAUTY'}</span>
         </button>
         
         <div className="hidden md:flex space-x-12 items-center">
@@ -201,13 +249,13 @@ const Navbar = ({ onDashboardClick, showDashboard, onBlogClick, showBlog, onBack
             <button className="absolute top-8 right-8" onClick={() => setIsMenuOpen(false)}>
               <X className="w-6 h-6" />
             </button>
-            <button type="button" onClick={() => { onDashboardClick(); setIsMenuOpen(false); }} className="text-lg uppercase tracking-[0.3em] font-serif">
+            <button type="button" onClick={() => { onDashboardClick(); setIsMenuOpen(false); }} className="text-lg uppercase tracking-[0.3em] font-serif cursor-pointer">
               Client Dashboard
             </button>
-            <button type="button" onClick={() => { onBlogClick(); setIsMenuOpen(false); }} className="text-lg uppercase tracking-[0.3em] font-serif">
+            <button type="button" onClick={() => { onBlogClick(); setIsMenuOpen(false); }} className="text-lg uppercase tracking-[0.3em] font-serif cursor-pointer">
               Blog
             </button>
-            <button type="button" className="gold-button !mt-12" onClick={() => { onOpenBooking(); setIsMenuOpen(false); }}>
+            <button type="button" className="gold-button !mt-12 cursor-pointer" onClick={() => { onOpenBooking(); setIsMenuOpen(false); }}>
               Book Appointment
             </button>
           </motion.div>
@@ -250,25 +298,16 @@ const ClientDashboard = ({ onOpenBooking }: { onOpenBooking?: () => void } = {})
         {/* Salon info + hours */}
         <div className="space-y-10">
           <div>
-            <h2 className="text-2xl font-serif text-salon-ink mb-1">pika pika <span className="text-salon-gold">|</span> salon</h2>
-            <p className="text-sm text-salon-ink/80 mt-4 leading-relaxed">3420 K Ave, Ste 214<br />Plano TX 75074</p>
-            <p className="text-[10px] italic text-salon-ink/60 mt-2">Located to the left of the entrance of H-Mart in Plano</p>
+            <h2 className="text-2xl font-serif text-salon-ink mb-1">Change Hair <span className="text-salon-gold">|</span> Beauty</h2>
+            <p className="text-sm text-salon-ink/80 mt-4 leading-relaxed">{LOCATION_NAME}<br />{LOCATION_ADDRESS}</p>
             <div className="mt-6 space-y-2 text-sm text-salon-ink/80">
-              <p><span className="text-[10px] uppercase tracking-widest text-salon-gold">Call:</span> <a href="tel:+19724234212" className="hover:text-salon-gold">(972) 423-4212</a></p>
-              <p><span className="text-[10px] uppercase tracking-widest text-salon-gold">Text:</span> <a href="tel:+12149343659" className="hover:text-salon-gold">(214) 934-3659</a></p>
-              <p><span className="text-[10px] uppercase tracking-widest text-salon-gold">Email:</span> <a href="mailto:service@pikapikahairsalon.com" className="hover:text-salon-gold">service@pikapikahairsalon.com</a></p>
+              <p><span className="text-[10px] uppercase tracking-widest text-salon-gold">Phone:</span> <a href="tel:+12144881122" className="hover:text-salon-gold">{LOCATION_PHONE}</a></p>
             </div>
           </div>
           <div>
             <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-4">Operating Hours</p>
             <ul className="text-sm text-salon-ink/80 space-y-2">
-              <li>Monday : 10am – 7pm</li>
-              <li>Tuesday : 10am – 7pm</li>
-              <li>Wednesday : 10am – 7pm</li>
-              <li>Thursday : 10am – 7pm</li>
-              <li>Friday : 10am – 7pm</li>
-              <li>Saturday : 10am – 7pm</li>
-              <li>Sunday & Holidays : Appointment only</li>
+              {LOCATION_HOURS.map((line, i) => <li key={i}>{line}</li>)}
             </ul>
           </div>
         </div>
@@ -279,8 +318,8 @@ const ClientDashboard = ({ onOpenBooking }: { onOpenBooking?: () => void } = {})
         <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-4">Location</p>
         <div className="relative w-full border border-salon-ink/10 overflow-hidden bg-salon-ink/5 grayscale hover:grayscale-0 opacity-95 hover:opacity-100 transition-all duration-500" style={{ height: 400 }}>
           <iframe
-            title="Pika Pika Salon location"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3343.868725848529!2d-96.699444!3d33.046111!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x864c19396e2978f7%3A0x3ca58a57e193660d!2s3420%20K%20Ave%20%23214%2C%20Plano%2C%20TX%2075074!5e0!3m2!1sen!2sus!4v1710423340000!5m2!1sen!2sus"
+            title="Change Hair & Beauty location"
+            src={MAP_EMBED_URL}
             width="100%"
             height="100%"
             style={{ border: 0, position: 'absolute', left: 0, top: 0, width: '100%', height: '100%', display: 'block' }}
@@ -288,7 +327,7 @@ const ClientDashboard = ({ onOpenBooking }: { onOpenBooking?: () => void } = {})
             referrerPolicy="no-referrer-when-downgrade"
           />
         </div>
-        <a href="https://www.google.com/maps/search/3420+K+Ave+Ste+214+Plano+TX+75074" target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-[10px] uppercase tracking-widest text-salon-gold hover:underline">View on Google Maps</a>
+        <a href={MAP_SEARCH_URL} target="_blank" rel="noopener noreferrer" className="inline-block mt-3 text-[10px] uppercase tracking-widest text-salon-gold hover:underline">View on Google Maps</a>
       </div>
     </div>
   </div>
@@ -303,27 +342,25 @@ const BlogView = () => {
       <div className="max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-12">
           <div>
-            <h3 className="text-xl font-serif text-salon-ink mb-2">pika pika <span className="text-salon-gold">|</span> salon</h3>
-            <p className="text-sm text-salon-ink/80">3420 K Ave, Ste 214, Plano TX 75074</p>
-            <p className="text-[10px] italic text-salon-ink/60 mt-1">Located to the left of the entrance of H-Mart in Plano</p>
+            <h3 className="text-xl font-serif text-salon-ink mb-2">Change Hair <span className="text-salon-gold">|</span> Beauty</h3>
+            <p className="text-sm text-salon-ink/80">{LOCATION_NAME} — {LOCATION_ADDRESS}</p>
             <div className="mt-4 space-y-1 text-sm text-salon-ink/80">
-              <p>Call: (972) 423-4212</p>
-              <p>Text: (214) 934-3659</p>
-              <p>Email: service@pikapikahairsalon.com</p>
+              <p>Phone: {LOCATION_PHONE}</p>
             </div>
           </div>
           <div>
             <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-3">Operating Hours</p>
-            <p className="text-sm text-salon-ink/80">Monday – Saturday: 10am – 7pm</p>
-            <p className="text-sm text-salon-ink/80">Sunday & Holidays: Appointment only</p>
+            <ul className="text-sm text-salon-ink/80 space-y-1">
+              {LOCATION_HOURS.map((line, i) => <li key={i}>{line}</li>)}
+            </ul>
           </div>
         </div>
         <div className="w-full mb-8">
             <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-3">Location</p>
             <div className="relative w-full rounded border border-salon-ink/10 overflow-hidden bg-salon-ink/5 grayscale hover:grayscale-0 opacity-95 hover:opacity-100 transition-all duration-500" style={{ height: 400 }}>
               <iframe
-                title="Pika Pika Salon location - Blog"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3343.868725848529!2d-96.699444!3d33.046111!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x864c19396e2978f7%3A0x3ca58a57e193660d!2s3420%20K%20Ave%20%23214%2C%20Plano%2C%20TX%2075074!5e0!3m2!1sen!2sus!4v1710423340000!5m2!1sen!2sus"
+                title="Change Hair & Beauty location - Blog"
+                src={MAP_EMBED_URL}
                 width="100%"
                 height="100%"
                 style={{ border: 0, position: 'absolute', left: 0, top: 0, width: '100%', height: '100%', display: 'block' }}
@@ -331,9 +368,9 @@ const BlogView = () => {
                 referrerPolicy="no-referrer-when-downgrade"
               />
             </div>
-            <a href="https://www.google.com/maps/search/3420+K+Ave+Ste+214+Plano+TX+75074" target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-[10px] uppercase tracking-widest text-salon-gold hover:underline">View on Google Maps</a>
+            <a href={MAP_SEARCH_URL} target="_blank" rel="noopener noreferrer" className="inline-block mt-2 text-[10px] uppercase tracking-widest text-salon-gold hover:underline">View on Google Maps</a>
           </div>
-        <p className="text-[10px] uppercase tracking-[0.2em] opacity-40 mt-8">Copyright © 2024, pika pika hair salon, inc.</p>
+        <p className="text-[10px] uppercase tracking-[0.2em] opacity-40 mt-8">Copyright © {new Date().getFullYear()}, Change Hair &amp; Beauty</p>
       </div>
     </footer>
   );
@@ -536,11 +573,11 @@ const Story = () => (
       >
         <p className="text-[10px] uppercase tracking-[0.3em] text-salon-gold mb-4">Our Story</p>
         <h2 className="text-4xl md:text-5xl font-serif mb-8 leading-tight">
-          Bringing Korean <br /> <span className="italic font-light">Finest Styling to Plano</span>
+          Change Hair <br /> <span className="italic font-light">&amp; Beauty in Lewisville</span>
         </h2>
         <div className="space-y-6 text-sm md:text-base opacity-80 leading-loose tracking-wide">
           <p>
-            Located just outside H-Mart Plano TX, our salon is a sanctuary dedicated to the art of Korean beauty. We believe that hair is the ultimate expression of self, and our mission is to provide personalized styling that enhances your natural beauty.
+            Located at The Vista in Lewisville TX, our salon is a sanctuary dedicated to the art of beauty. We believe that hair is the ultimate expression of self, and our mission is to provide personalized styling that enhances your natural beauty.
           </p>
           <p>
             Our team of expert stylists are trained in the latest K-beauty techniques, from the effortless waves of a digital perm to the precision of a down perm. We use only premium products and state-of-the-art equipment to ensure the health and vitality of your hair.
@@ -653,7 +690,7 @@ const SignatureServices = ({ onOpenBooking }: { onOpenBooking: () => void }) => 
             <button type="button" onClick={onOpenBooking} className="gold-button">Book Appointment</button>
           </div>
           <div className="order-1 lg:order-2">
-            <img src={smpBeforeAfter} alt="SMP before and after results" className="w-full aspect-video object-cover shadow-2xl rounded-lg" />
+            <img src={smpBeforeAfter} alt="SMP hairline and scalp results" className="w-full aspect-video object-cover shadow-2xl rounded-lg" />
           </div>
         </div>
       </div>
@@ -729,10 +766,14 @@ const Gallery = () => (
             </motion.a>
           ))}
         </div>
-        <div className="mt-12 text-center">
-          <a href={INSTAGRAM_FOLLOW_URL} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center space-x-2 text-[10px] uppercase tracking-widest hover:text-salon-gold transition-colors">
+        <div className="mt-12 flex flex-wrap justify-center gap-6">
+          <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center space-x-2 text-[10px] uppercase tracking-widest hover:text-salon-gold transition-colors">
             <Instagram className="w-4 h-4" />
             <span>Follow on Instagram</span>
+          </a>
+          <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center space-x-2 text-[10px] uppercase tracking-widest hover:text-salon-gold transition-colors">
+            <Facebook className="w-4 h-4" />
+            <span>Follow on Facebook</span>
           </a>
         </div>
       </div>
@@ -771,6 +812,9 @@ const Testimonials = () => {
   );
 };
 
+// Google Apps Script Web App URL for Book Appointment form (override with VITE_GOOGLE_SCRIPT_URL if needed)
+const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbx3hh9Cx_6q20r8Al0Soso2Ou8MInz-INHhJ8SpaSQQrP2Pt3oe4_LFzEbXV3OAWaf1pw/exec';
+
 const Booking = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -780,13 +824,40 @@ const Booking = () => {
     date: '',
     time: ''
   });
-  const [status, setStatus] = useState<'idle' | 'success'>('idle');
+  const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (Object.values(formData).every(val => val !== '')) {
+    if (!GOOGLE_SCRIPT_URL) {
+      setErrorMessage('Form is not configured. Please set VITE_GOOGLE_SCRIPT_URL.');
+      setStatus('error');
+      return;
+    }
+    setStatus('sending');
+    setErrorMessage('');
+    try {
+      const body = new URLSearchParams({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        service: formData.service,
+        date: formData.date,
+        time: formData.time
+      }).toString();
+      const res = await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body
+      });
+      // no-cors: we can't read response; assume success if no throw
       setStatus('success');
+      setFormData({ name: '', email: '', phone: '', service: '', date: '', time: '' });
       setTimeout(() => setStatus('idle'), 5000);
+    } catch (err) {
+      setStatus('error');
+      setErrorMessage(err instanceof Error ? err.message : 'Failed to send. Please try again or call us.');
     }
   };
 
@@ -809,12 +880,16 @@ const Booking = () => {
           </motion.div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-10">
+            {status === 'error' && (
+              <p className="text-sm text-red-600 bg-red-50 border border-red-200 px-4 py-2">{errorMessage}</p>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <div className="space-y-2">
                 <label className="text-[10px] uppercase tracking-widest opacity-40">Name</label>
                 <input 
                   type="text" 
                   required
+                  value={formData.name}
                   className="w-full border-b border-salon-ink/10 py-2 focus:border-salon-gold outline-none transition-colors bg-transparent"
                   onChange={(e) => setFormData({...formData, name: e.target.value})}
                 />
@@ -824,6 +899,7 @@ const Booking = () => {
                 <input 
                   type="email" 
                   required
+                  value={formData.email}
                   className="w-full border-b border-salon-ink/10 py-2 focus:border-salon-gold outline-none transition-colors bg-transparent"
                   onChange={(e) => setFormData({...formData, email: e.target.value})}
                 />
@@ -835,6 +911,7 @@ const Booking = () => {
                 <input 
                   type="tel" 
                   required
+                  value={formData.phone}
                   className="w-full border-b border-salon-ink/10 py-2 focus:border-salon-gold outline-none transition-colors bg-transparent"
                   onChange={(e) => setFormData({...formData, phone: e.target.value})}
                 />
@@ -843,6 +920,7 @@ const Booking = () => {
                 <label className="text-[10px] uppercase tracking-widest opacity-40">Service</label>
                 <select 
                   required
+                  value={formData.service}
                   className="w-full border-b border-salon-ink/10 py-2 focus:border-salon-gold outline-none transition-colors bg-transparent"
                   onChange={(e) => setFormData({...formData, service: e.target.value})}
                 >
@@ -863,6 +941,7 @@ const Booking = () => {
                 <input 
                   type="date" 
                   required
+                  value={formData.date}
                   className="w-full border-b border-salon-ink/10 py-2 focus:border-salon-gold outline-none transition-colors bg-transparent"
                   onChange={(e) => setFormData({...formData, date: e.target.value})}
                 />
@@ -872,13 +951,14 @@ const Booking = () => {
                 <input 
                   type="time" 
                   required
+                  value={formData.time}
                   className="w-full border-b border-salon-ink/10 py-2 focus:border-salon-gold outline-none transition-colors bg-transparent"
                   onChange={(e) => setFormData({...formData, time: e.target.value})}
                 />
               </div>
             </div>
-            <button type="submit" className="w-full bg-salon-ink text-white py-4 text-[10px] uppercase tracking-[0.4em] hover:bg-salon-gold transition-all duration-500">
-              Send Request
+            <button type="submit" disabled={status === 'sending'} className="w-full bg-salon-ink text-white py-4 text-[10px] uppercase tracking-[0.4em] hover:bg-salon-gold transition-all duration-500 disabled:opacity-60 disabled:cursor-not-allowed">
+              {status === 'sending' ? 'Sending…' : 'Send Request'}
             </button>
           </form>
         )}
@@ -899,28 +979,24 @@ const Contact = () => (
                 <MapPin className="w-3 h-3 mr-2" /> Location
               </p>
               <p className="text-sm opacity-70 leading-relaxed">
-                3420 K Ave, Ste 214<br />
-                Plano TX 75074<br />
-                <span className="text-[10px] italic opacity-60">Located to the left of the entrance of H-Mart in Plano</span>
+                {LOCATION_NAME}<br />
+                {LOCATION_ADDRESS}
               </p>
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-4 flex items-center">
                 <Clock className="w-3 h-3 mr-2" /> Hours
               </p>
-              <div className="text-sm opacity-70 leading-loose">
-                <p>Mon - Sat: 10:00 AM - 7:00 PM</p>
-                <p>Sun & Holidays: Appointment only</p>
-              </div>
+              <ul className="text-sm opacity-70 leading-loose space-y-1">
+                {LOCATION_HOURS.map((line, i) => <li key={i}>{line}</li>)}
+              </ul>
             </div>
             <div>
               <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-4 flex items-center">
                 <Phone className="w-3 h-3 mr-2" /> Contact
               </p>
               <div className="text-sm opacity-70 leading-relaxed">
-                <p>Call : (972) 423 - 4212</p>
-                <p>Text : (214) 934 - 3659</p>
-                <p>Email : service@pikapikahairsalon.com</p>
+                <p>Phone: {LOCATION_PHONE}</p>
               </div>
             </div>
           </div>
@@ -928,8 +1004,8 @@ const Contact = () => (
 
         <div className="relative w-full mt-8 overflow-hidden border border-salon-ink/10 bg-salon-ink/5 grayscale hover:grayscale-0 opacity-95 hover:opacity-100 transition-all duration-500" style={{ height: 500 }}>
           <iframe
-            title="Pika Pika Salon - Contact"
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3343.868725848529!2d-96.699444!3d33.046111!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x864c19396e2978f7%3A0x3ca58a57e193660d!2s3420%20K%20Ave%20%23214%2C%20Plano%2C%20TX%2075074!5e0!3m2!1sen!2sus!4v1710423340000!5m2!1sen!2sus"
+            title="Change Hair & Beauty - Contact"
+            src={MAP_EMBED_URL}
             width="100%"
             height="100%"
             style={{ border: 0, position: 'absolute', left: 0, top: 0, width: '100%', height: '100%', display: 'block' }}
@@ -945,18 +1021,18 @@ const Contact = () => (
 const Footer = () => (
   <footer className="bg-white py-20 px-8 border-t border-salon-ink/5">
     <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-12">
-      <a href="#" className="text-2xl font-serif tracking-[0.4em] uppercase flex flex-col items-center">
-        <span className="text-salon-ink">PIKA PIKA</span>
-        <span className="text-[8px] tracking-[0.5em] -mt-1 opacity-50">HAIR SALON</span>
+      <a href="#" className="text-2xl font-serif tracking-[0.3em] uppercase flex flex-col items-center">
+        <span className="text-salon-ink">CHANGE HAIR</span>
+        <span className="text-[8px] tracking-[0.4em] -mt-1 opacity-50">{' & BEAUTY'}</span>
       </a>
       
       <div className="flex space-x-12">
-        <a href="https://www.instagram.com/p/DVrabw2gUct/" target="_blank" rel="noopener noreferrer" className="hover:text-salon-gold transition-colors"><Instagram className="w-5 h-5" /></a>
-        <a href="#" className="hover:text-salon-gold transition-colors"><Facebook className="w-5 h-5" /></a>
+        <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="hover:text-salon-gold transition-colors"><Instagram className="w-5 h-5" /></a>
+        <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="hover:text-salon-gold transition-colors"><Facebook className="w-5 h-5" /></a>
       </div>
 
       <p className="text-[10px] uppercase tracking-[0.2em] opacity-40">
-        Copyright &copy; 2024, pika pika hair salon, inc.
+        Copyright &copy; {new Date().getFullYear()}, Change Hair &amp; Beauty
       </p>
     </div>
   </footer>
@@ -973,8 +1049,39 @@ const BookingModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
   const [customerTab, setCustomerTab] = useState<'new' | 'existing'>('new');
   const [form, setForm] = useState({ firstName: '', lastName: '', phone: '', email: '', password: '', confirmPassword: '', comments: '' });
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
-  useEffect(() => { if (isOpen) { setStep(1); setExpandedCategoryId(null); setSelectedService(null); setSelectedDate(null); setSelectedTime(null); setForm({ firstName: '', lastName: '', phone: '', email: '', password: '', confirmPassword: '', comments: '' }); setSubmitted(false); } }, [isOpen]);
+  useEffect(() => { if (isOpen) { setStep(1); setExpandedCategoryId(null); setSelectedService(null); setSelectedDate(null); setSelectedTime(null); setForm({ firstName: '', lastName: '', phone: '', email: '', password: '', confirmPassword: '', comments: '' }); setSubmitted(false); setSubmitError(''); } }, [isOpen]);
+
+  const handleModalSubmit = async () => {
+    if (!GOOGLE_SCRIPT_URL) { setSubmitError('Form is not configured.'); return; }
+    setSending(true);
+    setSubmitError('');
+    const dateStr = selectedDate ? `${selectedDate.getFullYear()}-${String(selectedDate.getMonth() + 1).padStart(2, '0')}-${String(selectedDate.getDate()).padStart(2, '0')}` : '';
+    const name = [form.firstName, form.lastName].filter(Boolean).join(' ');
+    try {
+      const body = new URLSearchParams({
+        name: name || '—',
+        email: form.email || '—',
+        phone: form.phone || '—',
+        service: selectedService?.name || selectedService?.categoryName || '—',
+        date: dateStr,
+        time: selectedTime || '—'
+      }).toString();
+      await fetch(GOOGLE_SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body
+      });
+      setSubmitted(true);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : 'Failed to send. Please try again or call us.');
+    } finally {
+      setSending(false);
+    }
+  };
 
   const handleServicePick = (cat: { id: string; name: string; services: { name: string; price: string }[] }, svc: { name: string; price: string }) => {
     setSelectedService({ ...svc, categoryName: cat.name });
@@ -1129,6 +1236,7 @@ const BookingModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
               {/* Step 4: Verify */}
               {step === 4 && (
                 <div className="space-y-6">
+                  {submitError && <p className="text-sm text-red-600 bg-red-50 border border-red-200 px-3 py-2">{submitError}</p>}
                   <div><p className="text-[10px] uppercase tracking-widest text-salon-gold mb-1">Service</p><p className="font-medium">{selectedService?.name}</p></div>
                   <div><p className="text-[10px] uppercase tracking-widest text-salon-gold mb-1">Date & Time</p><p className="font-medium">{formatDate(selectedDate)}, {selectedTime}</p></div>
                   <div><p className="text-[10px] uppercase tracking-widest text-salon-gold mb-1">Agent</p><div className="flex items-center gap-2"><div className="w-10 h-10 rounded-full bg-salon-gold/20 flex items-center justify-center text-salon-gold font-serif font-medium">{AGENT_NAME.split(' ').map(n=>n[0]).join('')}</div><span className="font-medium">{AGENT_NAME}</span></div></div>
@@ -1142,7 +1250,9 @@ const BookingModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
                 {step < 4 ? (
                   <button type="button" onClick={() => setStep(s => s + 1)} disabled={(step === 1 && !selectedService) || (step === 2 && (!selectedDate || !selectedTime))} className="gold-button py-3 px-6">Next</button>
                 ) : (
-                  <button type="button" onClick={() => setSubmitted(true)} className="gold-button py-3 px-6 flex items-center gap-2">Submit <ArrowRight className="w-4 h-4" /></button>
+                  <button type="button" onClick={handleModalSubmit} disabled={sending} className="gold-button py-3 px-6 flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed">
+                    {sending ? 'Sending…' : <>Submit <ArrowRight className="w-4 h-4" /></>}
+                  </button>
                 )}
               </div>
             </>
