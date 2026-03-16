@@ -749,7 +749,7 @@ const MENU_CARD_BLURBS: Record<string, string> = {
   'STYLE': 'Shampoo, blow dry, upstyle, and makeup. Perfect for events or a daily refresh.'
 };
 
-const MenuView = ({ onBack, onOpenBooking }: { onBack: () => void; onOpenBooking: () => void }) => (
+const MenuView = ({ onBack, onOpenBooking }: { onBack: () => void; onOpenBooking: (categoryId: string) => void }) => (
   <div className="min-h-screen bg-salon-beige pt-28 pb-20">
     <div className="max-w-6xl mx-auto px-6 md:px-12">
       <div className="flex items-center gap-4 mb-12">
@@ -794,7 +794,7 @@ const MenuView = ({ onBack, onOpenBooking }: { onBack: () => void; onOpenBooking
                   </li>
                 ))}
               </ul>
-              <button type="button" onClick={onOpenBooking} className="gold-button w-full sm:w-auto">
+              <button type="button" onClick={() => onOpenBooking(cat.category.toLowerCase())} className="gold-button w-full sm:w-auto">
                 Book this service
               </button>
             </div>
@@ -1115,7 +1115,7 @@ const Footer = () => (
 );
 
 // --- Booking Modal (4 steps) ---
-const BookingModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) => {
+const BookingModal = ({ isOpen, onClose, preselectedCategoryId = null }: { isOpen: boolean; onClose: () => void; preselectedCategoryId?: string | null }) => {
   const [step, setStep] = useState(1);
   const [expandedCategoryId, setExpandedCategoryId] = useState<string | null>(null);
   const [selectedService, setSelectedService] = useState<{ name: string; price: string; categoryName: string } | null>(null);
@@ -1128,7 +1128,22 @@ const BookingModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
   const [sending, setSending] = useState(false);
   const [submitError, setSubmitError] = useState('');
 
-  useEffect(() => { if (isOpen) { setStep(1); setExpandedCategoryId(null); setSelectedService(null); setSelectedDate(null); setSelectedTime(null); setForm({ firstName: '', lastName: '', phone: '', email: '', password: '', confirmPassword: '', comments: '' }); setSubmitted(false); setSubmitError(''); } }, [isOpen]);
+  const categoriesToShow = preselectedCategoryId
+    ? BOOKING_CATEGORIES.filter((c) => c.id === preselectedCategoryId)
+    : BOOKING_CATEGORIES;
+
+  useEffect(() => {
+    if (isOpen) {
+      setStep(1);
+      setExpandedCategoryId(preselectedCategoryId || null);
+      setSelectedService(null);
+      setSelectedDate(null);
+      setSelectedTime(null);
+      setForm({ firstName: '', lastName: '', phone: '', email: '', password: '', confirmPassword: '', comments: '' });
+      setSubmitted(false);
+      setSubmitError('');
+    }
+  }, [isOpen, preselectedCategoryId]);
 
   const handleModalSubmit = async () => {
     if (!GOOGLE_SCRIPT_URL) { setSubmitError('Form is not configured.'); return; }
@@ -1216,7 +1231,7 @@ const BookingModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
               {/* Step 1: Available Services */}
               {step === 1 && (
                 <div className="space-y-3">
-                  {BOOKING_CATEGORIES.map((cat) => (
+                  {categoriesToShow.map((cat) => (
                     <div key={cat.id}>
                       <button type="button" onClick={() => setExpandedCategoryId(expandedCategoryId === cat.id ? null : cat.id)} className="w-full flex items-center justify-between p-4 rounded-lg bg-salon-beige/60 border border-salon-ink/5 hover:border-salon-gold/30 transition-colors text-left">
                         <span className="flex items-center gap-3">
@@ -1225,7 +1240,7 @@ const BookingModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
                         </span>
                         <span className="text-[10px] uppercase tracking-widest text-salon-ink/50">{cat.services.length} Services</span>
                       </button>
-                      {expandedCategoryId === cat.id && (
+                      {(expandedCategoryId === cat.id || preselectedCategoryId === cat.id) && (
                         <div className="mt-2 pl-4 space-y-2 border-l-2 border-salon-gold/30">
                           {cat.services.map((svc) => (
                             <button key={svc.name} type="button" onClick={() => handleServicePick(cat, svc)} className={`w-full flex justify-between items-center py-3 px-3 rounded text-left text-sm transition-colors ${selectedService?.name === svc.name && selectedService?.categoryName === cat.name ? 'bg-salon-gold/20 text-salon-ink border border-salon-gold/50' : 'hover:bg-salon-beige/50'}`}>
@@ -1344,9 +1359,18 @@ export default function App() {
   const [showBlog, setShowBlog] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
+  const [bookingPreselectedCategoryId, setBookingPreselectedCategoryId] = useState<string | null>(null);
 
   const handleBack = () => { setShowDashboard(false); setShowBlog(false); setShowMenu(false); };
   const handleMenuClick = () => { setShowMenu(true); setShowDashboard(false); setShowBlog(false); };
+  const openBooking = (categoryId?: string) => {
+    setBookingPreselectedCategoryId(categoryId || null);
+    setBookingModalOpen(true);
+  };
+  const closeBooking = () => {
+    setBookingModalOpen(false);
+    setBookingPreselectedCategoryId(null);
+  };
 
   return (
     <div className="min-h-screen selection:bg-salon-gold/20">
@@ -1356,28 +1380,28 @@ export default function App() {
         onMenuClick={handleMenuClick}
         showMenu={showMenu}
         onBack={handleBack}
-        onOpenBooking={() => setBookingModalOpen(true)}
+        onOpenBooking={() => openBooking()}
       />
       {showDashboard ? (
-        <ClientDashboard onOpenBooking={() => setBookingModalOpen(true)} />
+        <ClientDashboard onOpenBooking={() => openBooking()} />
       ) : showMenu ? (
-        <MenuView onBack={handleBack} onOpenBooking={() => setBookingModalOpen(true)} />
+        <MenuView onBack={handleBack} onOpenBooking={(categoryId) => openBooking(categoryId)} />
       ) : showBlog ? (
         <BlogView />
       ) : (
         <>
-          <Hero onOpenBooking={() => setBookingModalOpen(true)} />
+          <Hero onOpenBooking={() => openBooking()} />
       <Story />
-          <SignatureServices onOpenBooking={() => setBookingModalOpen(true)} />
-          <ServicesMenu onOpenBooking={() => setBookingModalOpen(true)} />
-          <Gallery onOpenBooking={() => setBookingModalOpen(true)} />
+          <SignatureServices onOpenBooking={() => openBooking()} />
+          <ServicesMenu onOpenBooking={() => openBooking()} />
+          <Gallery onOpenBooking={() => openBooking()} />
       <Testimonials />
       <Booking />
       <Contact />
       <Footer />
         </>
       )}
-      <BookingModal isOpen={bookingModalOpen} onClose={() => setBookingModalOpen(false)} />
+      <BookingModal isOpen={bookingModalOpen} onClose={closeBooking} preselectedCategoryId={bookingPreselectedCategoryId} />
     </div>
   );
 }
