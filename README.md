@@ -32,3 +32,28 @@ The site is set up to deploy automatically to GitHub Pages when you push to the 
    `https://<your-username>.github.io/<repository-name>/`
 
 The Tawk.to live chat widget is included on the site and will appear once the script loads.
+
+## Deploy to Vercel (auto-deploy on every GitHub push)
+
+Connect this repo to Vercel once; after that, **every push to `main` will deploy the site to Vercel automatically**.
+
+### One-time setup: connect GitHub to Vercel
+
+1. **Sign in to Vercel**  
+   Go to [vercel.com](https://vercel.com) and sign in (use “Continue with GitHub” if you use GitHub).
+
+2. **Import your repository**  
+   - Click **Add New… → Project**.  
+   - Select **Import Git Repository** and choose your GitHub account if prompted.  
+   - Find and select **ChangeHair-Beuty-website** (or your repo: `https://github.com/tekmaxusa/ChangeHair-Beuty-website`).  
+   - Click **Import**.
+
+3. **Configure the project**  
+   - **Framework Preset:** Vite (should be auto-detected).  
+   - **Build Command:** `npm run build` (default).  
+   - **Output Directory:** `dist` (default).  
+   - **Root Directory:** leave blank.  
+   - Click **Deploy**.
+
+4. **Done**  
+   After the first deploy, every push to the `main` branch will trigger a new deployment. Your site will be available at a URL like `https://your-project.vercel.app` (you can add a custom domain in Vercel’s project settings).

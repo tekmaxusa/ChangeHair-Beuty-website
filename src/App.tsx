@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import {
-  Instagram,
-  Facebook,
-  MapPin,
-  Phone,
-  Mail,
-  Clock,
-  ChevronLeft,
-  ChevronRight,
+import { 
+  Instagram, 
+  Facebook, 
+  MapPin, 
+  Phone, 
+  Mail, 
+  Clock, 
+  ChevronLeft, 
+  ChevronRight, 
   X,
   Menu,
   ArrowRight,
@@ -182,7 +182,7 @@ const BLOG_POSTS = [
 
 // --- Components ---
 
-const Navbar = ({ onDashboardClick, showDashboard, onBlogClick, showBlog, onBack, onOpenBooking }: { onDashboardClick: () => void; showDashboard: boolean; onBlogClick: () => void; showBlog: boolean; onBack: () => void; onOpenBooking: () => void }) => {
+const Navbar = ({ onDashboardClick, showDashboard, onMenuClick, showMenu, onBack, onOpenBooking }: { onDashboardClick: () => void; showDashboard: boolean; onMenuClick: () => void; showMenu: boolean; onBack: () => void; onOpenBooking: () => void }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -197,8 +197,8 @@ const Navbar = ({ onDashboardClick, showDashboard, onBlogClick, showBlog, onBack
       <button type="button" onClick={() => { onDashboardClick(); setIsMenuOpen(false); }} className={`text-xs uppercase tracking-[0.2em] transition-colors cursor-pointer ${showDashboard ? 'text-salon-gold' : 'hover:text-salon-gold'}`}>
         Client Dashboard
       </button>
-      <button type="button" onClick={() => { onBlogClick(); setIsMenuOpen(false); }} className={`text-xs uppercase tracking-[0.2em] transition-colors cursor-pointer ${showBlog ? 'text-salon-gold' : 'hover:text-salon-gold'}`}>
-        Blog
+      <button type="button" onClick={() => { onMenuClick(); setIsMenuOpen(false); }} className={`text-xs uppercase tracking-[0.2em] transition-colors cursor-pointer ${showMenu ? 'text-salon-gold' : 'hover:text-salon-gold'}`}>
+        Menu
       </button>
       <button type="button" className="text-xs uppercase tracking-[0.2em] border border-salon-ink px-6 py-2 hover:bg-salon-ink hover:text-white transition-all cursor-pointer" onClick={() => { onOpenBooking(); setIsMenuOpen(false); }}>
         Book Appointment
@@ -207,7 +207,7 @@ const Navbar = ({ onDashboardClick, showDashboard, onBlogClick, showBlog, onBack
   );
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-700 ${isScrolled || showDashboard || showBlog ? 'bg-white/95 backdrop-blur-sm py-4 shadow-sm' : 'bg-transparent py-8'}`}>
+    <nav className={`fixed w-full z-50 transition-all duration-700 ${isScrolled || showDashboard || showMenu ? 'bg-white/95 backdrop-blur-sm py-4 shadow-sm' : 'bg-transparent py-8'}`}>
       <div className="max-w-7xl mx-auto px-8 flex justify-between items-center">
         <button type="button" onClick={onBack} className="text-xl font-serif tracking-[0.2em] uppercase flex flex-col items-center text-left cursor-pointer">
           <span className="text-salon-ink">CHANGE HAIR</span>
@@ -238,8 +238,8 @@ const Navbar = ({ onDashboardClick, showDashboard, onBlogClick, showBlog, onBack
             <button type="button" onClick={() => { onDashboardClick(); setIsMenuOpen(false); }} className="text-lg uppercase tracking-[0.3em] font-serif cursor-pointer">
               Client Dashboard
             </button>
-            <button type="button" onClick={() => { onBlogClick(); setIsMenuOpen(false); }} className="text-lg uppercase tracking-[0.3em] font-serif cursor-pointer">
-              Blog
+            <button type="button" onClick={() => { onMenuClick(); setIsMenuOpen(false); }} className="text-lg uppercase tracking-[0.3em] font-serif cursor-pointer">
+              Menu
             </button>
             <button type="button" className="gold-button !mt-12 cursor-pointer" onClick={() => { onOpenBooking(); setIsMenuOpen(false); }}>
               Book Appointment
@@ -710,6 +710,7 @@ const ServicesMenu = () => (
       <div className="text-center mb-24">
         <p className="text-[10px] uppercase tracking-[0.3em] text-salon-gold mb-4">Menu</p>
         <h2 className="text-4xl font-serif">Our Services</h2>
+        <p className="text-sm text-salon-ink/70 mt-4 max-w-xl mx-auto">Cut, Color, Perm &amp; Style — prices below. Book online or call us.</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-x-20 gap-y-16">
@@ -737,6 +738,72 @@ const ServicesMenu = () => (
       </div>
     </div>
   </section>
+);
+
+// Gallery images used for Menu page cards (WordPress-style)
+const MENU_CARD_IMAGES = [gallery1, gallery3, gallery5, gallery7];
+const MENU_CARD_BLURBS: Record<string, string> = {
+  'CUT': 'Precision cuts for women, men, and kids. Clean lines and modern shapes tailored to you.',
+  'COLOR': 'From root touch-ups to full highlights. Professional color for a fresh, vibrant look.',
+  'PERM': 'Perms and Japanese magic straight. Lasting waves or sleek, smooth results.',
+  'STYLE': 'Shampoo, blow dry, upstyle, and makeup. Perfect for events or a daily refresh.'
+};
+
+const MenuView = ({ onBack, onOpenBooking }: { onBack: () => void; onOpenBooking: () => void }) => (
+  <div className="min-h-screen bg-salon-beige pt-28 pb-20">
+    <div className="max-w-6xl mx-auto px-6 md:px-12">
+      <div className="flex items-center gap-4 mb-12">
+        <button type="button" onClick={onBack} className="flex items-center gap-2 text-sm uppercase tracking-widest text-salon-ink/70 hover:text-salon-gold transition-colors cursor-pointer">
+          <ChevronLeft className="w-4 h-4" /> Back
+        </button>
+      </div>
+      <header className="text-center mb-16">
+        <p className="text-[10px] uppercase tracking-[0.3em] text-salon-gold mb-4">Services</p>
+        <h1 className="text-4xl md:text-5xl font-serif text-salon-ink">Our Menu</h1>
+        <p className="text-sm text-salon-ink/70 mt-4 max-w-xl mx-auto">Cut, Color, Perm &amp; Style. Browse services and book your appointment.</p>
+      </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
+        {SERVICE_MENU.map((cat, idx) => (
+          <motion.article
+            key={cat.category}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.08 }}
+            className="bg-white rounded-sm overflow-hidden border border-salon-ink/5 shadow-lg hover:shadow-xl transition-shadow"
+          >
+            <div className="aspect-[4/3] overflow-hidden bg-salon-ink/5">
+              <img
+                src={MENU_CARD_IMAGES[idx]}
+                alt={cat.category}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="p-6 md:p-8">
+              <h2 className="text-xl font-serif text-salon-ink border-b border-salon-ink/10 pb-3 mb-4 uppercase tracking-widest">
+                {cat.category}
+              </h2>
+              <p className="text-sm text-salon-ink/70 mb-6 leading-relaxed">
+                {MENU_CARD_BLURBS[cat.category]}
+              </p>
+              <ul className="space-y-3 mb-6">
+                {cat.items.map((item, i) => (
+                  <li key={i} className="flex justify-between items-baseline text-sm">
+                    <span className="text-salon-ink">{item.name}</span>
+                    <span className="font-medium text-salon-ink">{item.price}</span>
+                  </li>
+                ))}
+              </ul>
+              <button type="button" onClick={onOpenBooking} className="gold-button w-full sm:w-auto">
+                Book this service
+              </button>
+            </div>
+          </motion.article>
+        ))}
+      </div>
+    </div>
+    <Footer />
+  </div>
 );
 
 const Gallery = () => (
@@ -1011,13 +1078,13 @@ const Contact = () => (
         </div>
 
         <div className="relative w-full mt-8 overflow-hidden border border-salon-ink/10 bg-salon-ink/5 grayscale hover:grayscale-0 opacity-95 hover:opacity-100 transition-all duration-500" style={{ height: 500 }}>
-          <iframe
+          <iframe 
             title="Change Hair & Beauty - Contact"
             src={MAP_EMBED_URL}
-            width="100%"
-            height="100%"
+            width="100%" 
+            height="100%" 
             style={{ border: 0, position: 'absolute', left: 0, top: 0, width: '100%', height: '100%', display: 'block' }}
-            allowFullScreen
+            allowFullScreen 
             referrerPolicy="no-referrer-when-downgrade"
           />
         </div>
@@ -1275,35 +1342,39 @@ const BookingModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: () => voi
 export default function App() {
   const [showDashboard, setShowDashboard] = useState(false);
   const [showBlog, setShowBlog] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
 
-  const handleBack = () => { setShowDashboard(false); setShowBlog(false); };
+  const handleBack = () => { setShowDashboard(false); setShowBlog(false); setShowMenu(false); };
+  const handleMenuClick = () => { setShowMenu(true); setShowDashboard(false); setShowBlog(false); };
 
   return (
     <div className="min-h-screen selection:bg-salon-gold/20">
       <Navbar
         onDashboardClick={() => setShowDashboard(true)}
         showDashboard={showDashboard}
-        onBlogClick={() => setShowBlog(true)}
-        showBlog={showBlog}
+        onMenuClick={handleMenuClick}
+        showMenu={showMenu}
         onBack={handleBack}
         onOpenBooking={() => setBookingModalOpen(true)}
       />
       {showDashboard ? (
         <ClientDashboard onOpenBooking={() => setBookingModalOpen(true)} />
+      ) : showMenu ? (
+        <MenuView onBack={handleBack} onOpenBooking={() => setBookingModalOpen(true)} />
       ) : showBlog ? (
         <BlogView />
       ) : (
         <>
           <Hero onOpenBooking={() => setBookingModalOpen(true)} />
-          <Story />
+      <Story />
           <SignatureServices onOpenBooking={() => setBookingModalOpen(true)} />
           <ServicesMenu onOpenBooking={() => setBookingModalOpen(true)} />
           <Gallery onOpenBooking={() => setBookingModalOpen(true)} />
-          <Testimonials />
-          <Booking />
-          <Contact />
-          <Footer />
+      <Testimonials />
+      <Booking />
+      <Contact />
+      <Footer />
         </>
       )}
       <BookingModal isOpen={bookingModalOpen} onClose={() => setBookingModalOpen(false)} />
