@@ -6,3 +6,5 @@ coverage/
 *.log
 .env*
 !.env.example
+!change-hair-beauty/.env.example
+!change-hair-beauty/.env.xampp.example

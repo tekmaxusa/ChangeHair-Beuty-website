@@ -1,0 +1,25 @@
+# Halimbawa para sa XAMPP Apache (Windows)
+# ------------------------------------------------------------
+# 1. Palitan ang Y:/path/to/... ng totoong path ng repo (folder na may public/).
+# 2. I-include sa httpd.conf:
+#      Include conf/extra/httpd-vhosts.conf
+# 3. Idagdag ang block na ito sa C:\xampp\apache\conf\extra\httpd-vhosts.conf
+#    (o kopyahin ang file na ito at Include mula sa httpd.conf).
+# 4. Sa C:\xampp\apache\conf\httpd.conf siguraduhing naka-on:
+#      LoadModule rewrite_module modules/mod_rewrite.so
+# 5. Buksan: http://changehair.local/  (idagdag sa C:\Windows\System32\drivers\etc\hosts:
+#      127.0.0.1  changehair.local)
+
+<VirtualHost *:80>
+    ServerName changehair.local
+    DocumentRoot "Y:/path/to/Pika-Pika-main/change-hair-beauty/public"
+
+    <Directory "Y:/path/to/Pika-Pika-main/change-hair-beauty/public">
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog "logs/changehair-error.log"
+    CustomLog "logs/changehair-access.log" common
+</VirtualHost>
