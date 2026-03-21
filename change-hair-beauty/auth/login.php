@@ -18,7 +18,7 @@ function login_user(string $email, string $password): array
     }
 
     $pdo = db();
-    $stmt = $pdo->prepare('SELECT id, name, email, password FROM users WHERE email = :email LIMIT 1');
+    $stmt = $pdo->prepare('SELECT id, name, email, password, role FROM users WHERE email = :email LIMIT 1');
     $stmt->execute([':email' => $email]);
     $row = $stmt->fetch();
 
@@ -34,6 +34,7 @@ function login_user(string $email, string $password): array
     $_SESSION['user_id'] = (int) $row['id'];
     $_SESSION['user_name'] = $row['name'];
     $_SESSION['user_email'] = $row['email'];
+    $_SESSION['user_role'] = ((string) ($row['role'] ?? '')) === 'admin' ? 'admin' : 'client';
 
     return ['ok' => true];
 }

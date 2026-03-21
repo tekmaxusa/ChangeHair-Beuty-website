@@ -5,6 +5,9 @@ declare(strict_types=1);
 require __DIR__ . '/layout.php';
 require_once dirname(__DIR__) . '/auth/signup.php';
 require_once dirname(__DIR__) . '/auth/google_oauth.php';
+require_once __DIR__ . '/partials/redirect.php';
+
+$next = chb_safe_next((string) ($_GET['next'] ?? '/dashboard/'));
 
 $error = '';
 $success = '';
@@ -21,8 +24,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-$loginAfter = '/login.php?next=' . rawurlencode('/dashboard/');
-$googleStart = '/google-oauth-start.php?next=' . rawurlencode('/dashboard/');
+$loginAfter = '/login.php?next=' . rawurlencode($next);
+$googleStart = '/google-oauth-start.php?next=' . rawurlencode($next);
 $googleOAuthReady = google_oauth_configured();
 
 ?>

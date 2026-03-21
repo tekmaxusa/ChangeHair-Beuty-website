@@ -16,7 +16,7 @@ $slidesJson = json_encode($slides, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS |
     <div class="chb-hero-scrim" aria-hidden="true"></div>
     <div class="chb-hero-content">
         <h1 class="chb-hero-heading" id="chb-hero-slide"><?= h($slides[0]) ?></h1>
-        <a class="chb-btn-gold chb-hero-cta" href="<?= h($bookHref) ?>">Book appointment</a>
+        <a class="chb-btn-gold chb-hero-cta chb-booking-open" href="<?= h($bookHref) ?>">Book appointment</a>
     </div>
     <script type="application/json" id="chb-hero-slides-data"><?= $slidesJson ?></script>
     <script>

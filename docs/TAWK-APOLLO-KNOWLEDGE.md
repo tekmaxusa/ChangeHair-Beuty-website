@@ -1,23 +1,23 @@
 # Tawk Apollo / AI Assist — Knowledge for Change Hair & Beauty
 
-Ang **Apollo** (AI sa Tawk) ay **walang access sa source code**. Kailangan niyang **basahin ang teksto** mula sa **Knowledge Base**, **Shortcuts**, **website scrape**, o **upload na file** sa [Tawk dashboard](https://dashboard.tawk.to).  
-**Layunin ng dokumentong ito:** isang **malawak na “master article”** na kapag na-import at naka-connect sa AI Assist, kayang sagutin ni Apollo ang karamihan ng tanong tungkol sa website — **basta sundin ang setup sa ibaba**.
+**Apollo** (Tawk’s AI) has **no access to source code**. It must **read text** from the **Knowledge Base**, **Shortcuts**, **website scrape**, or **uploaded files** in the [Tawk dashboard](https://dashboard.tawk.to).  
+**Purpose of this document:** one broad **“master article”** that, once imported and connected to AI Assist, lets Apollo answer most questions about the website — **if you follow the setup below**.
 
-### Para “kayang sagutin ang lahat” (best practice)
+### Best practice so it can “answer everything”
 
-1. I-paste ang buong **“Knowledge article — copy paste”** sa isang o hiwalay na mga article sa **Knowledge Base**.  
-2. Sa **AI Assist → Data sources**, i-enable ang **Knowledge Base** (at kung meron, **Plain text** na kopya rin).  
-3. **Idagdag ang live website URL** bilang data source (crawl) **kasama** ng Knowledge Base — para makuha ang tekstong nasa page mismo.  
-4. **Shortcuts** sa dulo — lagyan ng maraming trigger (synonyms) para sa madalas na tanong.  
-5. **I-test** sa Tawk preview; kung may maling sagot, dagdagan ang article o shortcut.
+1. Paste the full **“Knowledge article — copy paste”** into one or more articles in the **Knowledge Base**.  
+2. Under **AI Assist → Data sources**, enable the **Knowledge Base** (and **Plain text** copy if available).  
+3. Add the **live website URL** as a data source (crawl) **alongside** the Knowledge Base — so text from the pages themselves is included.  
+4. **Shortcuts** at the end — add many triggers (synonyms) for common questions.  
+5. **Test** in Tawk preview; if answers are wrong, expand the article or shortcuts.
 
-Tulong mula sa Tawk: [Train Apollo / AI Assist](https://help.tawk.to/article/how-to-train-ai-assists-apollo-ai-to-respond-to-your-chats) · [Knowledge Base](https://help.tawk.to/article/setting-up-your-knowledge-base) · [Data sources](https://help.tawk.to/article/understanding-ai-assist%E2%80%99s-data-sources)
+Tawk help: [Train Apollo / AI Assist](https://help.tawk.to/article/how-to-train-ai-assists-apollo-ai-to-respond-to-your-chats) · [Knowledge Base](https://help.tawk.to/article/setting-up-your-knowledge-base) · [Data sources](https://help.tawk.to/article/understanding-ai-assist%E2%80%99s-data-sources)
 
 ---
 
 ## Knowledge article — copy paste (English)
 
-*Palitan ang `https://YOUR-DOMAIN.com` ng tunay na domain. Halimbawa: `https://changehairbeauty.com`.*
+*Replace `https://YOUR-DOMAIN.com` with your real domain. Example: `https://changehairbeauty.com`.*
 
 ---
 
@@ -180,9 +180,9 @@ Prices show **“+”** (starting from). Final price may vary by hair length and
 
 ---
 
-## Mungkahing Shortcuts (dagdagan ang triggers sa Tawk)
+## Suggested Shortcuts (add triggers in Tawk)
 
-Gumawa ng shortcut bawat row; sa “trigger” field, idagdag ang **lahat ng variant** na allowed ng Tawk (hiwalay na shortcut kung isa lang ang trigger field).
+Create one shortcut per row; in the “trigger” field, add **every variant** Tawk allows (use a separate shortcut if the UI only accepts one trigger).
 
 | Topic | Example visitor phrases | Core answer (paste into Tawk; expand if you want) |
 |-------|-------------------------|-----------------------------------------------------|
@@ -208,6 +208,6 @@ Gumawa ng shortcut bawat row; sa “trigger” field, idagdag ang **lahat ng var
 
 ---
 
-## Paalala (limitations)
+## Note (limitations)
 
-Walang AI ang **100% perfect** sa lahat ng tanong. Kung may bagong feature sa website, **i-update** ang Knowledge Base article at ang Shortcuts. Ang dokumentong ito ay aligned sa `change-hair-beauty` PHP app (`config/salon_data.php` at booking flow) — kung magkaiba ang live copy, i-sync ang teksto dito at sa Tawk.
+No AI is **100% correct** on every question. When the website gains new features, **update** the Knowledge Base article and Shortcuts. This document matches the `change-hair-beauty` PHP app (`config/salon_data.php` and booking flow) — if live copy differs, sync the text here and in Tawk.

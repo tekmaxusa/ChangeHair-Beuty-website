@@ -44,3 +44,16 @@ function current_user_email(): string
     session_bootstrap();
     return (string) ($_SESSION['user_email'] ?? '');
 }
+
+function current_user_role(): string
+{
+    session_bootstrap();
+    $r = (string) ($_SESSION['user_role'] ?? '');
+
+    return $r === 'admin' ? 'admin' : 'client';
+}
+
+function is_admin_session(): bool
+{
+    return current_user_role() === 'admin';
+}

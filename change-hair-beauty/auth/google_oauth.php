@@ -176,7 +176,7 @@ function login_or_register_google_user(string $googleSub, string $email, string 
 
     $pdo = db();
 
-    $bySub = $pdo->prepare('SELECT id, name, email, google_sub FROM users WHERE google_sub = :g LIMIT 1');
+    $bySub = $pdo->prepare('SELECT id, name, email, google_sub, role FROM users WHERE google_sub = :g LIMIT 1');
     $bySub->execute([':g' => $googleSub]);
     $row = $bySub->fetch();
 
@@ -184,8 +184,9 @@ function login_or_register_google_user(string $googleSub, string $email, string 
         $userId = (int) $row['id'];
         $dispName = $row['name'];
         $dispEmail = $row['email'];
+        $dispRole = ((string) ($row['role'] ?? '')) === 'admin' ? 'admin' : 'client';
     } else {
-        $byEmail = $pdo->prepare('SELECT id, name, email, google_sub FROM users WHERE email = :e LIMIT 1');
+        $byEmail = $pdo->prepare('SELECT id, name, email, google_sub, role FROM users WHERE email = :e LIMIT 1');
         $byEmail->execute([':e' => $email]);
         $row = $byEmail->fetch();
 
@@ -200,14 +201,21 @@ function login_or_register_google_user(string $googleSub, string $email, string 
             $userId = (int) $row['id'];
             $dispName = $row['name'];
             $dispEmail = $row['email'];
+            $dispRole = ((string) ($row['role'] ?? '')) === 'admin' ? 'admin' : 'client';
         } else {
             $ins = $pdo->prepare(
-                'INSERT INTO users (name, email, password, google_sub) VALUES (:n, :e, NULL, :g)'
+                'INSERT INTO users (name, email, password, google_sub, role) VALUES (:n, :e, NULL, :g, :r)'
             );
-            $ins->execute([':n' => $name !== '' ? $name : $email, ':e' => $email, ':g' => $googleSub]);
+            $ins->execute([
+                ':n' => $name !== '' ? $name : $email,
+                ':e' => $email,
+                ':g' => $googleSub,
+                ':r' => 'client',
+            ]);
             $userId = (int) $pdo->lastInsertId();
             $dispName = $name !== '' ? $name : $email;
             $dispEmail = $email;
+            $dispRole = 'client';
         }
     }
 
@@ -215,4 +223,5 @@ function login_or_register_google_user(string $googleSub, string $email, string 
     $_SESSION['user_id'] = $userId;
     $_SESSION['user_name'] = $dispName;
     $_SESSION['user_email'] = $dispEmail;
+    $_SESSION['user_role'] = $dispRole;
 }

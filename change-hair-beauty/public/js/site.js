@@ -159,4 +159,67 @@
   }
 
   initTestimonialsCarousel();
+
+  function initBookingModal() {
+    var modal = document.getElementById('chb-booking-modal');
+    var iframe = document.querySelector('[data-chb-booking-iframe]');
+    if (!modal || !iframe) return;
+
+    var url = '/book-appointment.php';
+    var loaded = false;
+
+    function openModal() {
+      modal.removeAttribute('hidden');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('chb-modal-open');
+      if (!loaded) {
+        iframe.src = url;
+        loaded = true;
+      } else {
+        try {
+          iframe.contentWindow.location.reload();
+        } catch (e) {
+          iframe.src = url;
+        }
+      }
+    }
+
+    function closeModal() {
+      modal.setAttribute('hidden', '');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('chb-modal-open');
+    }
+
+    document.querySelectorAll('a.chb-booking-open').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        var href = (a.getAttribute('href') || '').toLowerCase();
+        if (href.indexOf('book-appointment') === -1) return;
+        e.preventDefault();
+        openModal();
+      });
+    });
+
+    modal.addEventListener('click', function (e) {
+      var t = e.target;
+      if (t && t.closest && t.closest('[data-chb-modal-close]')) {
+        closeModal();
+      }
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !modal.hasAttribute('hidden')) {
+        closeModal();
+      }
+    });
+
+    if (new URLSearchParams(location.search).get('open') === 'booking') {
+      openModal();
+      var u = new URL(location.href);
+      u.searchParams.delete('open');
+      var q = u.searchParams.toString();
+      history.replaceState({}, '', u.pathname + (q ? '?' + q : '') + u.hash);
+    }
+  }
+
+  initBookingModal();
 })();

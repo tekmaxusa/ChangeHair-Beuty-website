@@ -90,13 +90,13 @@ Tawk dashboard → **Administration** → widget / channel settings. No code cha
 
 Tawk supports a **hash** with `setAttributes` so visitors can’t spoof email. This project does **not** set `hash` by default. To enable later, add server-side HMAC per [Tawk’s docs](https://developer.tawk.to/js-api/) and extend `tawk.php`.
 
-### 5.4 Apollo / AI (“dapat masagot ang tanong tungkol sa website”)
+### 5.4 Apollo / AI (answering questions about the website)
 
-Ang **Apollo** ay trained sa **Tawk dashboard**, hindi sa `tawk.php`.  
-Para saklawin ang **lahat ng karaniwang tanong** tungkol sa site: (1) i-paste ang **master article** sa Knowledge Base, (2) **i-enable ang Knowledge Base** (at kung puwede **website URL crawl**) sa **AI Assist → Data sources**, (3) magdagdag ng **Shortcuts** para sa madalas na phrasing.
+**Apollo** is trained from the **Tawk dashboard**, not from `tawk.php`.  
+To cover **most common questions** about the site: (1) paste the **master article** into the Knowledge Base, (2) **enable the Knowledge Base** (and **website URL crawl** if available) under **AI Assist → Data sources**, (3) add **Shortcuts** for frequent phrasing.
 
-- **Master article + shortcut table:** [`docs/TAWK-APOLLO-KNOWLEDGE.md`](TAWK-APOLLO-KNOWLEDGE.md) — may buong menu, oras, address, lahat ng section ng homepage, booking rules, at FAQs.  
-- **Opisyal na gabay:** [Train Apollo / AI Assist](https://help.tawk.to/article/how-to-train-ai-assists-apollo-ai-to-respond-to-your-chats), [Knowledge Base](https://help.tawk.to/article/setting-up-your-knowledge-base), [Data sources](https://help.tawk.to/article/understanding-ai-assist%E2%80%99s-data-sources)
+- **Master article + shortcut table:** [`docs/TAWK-APOLLO-KNOWLEDGE.md`](TAWK-APOLLO-KNOWLEDGE.md) — full menu, hours, address, homepage sections, booking rules, and FAQs.  
+- **Official guides:** [Train Apollo / AI Assist](https://help.tawk.to/article/how-to-train-ai-assists-apollo-ai-to-respond-to-your-chats), [Knowledge Base](https://help.tawk.to/article/setting-up-your-knowledge-base), [Data sources](https://help.tawk.to/article/understanding-ai-assist%E2%80%99s-data-sources)
 
 ---
 
@@ -108,7 +108,7 @@ Para saklawin ang **lahat ng karaniwang tanong** tungkol sa site: (1) i-paste an
 | Wrong property | `salon_data.php` IDs vs Tawk embed snippet. |
 | Links always open new tab | `site.js` must load (`defer` on login/signup/home/dashboard). |
 | Agent doesn’t see name/email | User must be **logged in**; session must have `user_email` / `user_name`. |
-| Apollo / AI walang alam sa login, signup, booking | I-import ang teksto mula sa **`docs/TAWK-APOLLO-KNOWLEDGE.md`** sa Tawk Knowledge Base at i-enable bilang AI data source; tingnan §5.4. |
+| Apollo / AI doesn’t know login, signup, booking | Import the text from **`docs/TAWK-APOLLO-KNOWLEDGE.md`** into the Tawk Knowledge Base and enable it as an AI data source; see §5.4. |
 | Third-party cookie warnings | Often harmless; chat can still work. |
 
 ---

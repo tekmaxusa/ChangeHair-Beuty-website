@@ -61,7 +61,7 @@ $googleOAuthReady = google_oauth_configured();
     <main class="chb-page-shell">
         <div class="chb-panel">
             <h1 class="chb-page-title">Sign in to your account</h1>
-            <p class="chb-hint" style="margin-top:0;">Client dashboard &amp; online booking.</p>
+            <p class="chb-hint" style="margin-top:0;">Client dashboard, booking requests, and account access.</p>
             <?php if ($error !== ''): ?><p class="msg err"><?= h($error) ?></p><?php endif; ?>
 
             <form method="post" action="">

@@ -1,4 +1,6 @@
 services:
+  # Single PHP/Apache app: marketing site, client login/signup/dashboard, and merchant tools under /admin/
+  # Merchant: http://localhost:WEB_PORT/admin/login.php (sign up / sign in) → /admin/, /admin/bookings.php, /admin/users.php
   web:
     build:
       context: .
@@ -40,6 +42,20 @@ services:
       timeout: 5s
       retries: 10
       start_period: 25s
+
+  # Same MySQL as `db` — browse tables in the browser (optional; does not change data)
+  phpmyadmin:
+    image: phpmyadmin:5-apache
+    container_name: chb-phpmyadmin
+    ports:
+      - "${PMA_PORT:-8081}:80"
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      UPLOAD_LIMIT: 64M
+    depends_on:
+      db:
+        condition: service_healthy
 
 volumes:
   mysql_data:

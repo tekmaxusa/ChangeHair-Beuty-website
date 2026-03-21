@@ -7,8 +7,17 @@ require __DIR__ . '/layout.php';
 /** @var array<string,mixed> $salon */
 $salon = require dirname(__DIR__) . '/config/salon_data.php';
 
+$chb_home_book_success = '';
+if (isset($_GET['booked']) && isset($_SESSION['chb_book_flash']) && is_array($_SESSION['chb_book_flash'])) {
+    $fl = $_SESSION['chb_book_flash'];
+    unset($_SESSION['chb_book_flash']);
+    if (!empty($fl['message'])) {
+        $chb_home_book_success = (string) $fl['message'];
+    }
+}
+
 $nextDash = rawurlencode('/dashboard/');
-$bookHref = $loggedIn ? '/dashboard/' : '/login.php?next=' . $nextDash;
+$bookHref = '/book-appointment.php';
 
 ?>
 <!DOCTYPE html>
@@ -24,6 +33,12 @@ $bookHref = $loggedIn ? '/dashboard/' : '/login.php?next=' . $nextDash;
 </head>
 <body class="chb-body chb-home">
     <?php require __DIR__ . '/partials/site-header.php'; ?>
+
+    <?php if ($chb_home_book_success !== ''): ?>
+        <div class="chb-wrap" style="padding-top:1rem;">
+            <p class="msg ok" role="status" style="max-width:42rem;margin:0 auto;"><?= h($chb_home_book_success) ?></p>
+        </div>
+    <?php endif; ?>
 
     <?php require __DIR__ . '/partials/section-hero.php'; ?>
     <?php require __DIR__ . '/partials/section-story.php'; ?>

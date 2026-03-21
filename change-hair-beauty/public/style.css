@@ -174,8 +174,16 @@ body.chb-subpage .chb-logo-line2 {
     gap: 2.75rem;
 }
 
+.chb-marketing-main > .chb-band:first-child,
+.chb-marketing-main > section:first-child {
+    padding-top: 6.25rem;
+}
+
 @media (min-width: 900px) {
-    .chb-nav-desktop { display: flex; }
+    .chb-nav-desktop {
+        display: flex;
+    }
+
     .chb-nav-burger { display: none !important; }
     .chb-nav-drawer { display: none !important; }
 }
@@ -1153,6 +1161,270 @@ th {
     opacity: 0.75;
 }
 
+/* ——— Client dashboard (refined layout) ——— */
+.chb-client-dashboard .chb-dash-shell {
+    max-width: 46rem;
+    margin: 0 auto;
+}
+
+.chb-dash-pagehead {
+    margin-bottom: 1.75rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+    position: relative;
+}
+
+.chb-dash-pagehead::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 3.5rem;
+    height: 2px;
+    background: var(--gold);
+}
+
+.chb-dash-pagehead-kicker {
+    margin-bottom: 0.5rem;
+}
+
+.chb-dash-pagehead-title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.75rem, 3.5vw, 2.15rem);
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+}
+
+.chb-dash-pagehead-lead {
+    margin: 0;
+    max-width: 32rem;
+    font-size: 0.95rem;
+    line-height: 1.55;
+    color: rgba(26, 26, 26, 0.58);
+}
+
+.chb-dash-profile {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem 1.5rem;
+    padding: 1.35rem 1.5rem;
+    margin-bottom: 1.75rem;
+    background: #fff;
+    border: 1px solid rgba(26, 26, 26, 0.08);
+    box-shadow: 0 2px 16px rgba(26, 26, 26, 0.05);
+}
+
+.chb-dash-profile-main {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 0;
+}
+
+.chb-dash-avatar {
+    flex-shrink: 0;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--ink);
+    background: linear-gradient(145deg, rgba(197, 160, 89, 0.22), rgba(197, 160, 89, 0.08));
+    border: 1px solid rgba(197, 160, 89, 0.35);
+}
+
+.chb-dash-profile-text {
+    min-width: 0;
+}
+
+.chb-dash-profile-name {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    font-weight: 600;
+    line-height: 1.25;
+}
+
+.chb-dash-profile-email {
+    margin: 0.2rem 0 0;
+    font-size: 0.82rem;
+    color: rgba(26, 26, 26, 0.5);
+    word-break: break-word;
+}
+
+.chb-dash-profile-cta {
+    text-decoration: none;
+    flex-shrink: 0;
+    padding: 0.65rem 1.35rem;
+    font-size: 0.62rem;
+}
+
+.chb-dash-card {
+    background: #fff;
+    border: 1px solid rgba(26, 26, 26, 0.08);
+    box-shadow: 0 8px 32px rgba(26, 26, 26, 0.06);
+    padding: 1.75rem 1.5rem 1.5rem;
+}
+
+.chb-dash-card-head {
+    margin-bottom: 1.35rem;
+    padding-bottom: 1.15rem;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.07);
+}
+
+.chb-dash-card-title {
+    font-family: var(--font-serif);
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+}
+
+.chb-dash-card-desc {
+    margin: 0;
+    font-size: 0.86rem;
+    line-height: 1.55;
+    color: rgba(26, 26, 26, 0.58);
+}
+
+.chb-dash-card-desc strong {
+    color: rgba(26, 26, 26, 0.78);
+    font-weight: 600;
+}
+
+.chb-dash-empty {
+    text-align: center;
+    padding: 2.5rem 1.25rem 2rem;
+    border: 1px dashed rgba(26, 26, 26, 0.14);
+    background: var(--beige);
+}
+
+.chb-dash-empty-title {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.4rem;
+}
+
+.chb-dash-empty-text {
+    margin: 0 0 1.25rem;
+    font-size: 0.88rem;
+    color: rgba(26, 26, 26, 0.55);
+    max-width: 22rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.chb-dash-empty .chb-btn-gold {
+    display: inline-block;
+    text-decoration: none;
+    padding: 0.65rem 1.35rem;
+    font-size: 0.62rem;
+}
+
+.chb-dash-table-scroll {
+    overflow-x: auto;
+    margin: 0 -0.25rem;
+    padding: 0 0.25rem;
+    -webkit-overflow-scrolling: touch;
+}
+
+.chb-dash-table {
+    width: 100%;
+    min-width: 36rem;
+    border-collapse: collapse;
+    margin-top: 0;
+    font-size: 0.875rem;
+}
+
+.chb-dash-table th,
+.chb-dash-table td {
+    border: none;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.07);
+    padding: 0.85rem 0.65rem;
+    text-align: left;
+    vertical-align: middle;
+}
+
+.chb-dash-table th {
+    background: transparent;
+    font-family: var(--font-sans);
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(26, 26, 26, 0.45);
+    padding-top: 0.35rem;
+    padding-bottom: 0.65rem;
+}
+
+.chb-dash-table tbody tr {
+    transition: background 0.15s ease;
+}
+
+.chb-dash-table tbody tr:hover {
+    background: rgba(197, 160, 89, 0.06);
+}
+
+.chb-dash-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.chb-dash-cell-service {
+    font-weight: 500;
+    color: rgba(26, 26, 26, 0.88);
+    max-width: 14rem;
+    line-height: 1.45;
+}
+
+.chb-dash-cell-muted {
+    font-size: 0.82rem;
+    color: rgba(26, 26, 26, 0.48);
+    white-space: nowrap;
+}
+
+.chb-dash-footer-link {
+    text-align: center;
+    margin: 2.25rem 0 0;
+    font-size: 0.82rem;
+}
+
+.chb-dash-footer-link a {
+    color: rgba(26, 26, 26, 0.55);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(197, 160, 89, 0.35);
+    padding-bottom: 0.05rem;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.chb-dash-footer-link a:hover {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+}
+
+@media (max-width: 520px) {
+    .chb-dash-profile {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .chb-dash-profile-main {
+        width: 100%;
+    }
+
+    .chb-dash-profile-cta {
+        width: 100%;
+        text-align: center;
+    }
+}
+
 .chb-section-title {
     font-family: var(--font-serif);
     font-size: 1.1rem;
@@ -1388,9 +1660,478 @@ th {
     max-width: 100%;
 }
 
+.chb-book-panel--home {
+    max-width: 52rem;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: left;
+}
+
 .chb-submit-narrow { max-width: 16rem; }
 
 .chb-table-wrap { overflow-x: auto; }
+
+.chb-badge {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 0.25rem 0.55rem;
+    border: 1px solid rgba(26, 26, 26, 0.12);
+    background: rgba(26, 26, 26, 0.04);
+    color: rgba(26, 26, 26, 0.75);
+}
+
+.chb-badge--pending {
+    border-color: rgba(180, 130, 40, 0.45);
+    background: rgba(197, 160, 89, 0.12);
+    color: #6a4a12;
+}
+
+.chb-badge--confirmed {
+    border-color: rgba(60, 120, 60, 0.4);
+    background: rgba(76, 140, 74, 0.1);
+    color: #2d4a2c;
+}
+
+.chb-badge--cancelled {
+    border-color: rgba(140, 60, 60, 0.35);
+    background: rgba(160, 54, 54, 0.08);
+    color: #5c2222;
+}
+
+.chb-admin-table .chb-admin-actions {
+    white-space: nowrap;
+}
+
+.chb-inline-form {
+    display: inline-block;
+    margin-right: 0.35rem;
+    margin-bottom: 0.25rem;
+}
+
+.chb-btn-admin {
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0.4rem 0.65rem;
+    border: 1px solid rgba(26, 26, 26, 0.15);
+    background: #fff;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.chb-btn-admin--ok {
+    border-color: rgba(60, 120, 60, 0.45);
+    background: rgba(76, 140, 74, 0.12);
+    color: #2d4a2c;
+}
+
+.chb-btn-admin--ok:hover {
+    background: rgba(76, 140, 74, 0.22);
+}
+
+.chb-btn-admin--danger {
+    border-color: rgba(140, 60, 60, 0.4);
+    background: rgba(160, 54, 54, 0.08);
+    color: #5c2222;
+}
+
+.chb-btn-admin--danger:hover {
+    background: rgba(160, 54, 54, 0.15);
+}
+
+.chb-admin-nav:not(.chb-admin-nav--tabs) {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    color: rgba(26, 26, 26, 0.55);
+}
+
+.chb-admin-nav:not(.chb-admin-nav--tabs) a {
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(197, 160, 89, 0.45);
+}
+
+.chb-admin-nav:not(.chb-admin-nav--tabs) a:hover {
+    color: var(--gold);
+}
+
+/* ——— Admin top nav, dashboard shell, login ——— */
+.chb-admin-dash-shell {
+    max-width: 52rem;
+    margin: 0 auto;
+}
+
+.chb-admin-nav--tabs {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem 0.65rem;
+    margin-bottom: 1.75rem;
+    padding-bottom: 0.85rem;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.1);
+    font-family: var(--font-sans);
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(26, 26, 26, 0.45);
+}
+
+.chb-admin-nav--tabs .chb-admin-nav__link {
+    text-decoration: none;
+    color: inherit;
+    padding: 0.25rem 0;
+    border-bottom: 2px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.chb-admin-nav--tabs .chb-admin-nav__link:hover {
+    color: var(--ink);
+}
+
+.chb-admin-nav--tabs .chb-admin-nav__link.is-active {
+    color: var(--ink);
+    border-bottom-color: var(--gold);
+}
+
+.chb-admin-nav--tabs .chb-admin-nav__sep {
+    user-select: none;
+    opacity: 0.35;
+}
+
+.chb-admin-dash-links {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 0.5rem;
+}
+
+@media (max-width: 560px) {
+    .chb-admin-dash-links {
+        grid-template-columns: 1fr;
+    }
+}
+
+.chb-admin-dash-links__card {
+    display: block;
+    padding: 1.25rem 1.35rem;
+    background: #fff;
+    border: 1px solid rgba(26, 26, 26, 0.08);
+    box-shadow: 0 4px 20px rgba(26, 26, 26, 0.05);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.chb-admin-dash-links__card:hover {
+    border-color: rgba(197, 160, 89, 0.45);
+    box-shadow: 0 6px 28px rgba(26, 26, 26, 0.08);
+}
+
+.chb-admin-dash-links__label {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.35rem;
+}
+
+.chb-admin-dash-links__hint {
+    display: block;
+    font-size: 0.82rem;
+    color: rgba(26, 26, 26, 0.5);
+    line-height: 1.45;
+}
+
+.chb-admin-pagehead {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+    position: relative;
+}
+
+.chb-admin-pagehead::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 3rem;
+    height: 2px;
+    background: var(--gold);
+}
+
+.chb-admin-pagehead-kicker {
+    margin-bottom: 0.45rem;
+}
+
+.chb-admin-pagehead-title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.65rem, 3vw, 2rem);
+    font-weight: 600;
+    margin: 0 0 0.4rem;
+    letter-spacing: -0.02em;
+}
+
+.chb-admin-pagehead-meta {
+    margin: 0;
+    font-size: 0.88rem;
+    color: rgba(26, 26, 26, 0.55);
+}
+
+.chb-admin-pagehead-meta a {
+    color: var(--ink);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(197, 160, 89, 0.4);
+}
+
+.chb-admin-pagehead-meta a:hover {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+}
+
+.chb-admin-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.85rem;
+    margin-bottom: 1.75rem;
+}
+
+@media (max-width: 720px) {
+    .chb-admin-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.chb-admin-stat {
+    background: #fff;
+    border: 1px solid rgba(26, 26, 26, 0.08);
+    padding: 1rem 1.1rem;
+    box-shadow: 0 2px 12px rgba(26, 26, 26, 0.04);
+    border-left: 3px solid rgba(26, 26, 26, 0.12);
+}
+
+.chb-admin-stat--pending { border-left-color: rgba(197, 160, 89, 0.85); }
+.chb-admin-stat--confirmed { border-left-color: rgba(76, 140, 74, 0.75); }
+.chb-admin-stat--cancelled { border-left-color: rgba(160, 54, 54, 0.55); }
+.chb-admin-stat--total { border-left-color: rgba(26, 26, 26, 0.25); }
+
+.chb-admin-stat__value {
+    display: block;
+    font-family: var(--font-serif);
+    font-size: 1.65rem;
+    font-weight: 600;
+    line-height: 1.1;
+    color: var(--ink);
+}
+
+.chb-admin-stat__label {
+    display: block;
+    margin-top: 0.35rem;
+    font-size: 0.58rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(26, 26, 26, 0.45);
+}
+
+.chb-admin-bookings-card {
+    background: #fff;
+    border: 1px solid rgba(26, 26, 26, 0.08);
+    box-shadow: 0 8px 28px rgba(26, 26, 26, 0.06);
+    padding: 1.5rem 1.35rem 1.35rem;
+}
+
+.chb-admin-bookings-card__head {
+    margin-bottom: 1.15rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.07);
+}
+
+.chb-admin-bookings-card__title {
+    font-family: var(--font-serif);
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin: 0 0 0.35rem;
+}
+
+.chb-admin-bookings-card__lead {
+    margin: 0;
+    font-size: 0.86rem;
+    line-height: 1.5;
+    color: rgba(26, 26, 26, 0.55);
+}
+
+.chb-admin-empty {
+    margin: 0;
+    padding: 2rem 1rem;
+    text-align: center;
+    font-size: 0.9rem;
+    color: rgba(26, 26, 26, 0.5);
+    background: var(--beige);
+    border: 1px dashed rgba(26, 26, 26, 0.12);
+}
+
+.chb-admin-login-shell {
+    max-width: 48rem;
+    margin: 0 auto;
+}
+
+.chb-admin-login-brand {
+    margin-bottom: 2rem;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+}
+
+.chb-admin-login-kicker {
+    margin-bottom: 0.5rem;
+}
+
+.chb-admin-login-title {
+    font-family: var(--font-serif);
+    font-size: clamp(1.65rem, 3vw, 2rem);
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+}
+
+.chb-admin-login-lead {
+    margin: 0;
+    max-width: 36rem;
+    font-size: 0.92rem;
+    line-height: 1.55;
+    color: rgba(26, 26, 26, 0.58);
+}
+
+.chb-admin-login-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    align-items: start;
+}
+
+@media (max-width: 800px) {
+    .chb-admin-login-columns {
+        grid-template-columns: 1fr;
+    }
+}
+
+.chb-admin-login-card {
+    max-width: none;
+    margin: 0;
+}
+
+.chb-admin-login-card--setup {
+    border-left: 3px solid var(--gold);
+}
+
+.chb-admin-login-card-title {
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0 0 0.5rem;
+}
+
+.chb-admin-login-card-desc {
+    margin: 0 0 1rem;
+    font-size: 0.84rem;
+    line-height: 1.5;
+    color: rgba(26, 26, 26, 0.55);
+}
+
+.chb-admin-bootstrap-form .chb-submit {
+    margin-top: 1.25rem;
+}
+
+.chb-admin-login-back {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.82rem;
+}
+
+.chb-admin-login-back a {
+    color: rgba(26, 26, 26, 0.55);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(197, 160, 89, 0.35);
+}
+
+.chb-admin-login-back a:hover {
+    color: var(--gold);
+}
+
+.chb-admin-login-single {
+    max-width: 26rem;
+    margin: 0 auto;
+}
+
+.chb-admin-login-signup-row {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(26, 26, 26, 0.08);
+    text-align: center;
+    font-size: 0.82rem;
+    color: rgba(26, 26, 26, 0.55);
+}
+
+.chb-admin-login-signup-btn {
+    display: inline-block;
+    margin-top: 0.65rem;
+    padding: 0.55rem 1.35rem;
+    font-family: var(--font-sans);
+    font-size: 0.62rem;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--ink);
+    border: 1px solid rgba(26, 26, 26, 0.25);
+    background: #fff;
+    transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.chb-admin-login-signup-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+}
+
+.chb-admin-login-help {
+    max-width: 36rem;
+    margin: 2rem auto 0;
+    padding: 1.35rem 1.5rem;
+    background: var(--beige);
+    border: 1px solid rgba(26, 26, 26, 0.08);
+}
+
+.chb-admin-login-help h2 {
+    font-family: var(--font-serif);
+    font-size: 1.05rem;
+    margin: 0 0 0.5rem;
+}
+
+.chb-admin-login-help p {
+    margin: 0 0 0.65rem;
+    font-size: 0.86rem;
+    line-height: 1.55;
+    color: rgba(26, 26, 26, 0.58);
+}
+
+.chb-admin-login-help p:last-child {
+    margin-bottom: 0;
+}
+
+.chb-admin-user-form input,
+.chb-admin-user-form select {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
 
 .chb-hint code {
     font-size: 0.85em;
@@ -1454,4 +2195,140 @@ th {
 .chb-google-g {
     font-weight: 700;
     font-size: 0.95rem;
+}
+
+/* ——— Book appointment modal (iframe) ——— */
+body.chb-modal-open {
+    overflow: hidden;
+}
+
+.chb-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.chb-modal[hidden] {
+    display: none !important;
+}
+
+.chb-modal__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(26, 26, 26, 0.55);
+    cursor: pointer;
+}
+
+.chb-modal__dialog {
+    position: relative;
+    z-index: 1;
+    width: min(100%, 32rem);
+    max-height: min(90vh, 44rem);
+    display: flex;
+    flex-direction: column;
+    background: var(--cream);
+    border: 1px solid rgba(26, 26, 26, 0.12);
+    box-shadow: 0 1.25rem 3rem rgba(26, 26, 26, 0.18);
+}
+
+.chb-modal__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid rgba(26, 26, 26, 0.08);
+    flex-shrink: 0;
+}
+
+.chb-modal__title {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    font-family: var(--font-serif);
+}
+
+.chb-modal__close {
+    border: none;
+    background: transparent;
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--ink);
+    padding: 0.15rem 0.35rem;
+    opacity: 0.65;
+    transition: opacity 0.15s;
+}
+
+.chb-modal__close:hover {
+    opacity: 1;
+}
+
+.chb-modal__iframe {
+    width: 100%;
+    flex: 1;
+    min-height: min(70vh, 36rem);
+    border: 0;
+    background: #fff;
+}
+
+.chb-modal__content {
+    padding: 1rem 1.25rem 1.35rem;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+    -webkit-overflow-scrolling: touch;
+}
+
+.chb-admin-signup-modal .chb-modal__dialog {
+    width: min(100%, 26rem);
+    max-width: 26rem;
+    max-height: min(92vh, 40rem);
+    border-left: 3px solid var(--gold);
+}
+
+.chb-admin-signup-modal__content .chb-submit {
+    width: 100%;
+}
+
+.chb-admin-signup-modal__back {
+    margin: 1.15rem 0 0;
+    text-align: right;
+}
+
+.chb-admin-signup-modal__back-btn {
+    border: none;
+    background: none;
+    padding: 0;
+    font: inherit;
+    font-size: 0.82rem;
+    color: rgba(26, 26, 26, 0.55);
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+.chb-admin-signup-modal__back-btn:hover {
+    color: var(--gold);
+}
+
+.chb-admin-login-signup-btn--button {
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+/* Compact layout when booking page loads inside modal iframe */
+body.chb-book-frame {
+    margin: 0;
+    min-height: 100%;
+}
+
+.chb-book-frame-inner {
+    padding: 1rem 1.1rem 1.5rem;
+    max-width: 100%;
+    box-sizing: border-box;
 }

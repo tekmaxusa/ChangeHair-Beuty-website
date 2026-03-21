@@ -5,7 +5,9 @@ declare(strict_types=1);
 /** @var bool $loggedIn */
 
 $nextDash = rawurlencode('/dashboard/');
-$bookHref = $loggedIn ? '/dashboard/' : '/login.php?next=' . $nextDash;
+if (!isset($bookHref)) {
+    $bookHref = '/book-appointment.php';
+}
 $dashHref = $loggedIn ? '/dashboard/' : '/login.php?next=' . $nextDash;
 
 ?>
@@ -29,19 +31,21 @@ $dashHref = $loggedIn ? '/dashboard/' : '/login.php?next=' . $nextDash;
             <?php else: ?>
                 <a class="chb-nav-quiet" href="/logout.php">LOG OUT</a>
             <?php endif; ?>
-            <a class="chb-nav-book" href="<?= h($bookHref) ?>">BOOK APPOINTMENT</a>
+            <a class="chb-nav-book chb-booking-open" href="<?= h($bookHref) ?>">BOOK APPOINTMENT</a>
         </div>
     </div>
 
     <div class="chb-nav-drawer" aria-hidden="true">
-        <a class="chb-nav-drawer-link" href="<?= h($dashHref) ?>">CLIENT DASHBOARD</a>
-        <a class="chb-nav-drawer-link" href="/#services">MENU</a>
+        <a class="chb-nav-drawer-link" href="<?= h($dashHref) ?>">Client dashboard</a>
+        <a class="chb-nav-drawer-link" href="/#services">Menu</a>
         <?php if (!$loggedIn): ?>
-            <a class="chb-nav-drawer-link" href="/login.php?next=<?= h($nextDash) ?>">LOG IN</a>
-            <a class="chb-nav-drawer-link" href="/signup.php">SIGN UP</a>
+            <a class="chb-nav-drawer-link" href="/login.php?next=<?= h($nextDash) ?>">Log in</a>
+            <a class="chb-nav-drawer-link" href="/signup.php">Sign up</a>
         <?php else: ?>
-            <a class="chb-nav-drawer-link" href="/logout.php">LOG OUT</a>
+            <a class="chb-nav-drawer-link" href="/logout.php">Log out</a>
         <?php endif; ?>
-        <a class="chb-btn-gold chb-nav-drawer-cta" href="<?= h($bookHref) ?>">BOOK APPOINTMENT</a>
+        <a class="chb-btn-gold chb-nav-drawer-cta chb-booking-open" href="<?= h($bookHref) ?>">BOOK APPOINTMENT</a>
     </div>
 </nav>
+
+<?php require __DIR__ . '/booking-modal.php'; ?>

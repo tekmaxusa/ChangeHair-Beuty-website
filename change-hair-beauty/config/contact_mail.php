@@ -98,8 +98,8 @@ function chb_send_booking_request_email(
     $ts = strtotime($dateYmd . ' ' . $timeHi . ':00');
     $timePretty = $ts ? date('g:i A', $ts) : $timeHi;
 
-    $subject = 'Appointment request: ' . $dateYmd . ' ' . $timePretty;
-    $body = "New appointment booking from the website dashboard.\r\n\r\n";
+    $subject = 'Pending booking request: ' . $dateYmd . ' ' . $timePretty;
+    $body = "New pending appointment request (awaiting merchant confirmation).\r\n\r\n";
     $body .= 'Name: ' . $clientName . "\r\n";
     $body .= 'Email: ' . $clientEmail . "\r\n";
     $body .= 'Phone: ' . ($clientPhone !== '' ? $clientPhone : '—') . "\r\n\r\n";
@@ -108,4 +108,45 @@ function chb_send_booking_request_email(
     $body .= "Services:\r\n" . $servicesSummary . "\r\n";
 
     return chb_mail_send_plain($to, $subject, $body, $clientEmail);
+}
+
+/**
+ * Notify client when merchant confirms or cancels a booking.
+ */
+function chb_send_booking_status_email_to_client(
+    string $clientEmail,
+    string $clientName,
+    string $status,
+    string $dateYmd,
+    string $timeHi,
+    string $servicesSummary
+): bool {
+    if (!filter_var($clientEmail, FILTER_VALIDATE_EMAIL)) {
+        return false;
+    }
+
+    $ts = strtotime($dateYmd . ' ' . $timeHi . ':00');
+    $timePretty = $ts ? date('g:i A', $ts) : $timeHi;
+
+    $salonReply = chb_contact_recipient_email();
+    $replyTo = $salonReply !== '' ? $salonReply : $clientEmail;
+
+    if ($status === 'confirmed') {
+        $subject = 'Your appointment is confirmed — Change Hair & Beauty';
+        $body = "Hi {$clientName},\r\n\r\n";
+        $body .= "Your appointment is confirmed.\r\n\r\n";
+    } elseif ($status === 'cancelled') {
+        $subject = 'Your appointment was cancelled — Change Hair & Beauty';
+        $body = "Hi {$clientName},\r\n\r\n";
+        $body .= "Your appointment has been cancelled.\r\n\r\n";
+    } else {
+        return false;
+    }
+
+    $body .= 'Date: ' . $dateYmd . "\r\n";
+    $body .= 'Time: ' . $timePretty . "\r\n";
+    $body .= 'Services: ' . $servicesSummary . "\r\n\r\n";
+    $body .= "If you have questions, reply to this email or contact the salon.\r\n";
+
+    return chb_mail_send_plain($clientEmail, $subject, $body, $replyTo);
 }

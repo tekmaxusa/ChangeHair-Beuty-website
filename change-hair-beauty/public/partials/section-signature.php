@@ -24,7 +24,7 @@ declare(strict_types=1);
                             <li><?= h($line) ?></li>
                         <?php endforeach; ?>
                     </ul>
-                    <a class="chb-btn-gold" href="<?= h($bookHref) ?>">Book appointment</a>
+                    <a class="chb-btn-gold chb-booking-open" href="<?= h($bookHref) ?>">Book appointment</a>
                 </div>
                 <div class="chb-sig-media">
                     <img src="<?= h($block['img']) ?>" alt="" width="800" height="450" loading="lazy" decoding="async"<?= str_starts_with($block['img'], 'http') ? ' referrerpolicy="no-referrer"' : '' ?>>

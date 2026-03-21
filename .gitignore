@@ -8,3 +8,5 @@ coverage/
 !.env.example
 !change-hair-beauty/.env.example
 !change-hair-beauty/.env.xampp.example
+!change-hair-beauty/.env.xampp-mysql.example
+.vscode/

@@ -1,0 +1,24 @@
+# XAMPP = MySQL/MariaDB on the PC · Docker = PHP/Apache (web) only
+# ------------------------------------------------------------------
+# 1. Start XAMPP → MySQL (port 3306).
+# 2. In XAMPP phpMyAdmin: run/import sql/xampp_db_user.sql (as root), then import sql/schema.sql
+#    into database `change_hair_beauty` — or use sql/xampp_complete_setup.sql once.
+# 3. From this folder run:
+#      docker compose -f docker-compose.yml -f docker-compose.xampp-mysql.yml up -d --build --no-deps web
+#
+# The `db` container is not required in this mode. Do not run Docker MySQL on the same 3306 —
+# stop `chb-mysql` if you previously used the full stack.
+#
+# If the container cannot connect: in XAMPP my.ini try bind-address=0.0.0.0 (dev only).
+
+services:
+  web:
+    depends_on: !reset
+    environment:
+      DB_HOST: host.docker.internal
+      DB_PORT: "3306"
+      DB_NAME: ${DB_NAME:-change_hair_beauty}
+      DB_USER: ${DB_USER:-salon_user}
+      DB_PASS: ${DB_PASS:-salon_secret}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"

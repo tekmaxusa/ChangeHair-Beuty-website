@@ -5,33 +5,85 @@ declare(strict_types=1);
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/booking_services.php';
 
+const CHB_BOOKING_PENDING = 'pending';
+const CHB_BOOKING_CONFIRMED = 'confirmed';
+const CHB_BOOKING_CANCELLED = 'cancelled';
+
+function chb_booking_blocks_slot(string $status): bool
+{
+    return $status === CHB_BOOKING_PENDING || $status === CHB_BOOKING_CONFIRMED;
+}
+
 /**
- * @return list<array{id:int,service_category:string,service_name:string,booking_date:string,booking_time:string,created_at:string}>
+ * @return list<array{id:int,service_category:string,service_name:string,booking_date:string,booking_time:string,status:string,created_at:string}>
  */
 function fetch_bookings_for_user(int $userId): array
 {
     $pdo = db();
     $stmt = $pdo->prepare(
-        'SELECT id, service_category, service_name, booking_date, booking_time, created_at
+        'SELECT id, service_category, service_name, booking_date, booking_time, status, created_at
          FROM bookings WHERE user_id = :uid ORDER BY booking_date ASC, booking_time ASC'
     );
     $stmt->execute([':uid' => $userId]);
+
     return $stmt->fetchAll();
+}
+
+/**
+ * @return list<array{id:int,user_id:int,client_name:string,client_email:string,service_category:string,service_name:string,booking_date:string,booking_time:string,status:string,created_at:string}>
+ */
+function fetch_all_bookings_for_admin(): array
+{
+    $pdo = db();
+    $stmt = $pdo->query(
+        'SELECT b.id, b.user_id, u.name AS client_name, u.email AS client_email,
+                b.service_category, b.service_name, b.booking_date, b.booking_time, b.status, b.created_at
+         FROM bookings b
+         INNER JOIN users u ON u.id = b.user_id
+         ORDER BY b.booking_date DESC, b.booking_time DESC, b.id DESC'
+    );
+
+    return $stmt->fetchAll();
+}
+
+/**
+ * @return array<string,mixed>|null
+ */
+function fetch_booking_by_id(int $bookingId): ?array
+{
+    $pdo = db();
+    $stmt = $pdo->prepare(
+        'SELECT b.id, b.user_id, u.name AS client_name, u.email AS client_email,
+                b.service_category, b.service_name, b.booking_date, b.booking_time, b.status, b.created_at
+         FROM bookings b
+         INNER JOIN users u ON u.id = b.user_id
+         WHERE b.id = :id LIMIT 1'
+    );
+    $stmt->execute([':id' => $bookingId]);
+    $row = $stmt->fetch();
+
+    return $row ?: null;
 }
 
 function is_slot_taken(string $dateYmd, string $timeHi): bool
 {
     $pdo = db();
     $stmt = $pdo->prepare(
-        'SELECT 1 FROM bookings WHERE booking_date = :d AND booking_time = :t LIMIT 1'
+        'SELECT 1 FROM bookings
+         WHERE booking_date = :d AND booking_time = :t
+           AND (status = :st1 OR status = :st2)
+         LIMIT 1'
     );
-    $stmt->execute([':d' => $dateYmd, ':t' => $timeHi . ':00']);
+    $stmt->execute([
+        ':d' => $dateYmd,
+        ':t' => $timeHi . ':00',
+        ':st1' => CHB_BOOKING_PENDING,
+        ':st2' => CHB_BOOKING_CONFIRMED,
+    ]);
+
     return (bool) $stmt->fetchColumn();
 }
 
-/**
- * Slot exists in schedule and is not in the past (for "today").
- */
 function slot_is_bookable_relative_now(string $dateYmd, string $timeHi): bool
 {
     $today = (new DateTimeImmutable('today'))->format('Y-m-d');
@@ -49,9 +101,6 @@ function slot_is_bookable_relative_now(string $dateYmd, string $timeHi): bool
     return $dt > new DateTimeImmutable('now');
 }
 
-/**
- * Count of slots that are free and still bookable (future if today).
- */
 function count_available_slots_for_date(string $dateYmd): int
 {
     $n = 0;
@@ -64,9 +113,6 @@ function count_available_slots_for_date(string $dateYmd): int
     return $n;
 }
 
-/**
- * True when no slot can be booked on this calendar day (all taken or all past).
- */
 function date_is_fully_blocked(string $dateYmd): bool
 {
     return count_available_slots_for_date($dateYmd) === 0;
@@ -168,8 +214,8 @@ function create_booking(
 
     $pdo = db();
     $stmt = $pdo->prepare(
-        'INSERT INTO bookings (user_id, service_category, service_name, booking_date, booking_time)
-         VALUES (:uid, :sc, :sn, :d, :t)'
+        'INSERT INTO bookings (user_id, service_category, service_name, booking_date, booking_time, status)
+         VALUES (:uid, :sc, :sn, :d, :t, :st)'
     );
     try {
         $stmt->execute([
@@ -178,6 +224,7 @@ function create_booking(
             ':sn' => $service_name,
             ':d' => $dateYmd,
             ':t' => $timeNorm,
+            ':st' => CHB_BOOKING_PENDING,
         ]);
     } catch (PDOException $e) {
         if ((int) $e->errorInfo[1] === 1062) {
@@ -187,6 +234,45 @@ function create_booking(
     }
 
     return ['ok' => true];
+}
+
+/**
+ * Admin sets booking status. Sends client email when moving to confirmed or cancelled.
+ *
+ * @return array{ok: bool, error?: string, old_status?: string, new_status?: string}
+ */
+function admin_set_booking_status(int $bookingId, string $newStatus): array
+{
+    if (!in_array($newStatus, [CHB_BOOKING_CONFIRMED, CHB_BOOKING_CANCELLED], true)) {
+        return ['ok' => false, 'error' => 'Invalid status.'];
+    }
+
+    $row = fetch_booking_by_id($bookingId);
+    if (!$row) {
+        return ['ok' => false, 'error' => 'Booking not found.'];
+    }
+
+    $old = (string) $row['status'];
+    if ($old === $newStatus) {
+        return ['ok' => true, 'old_status' => $old, 'new_status' => $newStatus];
+    }
+
+    if ($old === CHB_BOOKING_CANCELLED) {
+        return ['ok' => false, 'error' => 'This booking is already cancelled.'];
+    }
+
+    if ($old === CHB_BOOKING_CONFIRMED && $newStatus !== CHB_BOOKING_CANCELLED) {
+        return ['ok' => false, 'error' => 'Only cancellation is allowed for confirmed bookings.'];
+    }
+
+    $pdo = db();
+    $stmt = $pdo->prepare('UPDATE bookings SET status = :st WHERE id = :id AND status = :old');
+    $stmt->execute([':st' => $newStatus, ':id' => $bookingId, ':old' => $old]);
+    if ($stmt->rowCount() === 0) {
+        return ['ok' => false, 'error' => 'Could not update booking (it may have changed).'];
+    }
+
+    return ['ok' => true, 'old_status' => $old, 'new_status' => $newStatus];
 }
 
 /**
@@ -205,4 +291,15 @@ function booking_time_options(): array
     }
 
     return $out;
+}
+
+function chb_booking_services_summary(array $bookingRow): string
+{
+    $cat = trim((string) ($bookingRow['service_category'] ?? ''));
+    $name = trim((string) ($bookingRow['service_name'] ?? ''));
+    if ($cat !== '' && $name !== '') {
+        return trim($cat . ' — ' . $name, ' —');
+    }
+
+    return $name !== '' ? $name : $cat;
 }

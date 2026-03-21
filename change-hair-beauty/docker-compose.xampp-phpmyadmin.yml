@@ -1,0 +1,25 @@
+# Docker phpMyAdmin → MySQL on XAMPP (same tekmax_app / change_hair_beauty data)
+# -------------------------------------------------------------------------------
+# XAMPP MySQL (3306) must be running. Do not merge with a compose file that starts `db` if you
+# want to avoid confusion — this service stands alone.
+#
+#   docker compose -f docker-compose.xampp-phpmyadmin.yml up -d
+#
+# Open: http://localhost:8082 (or PMA_XAMPP_PORT in .env)
+# Login: salon_user / salon_secret (or root + XAMPP root password)
+#
+# You should have imported sql/xampp_complete_setup.sql (or xampp_db_user + schema + optional tekmax) in XAMPP.
+
+services:
+  phpmyadmin-xampp:
+    image: phpmyadmin:5-apache
+    container_name: chb-phpmyadmin-xampp
+    ports:
+      - "${PMA_XAMPP_PORT:-8082}:80"
+    environment:
+      PMA_HOST: host.docker.internal
+      PMA_PORT: "3306"
+      PMA_ARBITRARY: "1"
+      UPLOAD_LIMIT: 64M
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
