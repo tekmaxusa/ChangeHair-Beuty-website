@@ -1,0 +1,146 @@
+<?php
+
+declare(strict_types=1);
+
+/**
+ * JSON API bootstrap: CORS (GitHub Pages + local Vite), session, helpers.
+ * Include only from public/api/* endpoints.
+ */
+
+if (!defined('CHB_API_JSON_REQUEST')) {
+    define('CHB_API_JSON_REQUEST', true);
+}
+
+require_once __DIR__ . '/env.php';
+require_once __DIR__ . '/session.php';
+
+/**
+ * @return list<string>
+ */
+function chb_api_allowed_origins(): array
+{
+    $raw = getenv('ALLOWED_ORIGINS');
+    if (!is_string($raw) || trim($raw) === '') {
+        return [];
+    }
+
+    return array_values(array_filter(array_map('trim', explode(',', $raw))));
+}
+
+function chb_api_origin_matches(): ?string
+{
+    $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
+    if (!is_string($origin) || $origin === '') {
+        return null;
+    }
+
+    foreach (chb_api_allowed_origins() as $allowed) {
+        if ($allowed !== '' && hash_equals($allowed, $origin)) {
+            return $origin;
+        }
+    }
+
+    return null;
+}
+
+function chb_api_send_cors(): void
+{
+    $origin = chb_api_origin_matches();
+    if ($origin !== null) {
+        header('Access-Control-Allow-Origin: ' . $origin);
+        header('Access-Control-Allow-Credentials: true');
+        header('Vary: Origin');
+    }
+
+    header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+    header('Access-Control-Allow-Headers: Content-Type');
+}
+
+function chb_api_init(): void
+{
+    chb_api_send_cors();
+
+    if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+        http_response_code(204);
+        exit;
+    }
+
+    session_bootstrap();
+}
+
+/**
+ * @param array<string,mixed> $data
+ */
+function chb_api_json(array $data, int $code = 200): void
+{
+    http_response_code($code);
+    header('Content-Type: application/json; charset=UTF-8');
+    echo json_encode($data, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    exit;
+}
+
+function chb_api_json_error(string $message, int $code = 400, ?string $field = null): void
+{
+    $payload = ['ok' => false, 'error' => $message];
+    if ($field !== null) {
+        $payload['field'] = $field;
+    }
+    chb_api_json($payload, $code);
+}
+
+function chb_api_require_method(string ...$methods): void
+{
+    $m = $_SERVER['REQUEST_METHOD'] ?? '';
+    foreach ($methods as $allowed) {
+        if ($m === $allowed) {
+            return;
+        }
+    }
+    chb_api_json_error('Method not allowed', 405);
+}
+
+/**
+ * @return array<string,mixed>
+ */
+function chb_api_read_json(): array
+{
+    $raw = file_get_contents('php://input');
+    if ($raw === false || trim($raw) === '') {
+        return [];
+    }
+
+    $data = json_decode($raw, true);
+    if (!is_array($data)) {
+        chb_api_json_error('Invalid JSON body', 400);
+    }
+
+    /** @var array<string,mixed> $data */
+    return $data;
+}
+
+function chb_api_require_login(): void
+{
+    session_bootstrap();
+    if (empty($_SESSION['user_id'])) {
+        chb_api_json_error('Unauthorized', 401);
+    }
+}
+
+function chb_api_require_client(): void
+{
+    session_bootstrap();
+    if (empty($_SESSION['user_id'])) {
+        chb_api_json_error('Unauthorized', 401);
+    }
+    if (is_admin_session()) {
+        chb_api_json_error('Use client account', 403);
+    }
+}
+
+function chb_api_require_admin_json(): void
+{
+    session_bootstrap();
+    if (empty($_SESSION['user_id']) || (string) ($_SESSION['user_role'] ?? '') !== 'admin') {
+        chb_api_json_error('Forbidden', 403);
+    }
+}

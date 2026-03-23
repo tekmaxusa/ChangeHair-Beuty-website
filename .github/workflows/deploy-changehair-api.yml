@@ -1,0 +1,32 @@
+name: Deploy changehair-api to cPanel
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'changehair-api/**'
+      - '.github/workflows/deploy-changehair-api.yml'
+  workflow_dispatch:
+
+jobs:
+  rsync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Rsync to cPanel over SSH
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr --delete
+          path: changehair-api/
+          remote_path: ${{ secrets.CPANEL_REMOTE_PATH }}
+          remote_host: ${{ secrets.CPANEL_SSH_HOST }}
+          remote_user: ${{ secrets.CPANEL_SSH_USER }}
+          remote_key: ${{ secrets.CPANEL_SSH_KEY }}
+          exclude: |
+            sql/
+            .env
+            docker-compose*.yml
+            Dockerfile
+            docker/
