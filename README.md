@@ -45,7 +45,7 @@ Connect this repo to Vercel once; after that, **every push to `main` will deploy
 2. **Import your repository**  
    - Click **Add New… → Project**.  
    - Select **Import Git Repository** and choose your GitHub account if prompted.  
-   - Find and select **ChangeHair-Beuty-website** (or your repo: `https://github.com/tekmaxusa/ChangeHair-Beuty-website`).  
+   - Find and select **changehair-beauty** (or your repo: `https://github.com/tekmaxusa/changehair-beauty`).  
    - Click **Import**.
 
 3. **Configure the project**  

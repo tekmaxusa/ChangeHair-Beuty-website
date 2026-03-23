@@ -30,6 +30,9 @@ import gallery9 from './assets/gallery/gallery-9.png';
 import smpBeforeAfter from './assets/smp-before-after.png';
 import signatureColor from './assets/signature-color.png';
 import signaturePerm from './assets/signature-perm.png';
+import soyoungImg from './assets/soyoung.png';
+import henryImg from './assets/henry.png';
+
 
 // --- Types ---
 interface ServiceItem {
@@ -180,9 +183,34 @@ const BLOG_POSTS = [
   { id: 'diy-indian-shampoo', title: 'DIY Indian Shampoo Recipes for Hair Loss', date: 'November 1, 2024', author: 'devzons', summary: 'Hair loss can stem from genetics, stress, or nutritional deficiencies. Traditional Indian natural ingredients—such as Amla, Shikakai, and Neem—have been used for generations in shampoos to strengthen follicles, promote growth, and restore hair health.' },
 ];
 
+const STYLISTS = [
+  {
+    name: "Soyoung",
+    role: "Owner / Master Stylist",
+    koreanRole: "소영 원장님",
+    experience: "25+ Years Experience",
+    bio: "25년 이상 경력, 피카피카 헤어 근무. 메이크업, 웨딩, 여자머리 전문.",
+    specialties: ["Makeup", "Wedding", "Women's Hair"],
+    ig: "https://www.instagram.com/change_hair_beauty?igsh=MWlxczNtZ20xemI4eg%3D%3D",
+    image: soyoungImg
+  },
+  {
+    name: "Henry",
+    role: "Senior Stylist",
+    koreanRole: "헨리 스타일리스트",
+    experience: "International Experience",
+    bio: "청담동 헤어뉴스, 김청경 헤어스페이스 (청담), 박승철 헤어 스튜디오 원장님, 도솔 헤어 원장님(신도림, 세종, 세종이마트 프랜차이즈), 이철 헤어커커 판교 경력.",
+    specialties: ["Men's Iron Perm", "Women's Design Cut", "Digital Cut", "Latest Korean Styles", "Modern Color"],
+    ig: "https://www.instagram.com/_hair_hanry.c_",
+    image: henryImg
+  }
+];
+
+
 // --- Components ---
 
-const Navbar = ({ onDashboardClick, showDashboard, onMenuClick, showMenu, onBack, onOpenBooking }: { onDashboardClick: () => void; showDashboard: boolean; onMenuClick: () => void; showMenu: boolean; onBack: () => void; onOpenBooking: () => void }) => {
+const Navbar = ({ onDashboardClick, showDashboard, onMenuClick, showMenu, onAboutClick, showAbout, onBack, onOpenBooking }: { onDashboardClick: () => void; showDashboard: boolean; onMenuClick: () => void; showMenu: boolean; onAboutClick: () => void; showAbout: boolean; onBack: () => void; onOpenBooking: () => void }) => {
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -194,33 +222,46 @@ const Navbar = ({ onDashboardClick, showDashboard, onMenuClick, showMenu, onBack
 
   const navLinks = (
     <>
-      <button type="button" onClick={() => { onDashboardClick(); setIsMenuOpen(false); }} className={`text-xs uppercase tracking-[0.2em] transition-colors cursor-pointer ${showDashboard ? 'text-salon-gold' : 'hover:text-salon-gold'}`}>
+      <button type="button" onClick={() => { onDashboardClick(); setIsMenuOpen(false); }} className={`text-sm uppercase tracking-[0.2em] transition-colors cursor-pointer ${showDashboard ? 'text-salon-gold' : 'hover:text-salon-gold'}`}>
         Client Dashboard
       </button>
-      <button type="button" onClick={() => { onMenuClick(); setIsMenuOpen(false); }} className={`text-xs uppercase tracking-[0.2em] transition-colors cursor-pointer ${showMenu ? 'text-salon-gold' : 'hover:text-salon-gold'}`}>
+
+      <button type="button" onClick={() => { onMenuClick(); setIsMenuOpen(false); }} className={`text-sm uppercase tracking-[0.2em] transition-colors cursor-pointer ${showMenu ? 'text-salon-gold' : 'hover:text-salon-gold'}`}>
         Menu
       </button>
+      <button type="button" onClick={() => { onAboutClick(); setIsMenuOpen(false); }} className={`text-sm uppercase tracking-[0.2em] transition-colors cursor-pointer ${showAbout ? 'text-salon-gold' : 'hover:text-salon-gold'}`}>
+        About
+      </button>
+
       <button type="button" className="text-xs uppercase tracking-[0.2em] border border-salon-ink px-6 py-2 hover:bg-salon-ink hover:text-white transition-all cursor-pointer" onClick={() => { onOpenBooking(); setIsMenuOpen(false); }}>
+
         Book Appointment
       </button>
     </>
   );
 
   return (
-    <nav className={`fixed w-full z-50 transition-all duration-700 ${isScrolled || showDashboard || showMenu ? 'bg-white/95 backdrop-blur-sm py-4 shadow-sm' : 'bg-transparent py-8'}`}>
+    <nav className={`fixed w-full z-50 transition-all duration-700 ${isScrolled || showDashboard || showMenu || showAbout || isMenuOpen ? 'bg-[#f9f9f9] py-4 shadow-sm' : 'bg-transparent py-8'}`}>
+
       <div className="max-w-7xl mx-auto px-8 flex justify-between items-center">
-        <button type="button" onClick={onBack} className="text-xl font-serif tracking-[0.2em] uppercase flex flex-col items-center text-left cursor-pointer">
-          <span className="text-salon-ink">CHANGE HAIR</span>
-          <span className="text-[8px] tracking-[0.4em] -mt-1 opacity-50">{' & BEAUTY'}</span>
+
+        <button type="button" onClick={onBack} style={{ backgroundColor: '#f9f9f9' }} className="text-lg md:text-xl font-serif tracking-[0.15em] uppercase flex flex-col items-center justify-center cursor-pointer backdrop-blur-sm px-6 md:px-10 py-3 md:py-4 transition-all duration-700">
+          <span className="text-salon-ink whitespace-nowrap">CHANGE HAIR</span>
+          <span className="text-[8px] md:text-[9px] tracking-[0.3em] opacity-50 whitespace-nowrap mt-1">{'& BEAUTY'}</span>
         </button>
+
+
+
         
         <div className="hidden md:flex space-x-12 items-center">
           {navLinks}
         </div>
 
-        <button className="md:hidden" onClick={() => setIsMenuOpen(!isMenuOpen)}>
-          <Menu className="w-5 h-5" />
+        <button className="md:hidden p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+          <Menu className="w-6 h-6" />
         </button>
+
+
       </div>
 
       <AnimatePresence>
@@ -235,12 +276,18 @@ const Navbar = ({ onDashboardClick, showDashboard, onMenuClick, showMenu, onBack
             <button className="absolute top-8 right-8" onClick={() => setIsMenuOpen(false)}>
               <X className="w-6 h-6" />
             </button>
-            <button type="button" onClick={() => { onDashboardClick(); setIsMenuOpen(false); }} className="text-lg uppercase tracking-[0.3em] font-serif cursor-pointer">
+            <button type="button" onClick={() => { onDashboardClick(); setIsMenuOpen(false); }} className="text-xl uppercase tracking-[0.3em] font-serif cursor-pointer">
               Client Dashboard
             </button>
-            <button type="button" onClick={() => { onMenuClick(); setIsMenuOpen(false); }} className="text-lg uppercase tracking-[0.3em] font-serif cursor-pointer">
+
+            <button type="button" onClick={() => { onMenuClick(); setIsMenuOpen(false); }} className="text-xl uppercase tracking-[0.3em] font-serif cursor-pointer">
               Menu
             </button>
+            <button type="button" onClick={() => { onAboutClick(); setIsMenuOpen(false); }} className="text-xl uppercase tracking-[0.3em] font-serif cursor-pointer">
+              About
+            </button>
+
+
             <button type="button" className="gold-button !mt-12 cursor-pointer" onClick={() => { onOpenBooking(); setIsMenuOpen(false); }}>
               Book Appointment
             </button>
@@ -617,13 +664,14 @@ const SignatureServices = ({ onOpenBooking }: { onOpenBooking: () => void }) => 
               Precision cuts for everyone. Our stylists deliver tailored cuts for women, men, and kids—clean lines, modern shapes, and a look that suits you.
             </p>
             <ul className="space-y-4 mb-10">
-              {['Women $35+', 'Men $25+', 'Kids $25+'].map((item, i) => (
+              {['Women', 'Men', 'Kids'].map((item, i) => (
                 <li key={i} className="flex items-center text-sm opacity-80">
                   <Sparkles className="w-4 h-4 text-salon-gold mr-3" />
                   {item}
                 </li>
               ))}
             </ul>
+
             <button type="button" onClick={onOpenBooking} className="gold-button">Book Appointment</button>
           </div>
           <div className="order-1 lg:order-2">
@@ -643,13 +691,14 @@ const SignatureServices = ({ onOpenBooking }: { onOpenBooking: () => void }) => 
               From root touch-ups to full highlights, we bring out your best with professional color. Root, manicure, and highlight services for a fresh, vibrant look.
             </p>
             <ul className="space-y-4 mb-10">
-              {['Root $80+', 'Manicure $80+', 'Highlight (F) $200+', 'Highlight (M) $150+'].map((item, i) => (
+              {['Root', 'Manicure', 'Highlight (F)', 'Highlight (M)'].map((item, i) => (
                 <li key={i} className="flex items-center text-sm opacity-80">
                   <Sparkles className="w-4 h-4 text-salon-gold mr-3" />
                   {item}
                 </li>
               ))}
             </ul>
+
             <button type="button" onClick={onOpenBooking} className="gold-button">Book Appointment</button>
           </div>
         </div>
@@ -663,13 +712,14 @@ const SignatureServices = ({ onOpenBooking }: { onOpenBooking: () => void }) => 
               From men's iron perm to Japanese magic straight, we offer a range of perm and straightening services. Set/Digital and Magic Setting for lasting waves or sleek, smooth results.
             </p>
             <ul className="space-y-4 mb-10">
-              {["Men's Iron Perm $130+", "Basic Women's Perm $100+", 'Set / Digital $200+', 'Magic Setting $250+', 'Japanese Magic Straight $230+'].map((item, i) => (
+              {["Men's Iron Perm", "Basic Women's Perm", 'Set / Digital', 'Magic Setting', 'Japanese Magic Straight'].map((item, i) => (
                 <li key={i} className="flex items-center text-sm opacity-80">
                   <Sparkles className="w-4 h-4 text-salon-gold mr-3" />
                   {item}
                 </li>
               ))}
             </ul>
+
             <button type="button" onClick={onOpenBooking} className="gold-button">Book Appointment</button>
           </div>
           <div className="order-1 lg:order-2">
@@ -689,13 +739,14 @@ const SignatureServices = ({ onOpenBooking }: { onOpenBooking: () => void }) => 
               Shampoo, blow dry, upstyle, and makeup. Perfect for events, daily refresh, or a full glam look. Let us finish your look with care and precision.
             </p>
             <ul className="space-y-4 mb-10">
-              {['Shampoo $20+', 'Blow Dry $35+', 'Upstyle $130+', 'Makeup $150+'].map((item, i) => (
+              {['Shampoo', 'Blow Dry', 'Upstyle', 'Makeup'].map((item, i) => (
                 <li key={i} className="flex items-center text-sm opacity-80">
                   <Sparkles className="w-4 h-4 text-salon-gold mr-3" />
                   {item}
                 </li>
               ))}
             </ul>
+
             <button type="button" onClick={onOpenBooking} className="gold-button">Book Appointment</button>
           </div>
         </div>
@@ -752,11 +803,9 @@ const MENU_CARD_BLURBS: Record<string, string> = {
 const MenuView = ({ onBack, onOpenBooking }: { onBack: () => void; onOpenBooking: (categoryId: string) => void }) => (
   <div className="min-h-screen bg-salon-beige pt-28 pb-20">
     <div className="max-w-6xl mx-auto px-6 md:px-12">
-      <div className="flex items-center gap-4 mb-12">
-        <button type="button" onClick={onBack} className="flex items-center gap-2 text-sm uppercase tracking-widest text-salon-ink/70 hover:text-salon-gold transition-colors cursor-pointer">
-          <ChevronLeft className="w-4 h-4" /> Back
-        </button>
+      <div className="mb-12">
       </div>
+
       <header className="text-center mb-16">
         <p className="text-[10px] uppercase tracking-[0.3em] text-salon-gold mb-4">Services</p>
         <h1 className="text-4xl md:text-5xl font-serif text-salon-ink">Our Menu</h1>
@@ -802,11 +851,93 @@ const MenuView = ({ onBack, onOpenBooking }: { onBack: () => void; onOpenBooking
         ))}
       </div>
     </div>
-    <Footer />
   </div>
 );
 
+
+
+const AboutView = ({ onBack, onOpenBooking }: { onBack: () => void; onOpenBooking: () => void }) => (
+  <div className="min-h-screen bg-salon-beige pt-28 pb-20">
+    <div className="max-w-6xl mx-auto px-6 md:px-12">
+      <div className="mb-12">
+      </div>
+
+      
+      <header className="text-center mb-20">
+        <p className="text-[10px] uppercase tracking-[0.3em] text-salon-gold mb-4">Meet the Team</p>
+        <h1 className="text-4xl md:text-5xl font-serif text-salon-ink mb-6">Our Stylists</h1>
+        <p className="text-sm text-salon-ink/70 max-w-2xl mx-auto leading-relaxed">
+          At Change Hair & Beauty, our master stylists bring decades of international experience and 
+          the latest Korean beauty trends to Lewisville. Meet the professionals behind your next transformation.
+        </p>
+      </header>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
+        {STYLISTS.map((stylist, idx) => (
+          <motion.article
+            key={stylist.name}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: idx * 0.1 }}
+            className="bg-white rounded-sm overflow-hidden border border-salon-ink/5 shadow-xl group"
+          >
+            <div className="aspect-[3/4] overflow-hidden bg-salon-ink/5">
+              <img
+                src={stylist.image}
+                alt={stylist.name}
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              />
+            </div>
+            <div className="p-8 md:p-10">
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-1">{stylist.role}</p>
+                  <h2 className="text-2xl font-serif text-salon-ink">{stylist.name}</h2>
+                  <p className="text-xs text-salon-ink/50 mt-1 font-medium">{stylist.koreanRole}</p>
+                </div>
+                <a href={stylist.ig} target="_blank" rel="noopener noreferrer" className="p-3 bg-salon-beige/50 text-salon-ink hover:bg-salon-gold hover:text-white transition-all rounded-full">
+                  <Instagram className="w-5 h-5" />
+                </a>
+              </div>
+              
+              <div className="space-y-6">
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest text-salon-ink/40 mb-3 border-b border-salon-ink/5 pb-2">Experience</p>
+                  <p className="text-sm text-salon-ink/80 leading-relaxed font-medium italic">
+                    {stylist.experience}
+                  </p>
+                  <p className="text-sm text-salon-ink/70 leading-relaxed mt-2">
+                    {stylist.bio}
+                  </p>
+                </div>
+                
+                <div>
+                  <p className="text-[10px] uppercase tracking-widest text-salon-ink/40 mb-3 border-b border-salon-ink/5 pb-2">Expertise</p>
+                  <div className="flex flex-wrap gap-2">
+                    {stylist.specialties.map(spec => (
+                      <span key={spec} className="px-3 py-1 bg-salon-beige/40 text-salon-ink/70 text-[10px] uppercase tracking-wider rounded-sm border border-salon-ink/5">
+                        {spec}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              <button type="button" onClick={onOpenBooking} className="gold-button w-full mt-10">
+                Book with {stylist.name}
+              </button>
+            </div>
+          </motion.article>
+        ))}
+      </div>
+      
+    </div>
+  </div>
+);
+
+
 const Gallery = () => (
+
     <section id="gallery" className="py-32 px-8 bg-salon-beige">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-20">
@@ -855,47 +986,83 @@ const Gallery = () => (
 
 const Testimonials = () => {
   const [active, setActive] = useState(0);
+  const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' ? window.innerWidth < 768 : false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const itemsPerPage = isMobile ? 1 : 2;
+  const totalPages = Math.ceil(TESTIMONIALS.length / itemsPerPage);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActive((prev) => (prev + 1) % totalPages);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, [totalPages]);
 
   return (
     <section className="py-32 px-8 bg-salon-ink text-white overflow-hidden">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-[1200px] mx-auto">
         <div className="text-center mb-16">
           <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-4">Client Voices</p>
           <h2 className="text-4xl font-serif">What Our Clients Say</h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {TESTIMONIALS.map((t, idx) => (
-            <motion.div 
-              key={t.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: idx * 0.1 }}
-              className="p-8 border border-white/10 hover:border-salon-gold transition-colors"
-            >
-              <MessageSquare className="w-6 h-6 text-salon-gold mb-6" />
-              <p className="text-sm italic mb-6 leading-relaxed opacity-80">"{t.text}"</p>
-              <p className="text-[10px] uppercase tracking-widest text-salon-gold">— {t.name}</p>
-            </motion.div>
-          ))}
+        <div className="relative">
+          <div className="flex transition-transform duration-1000 ease-in-out" style={{ transform: `translateX(-${active * 100}%)` }}>
+            {Array.from({ length: totalPages }).map((_, pageIdx) => (
+              <div key={pageIdx} className="min-w-full grid grid-cols-1 md:grid-cols-2 gap-8 px-4">
+                {TESTIMONIALS.slice(pageIdx * itemsPerPage, (pageIdx + 1) * itemsPerPage).map((t, idx) => (
+                  <motion.div 
+                    key={t.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: idx * 0.1 }}
+                    className="p-8 border border-white/10 hover:border-salon-gold h-full flex flex-col justify-between"
+                  >
+                    <div>
+                      <MessageSquare className="w-6 h-6 text-salon-gold mb-6" />
+                      <p className="text-sm italic mb-6 leading-relaxed opacity-80">"{t.text}"</p>
+                    </div>
+                    <p className="text-[10px] uppercase tracking-widest text-salon-gold">— {t.name}</p>
+                  </motion.div>
+                ))}
+              </div>
+            ))}
+          </div>
+
+          <div className="flex justify-center gap-3 mt-12">
+            {Array.from({ length: totalPages }).map((_, i) => (
+              <button 
+                key={i} 
+                onClick={() => setActive(i)}
+                className={`w-2 h-2 rounded-full transition-all duration-500 ${active === i ? 'bg-salon-gold w-8' : 'bg-white/20 hover:bg-white/40'}`}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>
   );
 };
 
+
 // Google Apps Script Web App URL for Book Appointment form (override with VITE_GOOGLE_SCRIPT_URL if needed)
 const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbx3hh9Cx_6q20r8Al0Soso2Ou8MInz-INHhJ8SpaSQQrP2Pt3oe4_LFzEbXV3OAWaf1pw/exec';
 
-const Booking = () => {
+const ContactForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    service: '',
-    date: '',
-    time: ''
+    message: ''
   });
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState('');
@@ -903,7 +1070,7 @@ const Booking = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!GOOGLE_SCRIPT_URL) {
-      setErrorMessage('Form is not configured. Please set VITE_GOOGLE_SCRIPT_URL.');
+      setErrorMessage('Form is not configured.');
       setStatus('error');
       return;
     }
@@ -914,121 +1081,61 @@ const Booking = () => {
         name: formData.name,
         email: formData.email,
         phone: formData.phone,
-        service: formData.service,
-        date: formData.date,
-        time: formData.time
+        service: 'Contact Request',
+        date: new Date().toISOString().split('T')[0],
+        time: formData.message
       }).toString();
-      const res = await fetch(GOOGLE_SCRIPT_URL, {
+      await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body
       });
-      // no-cors: we can't read response; assume success if no throw
       setStatus('success');
-      setFormData({ name: '', email: '', phone: '', service: '', date: '', time: '' });
+      setFormData({ name: '', email: '', phone: '', message: '' });
       setTimeout(() => setStatus('idle'), 5000);
     } catch (err) {
       setStatus('error');
-      setErrorMessage(err instanceof Error ? err.message : 'Failed to send. Please try again or call us.');
+      setErrorMessage(err instanceof Error ? err.message : 'Failed to send.');
     }
   };
 
   return (
-    <section id="booking" className="py-32 px-8 bg-white">
+    <section id="contact-form" className="py-32 px-8 bg-white">
       <div className="max-w-2xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-4xl font-serif mb-4">Book Appointment</h2>
-          <p className="text-[10px] opacity-40 uppercase tracking-[0.3em]">Reserve your transformation</p>
+          <h2 className="text-4xl font-serif mb-4">Contact Us</h2>
+          <p className="text-[10px] opacity-40 uppercase tracking-[0.3em]">We'd love to hear from you</p>
         </div>
 
         {status === 'success' ? (
-          <motion.div 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-20 border border-salon-ink/5"
-          >
-            <h3 className="text-2xl font-serif mb-4">Thank You.</h3>
-            <p className="opacity-60 text-sm">Your request has been sent. We will contact you shortly.</p>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-20 border border-salon-ink/5">
+            <h3 className="text-2xl font-serif mb-4">Message Sent</h3>
+            <p className="opacity-60 text-sm">Thank you for reaching out. We will get back to you shortly.</p>
           </motion.div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-10">
-            {status === 'error' && (
-              <p className="text-sm text-red-600 bg-red-50 border border-red-200 px-4 py-2">{errorMessage}</p>
-            )}
+            {status === 'error' && <p className="text-sm text-red-600 bg-red-50 p-4">{errorMessage}</p>}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
               <div className="space-y-2">
                 <label className="text-[10px] uppercase tracking-widest opacity-40">Name</label>
-                <input 
-                  type="text" 
-                  required
-                  value={formData.name}
-                  className="w-full border-b border-salon-ink/10 py-2 focus:border-salon-gold outline-none transition-colors bg-transparent"
-                  onChange={(e) => setFormData({...formData, name: e.target.value})}
-                />
+                <input type="text" required value={formData.name} className="w-full border-b border-salon-ink/10 py-2 focus:border-salon-gold outline-none bg-transparent" onChange={(e) => setFormData({...formData, name: e.target.value})} />
               </div>
               <div className="space-y-2">
                 <label className="text-[10px] uppercase tracking-widest opacity-40">Email</label>
-                <input 
-                  type="email" 
-                  required
-                  value={formData.email}
-                  className="w-full border-b border-salon-ink/10 py-2 focus:border-salon-gold outline-none transition-colors bg-transparent"
-                  onChange={(e) => setFormData({...formData, email: e.target.value})}
-                />
+                <input type="email" required value={formData.email} className="w-full border-b border-salon-ink/10 py-2 focus:border-salon-gold outline-none bg-transparent" onChange={(e) => setFormData({...formData, email: e.target.value})} />
               </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-widest opacity-40">Phone</label>
-                <input 
-                  type="tel" 
-                  required
-                  value={formData.phone}
-                  className="w-full border-b border-salon-ink/10 py-2 focus:border-salon-gold outline-none transition-colors bg-transparent"
-                  onChange={(e) => setFormData({...formData, phone: e.target.value})}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-widest opacity-40">Service</label>
-                <select 
-                  required
-                  value={formData.service}
-                  className="w-full border-b border-salon-ink/10 py-2 focus:border-salon-gold outline-none transition-colors bg-transparent"
-                  onChange={(e) => setFormData({...formData, service: e.target.value})}
-                >
-                  <option value="">Select</option>
-                  <option value="Cut">Cut</option>
-                  <option value="Color">Color</option>
-                  <option value="Perm">Perm</option>
-                  <option value="Style">Style</option>
-                </select>
-              </div>
+            <div className="space-y-2">
+              <label className="text-[10px] uppercase tracking-widest opacity-40">Phone</label>
+              <input type="tel" required value={formData.phone} className="w-full border-b border-salon-ink/10 py-2 focus:border-salon-gold outline-none bg-transparent" onChange={(e) => setFormData({...formData, phone: e.target.value})} />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-              <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-widest opacity-40">Date</label>
-                <input 
-                  type="date" 
-                  required
-                  value={formData.date}
-                  className="w-full border-b border-salon-ink/10 py-2 focus:border-salon-gold outline-none transition-colors bg-transparent"
-                  onChange={(e) => setFormData({...formData, date: e.target.value})}
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-[10px] uppercase tracking-widest opacity-40">Time</label>
-                <input 
-                  type="time" 
-                  required
-                  value={formData.time}
-                  className="w-full border-b border-salon-ink/10 py-2 focus:border-salon-gold outline-none transition-colors bg-transparent"
-                  onChange={(e) => setFormData({...formData, time: e.target.value})}
-                />
-              </div>
+            <div className="space-y-2">
+              <label className="text-[10px] uppercase tracking-widest opacity-40">Message</label>
+              <textarea required value={formData.message} rows={4} className="w-full border-b border-salon-ink/10 py-2 focus:border-salon-gold outline-none bg-transparent resize-none" onChange={(e) => setFormData({...formData, message: e.target.value})} />
             </div>
-            <button type="submit" disabled={status === 'sending'} className="w-full bg-salon-ink text-white py-4 text-[10px] uppercase tracking-[0.4em] hover:bg-salon-gold transition-all duration-500 disabled:opacity-60 disabled:cursor-not-allowed">
-              {status === 'sending' ? 'Sending…' : 'Send Request'}
+            <button type="submit" disabled={status === 'sending'} className="w-full bg-salon-ink text-white py-4 text-[10px] uppercase tracking-[0.4em] hover:bg-salon-gold transition-all duration-500">
+              {status === 'sending' ? 'Sending…' : 'Send Message'}
             </button>
           </form>
         )}
@@ -1037,12 +1144,13 @@ const Booking = () => {
   );
 };
 
+
 const Contact = () => (
   <section id="contact" className="py-32 px-8 bg-salon-beige">
     <div className="max-w-7xl mx-auto">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-20">
         <div>
-          <h2 className="text-4xl font-serif mb-16">Contact Us</h2>
+          <h2 className="text-4xl font-serif mb-16">Visit Our Studio</h2>
           <div className="space-y-12">
             <div>
               <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-4 flex items-center">
@@ -1068,8 +1176,8 @@ const Contact = () => (
               <div className="text-sm opacity-70 leading-relaxed space-y-2">
                 <p>Phone: {LOCATION_PHONE}</p>
                 <p>
-                  <a href={TAWK_CHAT_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 hover:text-salon-gold transition-colors cursor-pointer">
-                    <MessageSquare className="w-3 h-3" /> Live chat
+                  <a href="mailto:sokimhair@gmail.com" className="inline-flex items-center gap-2 hover:text-salon-gold transition-colors cursor-pointer">
+                    <Mail className="w-3 h-3" /> sokimhair@gmail.com
                   </a>
                 </p>
               </div>
@@ -1102,7 +1210,7 @@ const Footer = () => (
       </a>
       
       <div className="flex space-x-12 items-center">
-        <a href={TAWK_CHAT_URL} target="_blank" rel="noopener noreferrer" className="hover:text-salon-gold transition-colors" title="Live chat"><MessageSquare className="w-5 h-5" /></a>
+        <a href="mailto:sokimhair@gmail.com" className="hover:text-salon-gold transition-colors" title="Email us"><Mail className="w-5 h-5" /></a>
         <a href={INSTAGRAM_URL} target="_blank" rel="noopener noreferrer" className="hover:text-salon-gold transition-colors"><Instagram className="w-5 h-5" /></a>
         <a href={FACEBOOK_URL} target="_blank" rel="noopener noreferrer" className="hover:text-salon-gold transition-colors"><Facebook className="w-5 h-5" /></a>
       </div>
@@ -1356,13 +1464,17 @@ const BookingModal = ({ isOpen, onClose, preselectedCategoryId = null }: { isOpe
 
 export default function App() {
   const [showDashboard, setShowDashboard] = useState(false);
+  const [showAbout, setShowAbout] = useState(false);
   const [showBlog, setShowBlog] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+
   const [bookingModalOpen, setBookingModalOpen] = useState(false);
   const [bookingPreselectedCategoryId, setBookingPreselectedCategoryId] = useState<string | null>(null);
 
-  const handleBack = () => { setShowDashboard(false); setShowBlog(false); setShowMenu(false); };
-  const handleMenuClick = () => { setShowMenu(true); setShowDashboard(false); setShowBlog(false); };
+  const handleBack = () => { setShowDashboard(false); setShowBlog(false); setShowMenu(false); setShowAbout(false); };
+  const handleMenuClick = () => { setShowMenu(true); setShowDashboard(false); setShowBlog(false); setShowAbout(false); };
+  const handleAboutClick = () => { setShowAbout(true); setShowDashboard(false); setShowBlog(false); setShowMenu(false); };
+
   const openBooking = (categoryId?: string) => {
     setBookingPreselectedCategoryId(categoryId || null);
     setBookingModalOpen(true);
@@ -1379,29 +1491,35 @@ export default function App() {
         showDashboard={showDashboard}
         onMenuClick={handleMenuClick}
         showMenu={showMenu}
+        onAboutClick={handleAboutClick}
+        showAbout={showAbout}
         onBack={handleBack}
         onOpenBooking={() => openBooking()}
+
       />
       {showDashboard ? (
         <ClientDashboard onOpenBooking={() => openBooking()} />
       ) : showMenu ? (
         <MenuView onBack={handleBack} onOpenBooking={(categoryId) => openBooking(categoryId)} />
+      ) : showAbout ? (
+        <AboutView onBack={handleBack} onOpenBooking={() => openBooking()} />
       ) : showBlog ? (
         <BlogView />
       ) : (
         <>
           <Hero onOpenBooking={() => openBooking()} />
-      <Story />
+          <Story />
           <SignatureServices onOpenBooking={() => openBooking()} />
           <ServicesMenu onOpenBooking={() => openBooking()} />
           <Gallery onOpenBooking={() => openBooking()} />
-      <Testimonials />
-      <Booking />
-      <Contact />
-      <Footer />
+          <Testimonials />
+          <ContactForm />
         </>
       )}
+      <Contact />
+      <Footer />
       <BookingModal isOpen={bookingModalOpen} onClose={closeBooking} preselectedCategoryId={bookingPreselectedCategoryId} />
+
     </div>
   );
 }
