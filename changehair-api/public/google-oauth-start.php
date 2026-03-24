@@ -9,11 +9,11 @@ require_once __DIR__ . '/partials/redirect.php';
 session_bootstrap();
 
 if (!google_oauth_configured()) {
-    header('Location: /login.php?google_err=not_configured');
+    header('Location: /login?google_err=not_configured');
     exit;
 }
 
-$next = chb_safe_next((string) ($_GET['next'] ?? '/dashboard/'));
+$next = chb_safe_next((string) ($_GET['next'] ?? '/dashboard'));
 $_SESSION['oauth_google_next'] = $next;
 
 $state = bin2hex(random_bytes(16));

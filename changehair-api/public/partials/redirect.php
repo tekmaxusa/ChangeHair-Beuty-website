@@ -9,10 +9,10 @@ function chb_safe_next(string $next): string
 {
     $next = trim($next);
     if ($next === '' || !str_starts_with($next, '/') || str_contains($next, '//')) {
-        return '/dashboard/';
+        return '/dashboard';
     }
     if (str_contains($next, "\0") || str_contains($next, ':')) {
-        return '/dashboard/';
+        return '/dashboard';
     }
 
     return $next;

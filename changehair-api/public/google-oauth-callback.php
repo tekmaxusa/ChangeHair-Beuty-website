@@ -8,12 +8,12 @@ require_once __DIR__ . '/partials/redirect.php';
 
 session_bootstrap();
 
-$next = chb_safe_next((string) ($_SESSION['oauth_google_next'] ?? '/dashboard/'));
+$next = chb_safe_next((string) ($_SESSION['oauth_google_next'] ?? '/dashboard'));
 unset($_SESSION['oauth_google_next']);
 
 $err = (string) ($_GET['error'] ?? '');
 if ($err !== '') {
-    header('Location: /login.php?google_err=' . rawurlencode($err));
+    header('Location: /login?google_err=' . rawurlencode($err));
     exit;
 }
 
@@ -23,7 +23,7 @@ $sessState = (string) ($_SESSION['oauth_google_state'] ?? '');
 unset($_SESSION['oauth_google_state']);
 
 if ($code === '' || $state === '' || $sessState === '' || !hash_equals($sessState, $state)) {
-    header('Location: /login.php?google_err=invalid_state');
+    header('Location: /login?google_err=invalid_state');
     exit;
 }
 
@@ -32,7 +32,7 @@ try {
     $info = google_oauth_userinfo($tok['access_token']);
     login_or_register_google_user($info['sub'], $info['email'], $info['name']);
 } catch (Throwable $e) {
-    header('Location: /login.php?google_err=' . rawurlencode('auth_failed'));
+    header('Location: /login?google_err=' . rawurlencode('auth_failed'));
     exit;
 }
 

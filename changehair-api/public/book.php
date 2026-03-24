@@ -2,5 +2,6 @@
 
 declare(strict_types=1);
 
-header('Location: /?open=booking', true, 302);
-exit;
+require_once __DIR__ . '/_spa_redirect.php';
+
+chb_redirect_spa('/booking');
