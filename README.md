@@ -38,13 +38,15 @@ The site deploys to GitHub Pages when you push to **`main`** or **`payment`** (s
 A local helper is included at `scripts/deploy-cpanel.sh` to sync updated files via SSH/rsync.
 
 ```bash
-CPANEL_SSH_HOST=tekmaxhosting.com CPANEL_SSH_USER=YOUR_USER \
+export CPANEL_SSH_HOST=tekmaxhosting.com
+export CPANEL_SSH_USER=YOUR_USER
+export CPANEL_SSH_IDENTITY_FILE="$PWD/cpanel_deploy_key"
 bash ./scripts/deploy-cpanel.sh all --build
 ```
 
 Defaults:
 - Frontend `dist/` -> `public_html/bookings/changehair`
-- API `api/` -> `public_html/bookings/changehair-api`
+- API `api/` -> `public_html/bookings/changehair` (override with `API_REMOTE_PATH`)
 
 You can also deploy one side only:
 
@@ -52,6 +54,16 @@ You can also deploy one side only:
 bash ./scripts/deploy-cpanel.sh frontend --build
 bash ./scripts/deploy-cpanel.sh api
 ```
+
+### Push to GitHub and deploy API in one step (local)
+
+After you create `.cpanel-deploy.env` (see `scripts/push-and-deploy-api.sh` header) or export `CPANEL_*` and `CPANEL_SSH_IDENTITY_FILE`:
+
+```bash
+npm run push:deploy:api -- origin payment
+```
+
+This runs `git push` with your arguments, then `scripts/deploy-cpanel.sh api`.
 
 ## Deploy to Vercel (auto-deploy on every GitHub push)
 

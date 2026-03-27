@@ -9,3 +9,8 @@ coverage/
 !.env.example
 !api/.env.example
 .vscode/
+
+# Local cPanel deploy credentials (never commit)
+.cpanel-deploy.env
+cpanel_deploy_key
+cpanel_deploy_key.pub

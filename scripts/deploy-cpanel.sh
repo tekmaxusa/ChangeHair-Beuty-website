@@ -4,7 +4,9 @@ set -euo pipefail
 # Deploy helper for cPanel over SSH/rsync.
 # Defaults:
 # - Frontend dist -> public_html/bookings/changehair
-# - API tree      -> public_html/bookings/changehair-api
+# - API tree      -> public_html/bookings/changehair (override with API_REMOTE_PATH)
+#
+# Optional: CPANEL_SSH_IDENTITY_FILE=/path/to/key (ed25519/rsa private key for non-interactive deploy)
 #
 # Usage examples:
 #   CPANEL_SSH_HOST=example.com CPANEL_SSH_USER=myuser ./scripts/deploy-cpanel.sh frontend
@@ -30,9 +32,10 @@ Required env:
   CPANEL_SSH_USER   SSH user
 
 Optional env:
-  CPANEL_SSH_PORT         SSH port (default: 22)
-  FRONTEND_REMOTE_PATH    Frontend destination (default: public_html/bookings/changehair)
-  API_REMOTE_PATH         API destination (default: public_html/bookings/changehair-api)
+  CPANEL_SSH_PORT           SSH port (default: 22)
+  CPANEL_SSH_IDENTITY_FILE  Path to SSH private key (recommended; avoids password prompts)
+  FRONTEND_REMOTE_PATH      Frontend destination (default: public_html/bookings/changehair)
+  API_REMOTE_PATH           API destination (default: public_html/bookings/changehair)
 EOF
       exit 0
       ;;
@@ -57,7 +60,7 @@ esac
 
 CPANEL_SSH_PORT="${CPANEL_SSH_PORT:-22}"
 FRONTEND_REMOTE_PATH="${FRONTEND_REMOTE_PATH:-public_html/bookings/changehair}"
-API_REMOTE_PATH="${API_REMOTE_PATH:-public_html/bookings/changehair-api}"
+API_REMOTE_PATH="${API_REMOTE_PATH:-public_html/bookings/changehair}"
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
@@ -74,9 +77,22 @@ if [[ "$TARGET" == "frontend" || "$TARGET" == "all" ]]; then
   fi
 fi
 
-SSH_CMD=(ssh -p "$CPANEL_SSH_PORT")
-RSYNC_SSH=(-e "ssh -p $CPANEL_SSH_PORT")
-RSYNC_COMMON=(-az --delete)
+# Build ssh/rsync transport (optional identity file for key-based auth)
+SSH_EXTRA=()
+if [[ -n "${CPANEL_SSH_IDENTITY_FILE:-}" ]]; then
+  if [[ ! -f "$CPANEL_SSH_IDENTITY_FILE" ]]; then
+    echo "CPANEL_SSH_IDENTITY_FILE not found: $CPANEL_SSH_IDENTITY_FILE" >&2
+    exit 1
+  fi
+  SSH_EXTRA+=(-i "$CPANEL_SSH_IDENTITY_FILE" -o IdentitiesOnly=yes -o PreferredAuthentications=publickey)
+fi
+SSH_CMD=(ssh -p "$CPANEL_SSH_PORT" "${SSH_EXTRA[@]}")
+if [[ -n "${CPANEL_SSH_IDENTITY_FILE:-}" ]]; then
+  RSYNC_SSH=(-e "ssh -p ${CPANEL_SSH_PORT} -i ${CPANEL_SSH_IDENTITY_FILE} -o IdentitiesOnly=yes -o PreferredAuthentications=publickey")
+else
+  RSYNC_SSH=(-e "ssh -p ${CPANEL_SSH_PORT}")
+fi
+RSYNC_COMMON=(-az)
 if [[ "$DRY_RUN" -eq 1 ]]; then
   RSYNC_COMMON+=(--dry-run)
 fi
