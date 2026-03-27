@@ -143,12 +143,12 @@ Restart PHP if your host caches opcode (or touch `.env` and wait)—some panels 
 
 ### E1. Branch and workflows
 
-Workflows are configured for **`main`** by default:
+Both **`main`** and **`payment`** trigger deploys:
 
 - **`.github/workflows/deploy.yml`** — builds the SPA and deploys to **GitHub Pages**.
-- **`.github/workflows/deploy-api.yml`** — rsyncs **`api/`** to your server over **SSH**.
+- **`.github/workflows/deploy-api.yml`** — rsyncs **`api/`** to your server over **SSH** (only when `api/**` or the workflow file changes).
 
-Merge or push to **`main`** so these run (or duplicate the branch list in the YAML if you deploy from another branch).
+Push to **`payment`** or **`main`** to run them. To use only **`main`**, remove the extra branch name from those workflow files.
 
 ### E2. Enable GitHub Pages
 

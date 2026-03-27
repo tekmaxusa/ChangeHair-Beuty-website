@@ -23,13 +23,13 @@ View your app in AI Studio: https://ai.studio/apps/a9bc5ac8-eeed-46e3-ac1e-5b8f4
 
 ## Publish with GitHub Pages
 
-The site is set up to deploy automatically to GitHub Pages when you push to the `main` branch.
+The site deploys to GitHub Pages when you push to **`main`** or **`payment`** (see `.github/workflows/deploy.yml`).
 
 1. **Push your code** to a GitHub repository (create one at [github.com/new](https://github.com/new) if needed).
 2. **Enable GitHub Pages** in the repo:
    - Go to **Settings → Pages**
    - Under **Build and deployment**, set **Source** to **GitHub Actions**
-3. **Trigger a deploy**: push to `main` or run the workflow from **Actions → Deploy to GitHub Pages → Run workflow**.
+3. **Trigger a deploy**: push to `main` or `payment`, or run **Actions → Deploy to GitHub Pages → Run workflow**.
 4. After the workflow finishes, your site will be at:  
    `https://<your-username>.github.io/<repository-name>/`
 

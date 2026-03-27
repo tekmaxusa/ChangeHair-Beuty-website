@@ -2,7 +2,7 @@ name: Deploy api to cPanel
 
 on:
   push:
-    branches: [main]
+    branches: [main, payment]
     paths:
       - 'api/**'
       - '.github/workflows/deploy-api.yml'
