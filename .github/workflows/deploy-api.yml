@@ -20,7 +20,7 @@ jobs:
         with:
           switches: -avzr
           args: --exclude sql/ --exclude .env --exclude .dockerignore
-          rsh: ssh -o IdentitiesOnly=yes -o PreferredAuthentications=publickey
+          rsh: -o IdentitiesOnly=yes -o PreferredAuthentications=publickey
           path: api/
           remote_path: ${{ secrets.CPANEL_REMOTE_PATH }}
           remote_host: ${{ secrets.CPANEL_SSH_HOST }}
