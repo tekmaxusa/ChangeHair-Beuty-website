@@ -2,6 +2,8 @@
 
 **First-time from scratch?** Use the full checklist: **[INITIAL-SETUP.md](INITIAL-SETUP.md)** (MySQL import, cPanel paths, GitHub secrets, OAuth, verification).
 
+**SPA + API both on cPanel (same domain)?** See **[CPANEL-FULL-DEPLOY.md](CPANEL-FULL-DEPLOY.md)** (env map, token secret, paths).
+
 One place for the **three production targets**: GitHub Pages (frontend), cPanel (PHP API), cPanel MySQL.
 
 **Layout:** Vite/React SPA at **repo root** (`src/`, `index.html`, `vite.config.ts`) · **`api/`** = PHP API · **`api/sql/`** = schema/migrations.

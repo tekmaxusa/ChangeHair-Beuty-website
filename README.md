@@ -8,6 +8,8 @@ This contains everything you need to run your app locally..
 
 **First-time production setup:** [docs/INITIAL-SETUP.md](docs/INITIAL-SETUP.md) (MySQL, cPanel, GitHub Actions, secrets, OAuth).
 
+**Full stack on cPanel (same site):** [docs/CPANEL-FULL-DEPLOY.md](docs/CPANEL-FULL-DEPLOY.md) — `.env` for build vs `api/.env`, token auth, paths.
+
 **Ongoing deployment reference:** [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). The SPA lives at the repo root; the PHP API is in **`api/`**.
 
 View your app in AI Studio: https://ai.studio/apps/a9bc5ac8-eeed-46e3-ac1e-5b8f40d38839
