@@ -58,7 +58,8 @@ export default function SalonHeader() {
     } catch {
       setUser(null);
     }
-    navigate('/', { replace: true });
+    const logoutTarget = user?.role === 'admin' ? '/admin/login' : '/login';
+    navigate(logoutTarget, { replace: true });
   };
 
   const linkClass = `text-sm uppercase tracking-[0.2em] transition-colors cursor-pointer ${heroMode ? 'hover:text-salon-gold text-white' : 'hover:text-salon-gold text-salon-ink'}`;

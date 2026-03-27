@@ -95,7 +95,7 @@ export default function ClientDashboardPage() {
     } catch {
       setUser(null);
     }
-    navigate('/', { replace: true });
+    navigate('/login', { replace: true });
   };
 
   return (
