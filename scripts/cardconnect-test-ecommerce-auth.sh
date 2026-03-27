@@ -2,7 +2,7 @@
 # CardSecure tokenize (test PAN) + Gateway auth with ecomind=E (ecommerce).
 # Use after inquireMerchant works. Check CardPointe Reporting for the new txn.
 #
-# Loads changehair-api/.env (and optionally scripts/.env.cardconnect) via _cardconnect_env.sh.
+# Loads api/.env (and optionally scripts/.env.cardconnect) via _cardconnect_env.sh.
 #
 # Optional env overrides:
 #   CARDCONNECT_TEST_AMOUNT   default 1.00

@@ -10,7 +10,7 @@ Tawk.to is a free live chat service. It adds a chat widget so visitors can messa
 
 ### 2.1 Single source of truth
 
-All IDs and the direct chat URL live in **`changehair-api/config/salon_data.php`**:
+All IDs and the direct chat URL live in **`api/config/salon_data.php`**:
 
 | Key | Purpose |
 |-----|---------|
@@ -23,12 +23,12 @@ The embed URL is built as:
 
 ### 2.2 Widget script (every page that loads chat)
 
-- **File:** `changehair-api/public/partials/tawk.php`
+- **File:** `api/public/partials/tawk.php`
 - **Current routing note:** legacy PHP page wrappers were removed; user-facing routes are now SPA routes such as `/`, `/login`, `/signup`, and `/dashboard`.
 - **Behavior:**
   - Loads the Tawk embed from `salon_data.php`.
   - **Logged-in users:** after the widget loads, sets visitor **name** and **email** via `Tawk_API.setAttributes` (from the PHP session) so agents see who is chatting.
-  - **Tags** (for filtering in Tawk): always `changehair-api`, plus context:
+  - **Tags** (for filtering in Tawk): e.g. `changehair-beauty` or `api`, plus context:
     - `marketing-site` — home / marketing pages
     - `auth-login` — login page
     - `auth-signup` — signup page
@@ -118,8 +118,8 @@ To cover **most common questions** about the site: (1) paste the **master articl
 | Item | Value / location |
 |------|------------------|
 | Dashboard | https://dashboard.tawk.to |
-| Config | `changehair-api/config/salon_data.php` (`tawk_*` keys) |
-| Embed partial | `changehair-api/public/partials/tawk.php` |
+| Config | `api/config/salon_data.php` (`tawk_*` keys) |
+| Embed partial | `api/public/partials/tawk.php` |
 | Open-widget links | class `chb-tawk-open` + `site.js` |
 | Direct chat URL | `tawk_chat` in `salon_data.php` |
 | Apollo / AI answers | `docs/TAWK-APOLLO-KNOWLEDGE.md` → paste into Tawk Knowledge Base + enable as data source |

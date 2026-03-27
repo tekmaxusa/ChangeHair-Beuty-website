@@ -8,7 +8,7 @@
 #   6) GET /cardconnect/rest/settlestat  (merchid + date MMDD, or CARDCONNECT_SETTLESTAT_BATCHID)
 #   7) GET /cardconnect/rest/funding  (query merchid + date; optional page/limit)
 #
-# Loads changehair-api/.env via scripts/_cardconnect_env.sh (optional scripts/.env.cardconnect overlay).
+# Loads api/.env via scripts/_cardconnect_env.sh (optional scripts/.env.cardconnect overlay).
 #
 # Optional env:
 #   CARDCONNECT_TEST_RETREF, CARDCONNECT_TEST_ORDERID
@@ -75,7 +75,7 @@ else
   echo ""
   echo ""
   echo "=== GET inquire (skipped) ==="
-  echo "Set CARDCONNECT_TEST_RETREF in changehair-api/.env or scripts/.env.cardconnect (e.g. 082930785638)."
+  echo "Set CARDCONNECT_TEST_RETREF in api/.env or scripts/.env.cardconnect (e.g. 082930785638)."
 fi
 
 ORDERID="${CARDCONNECT_TEST_ORDERID:-}"
@@ -89,7 +89,7 @@ else
   echo ""
   echo ""
   echo "=== GET inquireByOrderid (skipped) ==="
-  echo "Set CARDCONNECT_TEST_ORDERID in changehair-api/.env or scripts/.env.cardconnect (e.g. chb-ecom-...) to try order lookup."
+  echo "Set CARDCONNECT_TEST_ORDERID in api/.env or scripts/.env.cardconnect (e.g. chb-ecom-...) to try order lookup."
 fi
 
 # settlestat: query merchid + (batchid OR date MMDD)

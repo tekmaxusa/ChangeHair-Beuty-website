@@ -1,3 +1,4 @@
+.vite/
 node_modules/
 build/
 dist/
@@ -6,7 +7,5 @@ coverage/
 *.log
 .env*
 !.env.example
-!changehair-api/.env.example
-!changehair-api/.env.xampp.example
-!changehair-api/.env.xampp-mysql.example
+!api/.env.example
 .vscode/

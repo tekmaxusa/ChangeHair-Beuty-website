@@ -210,4 +210,4 @@ Create one shortcut per row; in the “trigger” field, add **every variant** T
 
 ## Note (limitations)
 
-No AI is **100% correct** on every question. When the website gains new features, **update** the Knowledge Base article and Shortcuts. This document matches the `changehair-api` PHP app (`config/salon_data.php` and booking flow) — if live copy differs, sync the text here and in Tawk.
+No AI is **100% correct** on every question. When the website gains new features, **update** the Knowledge Base article and Shortcuts. This document matches the `api` PHP app (`config/salon_data.php` and booking flow) — if live copy differs, sync the text here and in Tawk.

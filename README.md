@@ -6,6 +6,8 @@
 
 This contains everything you need to run your app locally.
 
+**Deployment (GitHub Pages + cPanel API + MySQL):** see [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). The SPA lives at the repo root; the PHP API is in **`api/`**.
+
 View your app in AI Studio: https://ai.studio/apps/a9bc5ac8-eeed-46e3-ac1e-5b8f40d38839
 
 ## Run Locally
@@ -13,11 +15,9 @@ View your app in AI Studio: https://ai.studio/apps/a9bc5ac8-eeed-46e3-ac1e-5b8f4
 **Prerequisites:**  Node.js
 
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+1. Install dependencies: `npm install`
+2. Copy [.env.example](.env.example) to `.env` and set `VITE_API_URL` (and optional `GEMINI_API_KEY` if you use that flow)
+3. Run the app: `npm run dev`
 
 ## Publish with GitHub Pages
 

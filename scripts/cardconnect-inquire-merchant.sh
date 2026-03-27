@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # First API sanity check: GET /cardconnect/rest/inquireMerchant/{merchid}
 #
-# Option A — secrets in changehair-api/.env (recommended; same as booking API):
-#   cp changehair-api/.env.example changehair-api/.env
-#   # set CARDCONNECT_* in changehair-api/.env
+# Option A — secrets in api/.env (recommended; same as booking API):
+#   cp api/.env.example api/.env
+#   # set CARDCONNECT_* in api/.env
 #   ./scripts/cardconnect-inquire-merchant.sh
 #
 # Option A2 — optional overlay scripts/.env.cardconnect (e.g. test PAN only); merged after API .env

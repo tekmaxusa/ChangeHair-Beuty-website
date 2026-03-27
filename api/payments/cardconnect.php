@@ -50,7 +50,7 @@ function chb_cardconnect_post_json(string $path, array $payload): array
             'status' => 0,
             'response' => [],
             'raw' => '',
-            'error' => 'CardConnect credentials are not configured. Set CARDCONNECT_* in changehair-api/.env, then restart PHP (e.g. docker compose restart web).',
+            'error' => 'CardConnect credentials are not configured. Set CARDCONNECT_* in api/.env, then restart PHP (e.g. docker compose restart web).',
         ];
     }
 

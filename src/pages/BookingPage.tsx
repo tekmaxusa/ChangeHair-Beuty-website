@@ -894,7 +894,7 @@ export default function BookingPage() {
                     deposit of {formatUsd(depositDueCents)} is recorded for testing only — no card is charged.
                   </p>
                   <p className="text-xs text-amber-900/80 bg-amber-50 border border-amber-200/80 rounded-lg px-3 py-2">
-                    Turn off CHB_PAYMENT_SKIP in <code className="text-[11px]">changehair-api/.env</code> and restart PHP for
+                    Turn off CHB_PAYMENT_SKIP in <code className="text-[11px]">api/.env</code> and restart PHP for
                     real payments.
                   </p>
                 </>

@@ -25,14 +25,13 @@ CSRF, honeypot, and a short rate limit protect the contact form.
 
 1. **Copy environment file** (optional — defaults work for local dev):
 
-   From the **repository root**, `docker compose up` uses the root `docker-compose.yml`. Or from **`changehair-api`**:
+   Always run Docker Compose from the **repository root** (see `docker/README.md`). Copy the API env file:
 
    ```bash
-   cd changehair-api
-   copy .env.example .env
+   cp api/.env.example api/.env
    ```
 
-   On macOS/Linux: `cp .env.example .env`
+   On Windows (CMD): `copy api\.env.example api\.env`
 
 2. **Build and start**:
 
@@ -40,7 +39,7 @@ CSRF, honeypot, and a short rate limit protect the contact form.
    docker compose up --build -d
    ```
 
-   From the **repository root**, Compose also starts **`frontend`** (Vite on **`FRONTEND_PORT`**, default `3000`) that proxies `/api` to **`web`**. From **`changehair-api`** only, you get **web**, **MySQL** (`db`), and **phpMyAdmin** — one shared database.
+   Compose starts **`frontend`** (Vite on **`FRONTEND_PORT`**, default `3000`) that proxies `/api` to **`web`**, plus **MySQL** (`db`) and **phpMyAdmin** — one shared database.
 
 3. **Open the app**: [http://localhost:8080](http://localhost:8080) for the PHP site (not port 80 — other tools may use that).  
    - Plain check: [http://localhost:8080/status.php](http://localhost:8080/status.php) → `server is up and running.`  
@@ -59,7 +58,7 @@ CSRF, honeypot, and a short rate limit protect the contact form.
 This means **nothing is listening on the port you opened** (or Docker is not running).
 
 1. **Open Docker Desktop** (Windows) and wait until the engine is “running” (whale icon in the system tray).
-2. In the **`changehair-api`** folder:
+2. From the **repository root** (not inside `api/`):
 
    ```bash
    docker compose up -d
@@ -80,13 +79,11 @@ This means **nothing is listening on the port you opened** (or Docker is not run
    docker compose ps
    ```
 
-   `chb-frontend`, `chb-web`, `chb-mysql`, and (if you use the browser DB UI) `chb-phpmyadmin` should be **Up**. First start runs `npm ci` in the frontend container (can take a minute). If phpMyAdmin is missing, run: `docker compose up phpmyadmin -d`.
-
-5. **PowerShell helper:** `.\scripts\check-docker.ps1` — prints `docker compose ps` and the expected URLs.
+   `chb-frontend`, `chb-web`, `chb-mysql`, and (if you use the browser DB UI) `chb-phpmyadmin` should be **Up**. First start runs `npm ci` in the frontend container (can take a minute).    If phpMyAdmin is missing, run: `docker compose up phpmyadmin -d`.
 
 If port `3306` is already in use on your machine, keep Compose on `DB_PORT=3307` (default) or change `DB_PORT` in `.env`.
 
-**Already ran Docker before (old DB)?** On first DB connection the app runs **`config/schema_auto_migrate.php`** and adds missing columns (`users.role`, `bookings.status`, `service_category`, `service_name`, `google_sub`, nullable `password`) and drops the old **unique (date, time)** index if present so **cancelled** slots can be re-booked. Requires `ALTER` privilege (default Docker user has it).
+**Already ran Docker before (old DB)?** On first DB connection the app runs **`config/schema_auto_migrate.php`** and adds missing columns (`users.role`, `bookings.status`, `service_category`, `service_name`, guest contact fields, `google_sub`, nullable `password`) and drops the old **unique (date, time)** index if present so **cancelled** slots can be re-booked. Requires `ALTER` privilege (default Docker user has it).
 
 ### Merchant admin (`/admin/`)
 
@@ -94,13 +91,7 @@ If port `3306` is already in use on your machine, keep Compose on `DB_PORT=3307`
 - **No self-service merchant sign-up.** The first admin is created when the app connects to the database and **no** admin row exists yet: set **`ADMIN_NAME`**, **`ADMIN_EMAIL`**, and **`ADMIN_INITIAL_PASSWORD`** in **`.env`** (see `config/schema_auto_migrate.php`). Sign in at **`/admin/login`** with that **email** and password. Additional admins require a direct database change or promoting another user (e.g. SQL / temporary `.env` promotion).
 - **`/admin/bookings`** = all bookings (confirm/cancel); **`/admin/users`** = client accounts + list of admins + **create client accounts only**. Client sign-out uses the API-backed SPA logout flow.
 
-You can still apply SQL manually if you prefer:
-
-```bash
-docker compose exec -T db mysql -u root -p"$env:DB_ROOT_PASSWORD" change_hair_beauty < sql/migrate_v2_booking_services_google.sql
-```
-
-(On PowerShell, set the password or run `mysql` inside the container interactively.) Or recreate the volume: `docker compose down -v` (deletes data).
+Schema upgrades on existing databases are applied automatically by **`config/schema_auto_migrate.php`** when the app connects. To reset local data: `docker compose down -v` (deletes the DB volume).
 
 **Google sign-in (“Continue with Google”):**  
 The [Vite reference site](https://github.com/tekmaxusa/changehair-beauty) only opens `https://accounts.google.com/` in a new tab when OAuth isn’t wired. This PHP app does the **same** when `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` are missing; when they **are** set, the button uses **server OAuth** (`/google-oauth-start.php`) so users return logged in.
@@ -125,9 +116,9 @@ The [Vite reference site](https://github.com/tekmaxusa/changehair-beauty) only o
 
 | Path | Role |
 |------|------|
-| `docker-compose.yml` | PHP-Apache + MySQL + phpMyAdmin; MySQL host port `DB_PORT` (default 3307) |
-| `Dockerfile` | `php:8.2-apache` + `pdo_mysql` |
-| `docker/apache/000-default.conf` | `DocumentRoot` → `/var/www/html/public` |
+| `../docker-compose.yml` | Local full stack (repo root): frontend + PHP `web` + MySQL + phpMyAdmin |
+| `../docker/web/Dockerfile` | PHP-Apache image for `web` (`pdo_mysql`, rewrite) |
+| `../docker/web/apache/000-default.conf` | Apache `DocumentRoot` → `/var/www/html/public` |
 | `sql/schema.sql` | Tables: `users.role`, `bookings.status` (no unique on slot — enforced in app for pending/confirmed) |
 | `config/database.php` | PDO factory (`ATTR_EMULATE_PREPARES` off) |
 | `config/session.php` | Session bootstrap, `require_login()` |
@@ -141,7 +132,7 @@ The [Vite reference site](https://github.com/tekmaxusa/changehair-beauty) only o
 
 ## Environment variables
 
-Defined in `.env` / `docker-compose.yml`:
+Defined in `.env` / root `docker-compose.yml`:
 
 - `WEB_PORT` — host port for Apache (default `8080`)
 - `PMA_PORT` — host port for Docker **phpMyAdmin** (default `8081`)

@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # Sourced by cardconnect-*.sh — do not run directly.
 # Loads env in order (later files override):
-#   1) changehair-api/.env  — canonical place for CARDCONNECT_* (same as PHP booking API)
+#   1) api/.env  — canonical place for CARDCONNECT_* (same as PHP booking API)
 #   2) scripts/.env.cardconnect — optional; test PAN/CVV/postal overrides only if you prefer not to put them in API .env
 
 _SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 _REPO_ROOT="$(cd "${_SCRIPT_DIR}/.." && pwd)"
-_API_ENV="${_REPO_ROOT}/changehair-api/.env"
+_API_ENV="${_REPO_ROOT}/api/.env"
 _SCRIPTS_LOCAL="${_SCRIPT_DIR}/.env.cardconnect"
 
 _chb_source_env() {

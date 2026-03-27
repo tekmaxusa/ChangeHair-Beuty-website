@@ -53,9 +53,9 @@ declare(strict_types=1);
         return $out;
     };
 
-    // Merge: changehair-api/.env first, then repo-root .env (later wins on duplicate keys).
+    // Merge: api/.env first, then repo-root .env (later wins on duplicate keys).
     // So CHB_PAYMENT_SKIP=1 in the monorepo root can override CHB_PAYMENT_SKIP=0 from api/.env.example.
-    // CardConnect credentials still live in changehair-api/.env unless overridden in repo (avoid duplicating DB_* in repo).
+    // CardConnect credentials still live in api/.env unless overridden in repo (avoid duplicating DB_* in repo).
     $apiEnv = dirname(__DIR__) . DIRECTORY_SEPARATOR . '.env';
     $repoEnv = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . '.env';
     $merged = array_merge($parseEnvFile($apiEnv), $parseEnvFile($repoEnv));

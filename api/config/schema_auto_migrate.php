@@ -24,6 +24,44 @@ function chb_migrate_drop_booking_slot_unique_if_exists(PDO $pdo, string $dbName
 }
 
 /**
+ * Legacy DBs without guest booking columns: nullable user_id + guest_name/email/phone.
+ * Replaces former sql/migrate_v3_guest_bookings.sql (idempotent when guest_name exists).
+ */
+function chb_migrate_guest_bookings_columns_if_needed(PDO $pdo, string $dbName): void
+{
+    $st = $pdo->prepare(
+        'SELECT 1 FROM information_schema.COLUMNS
+         WHERE TABLE_SCHEMA = :s AND TABLE_NAME = \'bookings\' AND COLUMN_NAME = \'guest_name\' LIMIT 1'
+    );
+    $st->execute([':s' => $dbName]);
+    if ($st->fetchColumn()) {
+        return;
+    }
+
+    $fk = $pdo->prepare(
+        'SELECT CONSTRAINT_NAME FROM information_schema.KEY_COLUMN_USAGE
+         WHERE TABLE_SCHEMA = :s AND TABLE_NAME = \'bookings\' AND COLUMN_NAME = \'user_id\'
+         AND REFERENCED_TABLE_NAME IS NOT NULL LIMIT 1'
+    );
+    $fk->execute([':s' => $dbName]);
+    $fkName = $fk->fetchColumn();
+    if (is_string($fkName) && $fkName !== '') {
+        $pdo->exec('ALTER TABLE bookings DROP FOREIGN KEY `' . str_replace('`', '``', $fkName) . '`');
+    }
+
+    $pdo->exec('ALTER TABLE bookings MODIFY user_id INT UNSIGNED NULL');
+    $pdo->exec(
+        'ALTER TABLE bookings
+            ADD COLUMN guest_name VARCHAR(255) NULL AFTER user_id,
+            ADD COLUMN guest_email VARCHAR(255) NULL AFTER guest_name,
+            ADD COLUMN guest_phone VARCHAR(64) NULL AFTER guest_email'
+    );
+    $pdo->exec(
+        'ALTER TABLE bookings ADD CONSTRAINT fk_bookings_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL'
+    );
+}
+
+/**
  * First admin from .env when no admin exists (see ADMIN_NAME / ADMIN_EMAIL / ADMIN_INITIAL_PASSWORD).
  */
 function chb_ensure_admin_user_from_env(PDO $pdo): void
@@ -106,6 +144,8 @@ function db_ensure_schema(PDO $pdo): void
             "ALTER TABLE bookings ADD COLUMN service_name VARCHAR(255) NOT NULL DEFAULT '' AFTER service_category"
         );
     }
+
+    chb_migrate_guest_bookings_columns_if_needed($pdo, $dbName);
 
     if (!$hasCol($pdo, $dbName, 'users', 'google_sub')) {
         $pdo->exec('ALTER TABLE users MODIFY password VARCHAR(255) NULL');

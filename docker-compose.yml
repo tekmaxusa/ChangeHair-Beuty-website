@@ -1,7 +1,8 @@
 # Full stack: React (Vite) UI + PHP API + MySQL (+ phpMyAdmin).
 # - UI: http://localhost:FRONTEND_PORT (default 3000) — JavaScript SPA; `/api` proxied to `web`.
-# - API / legacy PHP: http://localhost:WEB_PORT (default 8080) — JSON under /public/api/, OAuth, mail, etc.
-# Copy changehair-api/.env.example to changehair-api/.env and adjust if needed.
+# - API: http://localhost:WEB_PORT (default 8080) — JSON under /public/api/, OAuth, mail, etc.
+# PHP image build: docker/web/Dockerfile (see docker/README.md).
+# Copy api/.env.example to api/.env and adjust if needed.
 
 services:
   frontend:
@@ -20,13 +21,13 @@ services:
 
   web:
     build:
-      context: ./changehair-api
+      context: ./docker/web
       dockerfile: Dockerfile
     container_name: chb-web
     ports:
       - "${WEB_PORT:-8080}:80"
     volumes:
-      - ./changehair-api:/var/www/html
+      - ./api:/var/www/html
     environment:
       DB_HOST: db
       DB_NAME: ${DB_NAME:-change_hair_beauty}
@@ -57,7 +58,7 @@ services:
       - "${DB_PORT:-3307}:3306"
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./changehair-api/sql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+      - ./api/sql/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
     healthcheck:
       test: ["CMD", "sh", "-c", "mysqladmin ping -h 127.0.0.1 -uroot -p\"$$MYSQL_ROOT_PASSWORD\""]
       interval: 5s
