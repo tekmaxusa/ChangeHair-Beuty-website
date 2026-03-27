@@ -53,7 +53,13 @@ function chb_api_send_cors(): void
     }
 
     header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-    header('Access-Control-Allow-Headers: Content-Type');
+    $reqHeaders = $_SERVER['HTTP_ACCESS_CONTROL_REQUEST_HEADERS'] ?? '';
+    if (is_string($reqHeaders) && trim($reqHeaders) !== '') {
+        // Echo requested headers so browser preflight succeeds for no-cache polling headers.
+        header('Access-Control-Allow-Headers: ' . $reqHeaders);
+    } else {
+        header('Access-Control-Allow-Headers: Content-Type, Cache-Control, Pragma');
+    }
 }
 
 function chb_api_init(): void

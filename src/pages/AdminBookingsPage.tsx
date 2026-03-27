@@ -75,7 +75,6 @@ export default function AdminBookingsPage() {
         {
           method: 'GET',
           cache: 'no-store',
-          headers: { 'Cache-Control': 'no-cache', Pragma: 'no-cache' },
         },
       );
       const list = data.bookings ?? [];
