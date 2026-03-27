@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/../config/database.php';
+require_once __DIR__ . '/../booking/booking.php';
 
 /**
  * @return array{ok: bool, error?: string}
@@ -93,6 +94,11 @@ function admin_create_user_account(string $name, string $email, string $password
             return ['ok' => false, 'error' => 'That email is already registered.'];
         }
         throw $e;
+    }
+
+    $newId = (int) $pdo->lastInsertId();
+    if ($role === 'client') {
+        chb_attach_guest_bookings_to_user($newId, $email);
     }
 
     return ['ok' => true];

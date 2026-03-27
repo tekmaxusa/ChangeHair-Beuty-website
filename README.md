@@ -31,8 +31,6 @@ The site is set up to deploy automatically to GitHub Pages when you push to the 
 4. After the workflow finishes, your site will be at:  
    `https://<your-username>.github.io/<repository-name>/`
 
-The Tawk.to live chat widget is included on the site and will appear once the script loads.
-
 ## Deploy to Vercel (auto-deploy on every GitHub push)
 
 Connect this repo to Vercel once; after that, **every push to `main` will deploy the site to Vercel automatically**.

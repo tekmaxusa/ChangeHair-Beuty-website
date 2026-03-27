@@ -57,13 +57,14 @@ function booking_slot_is_available_for_request(string $dateYmd, string $timeHi):
 }
 
 /**
- * @return list<array{id:int,service_category:string,service_name:string,booking_date:string,booking_time:string,status:string,created_at:string}>
+ * @return list<array{id:int,service_category:string,service_name:string,booking_date:string,booking_time:string,status:string,service_total_cents:int,deposit_due_cents:int,deposit_paid_cents:int,deposit_refunded_cents:int,payment_status:string,created_at:string}>
  */
 function fetch_bookings_for_user(int $userId): array
 {
     $pdo = db();
     $stmt = $pdo->prepare(
-        'SELECT id, service_category, service_name, booking_date, booking_time, status, created_at
+        'SELECT id, service_category, service_name, booking_date, booking_time, status,
+                service_total_cents, deposit_due_cents, deposit_paid_cents, deposit_refunded_cents, payment_status, created_at
          FROM bookings WHERE user_id = :uid ORDER BY booking_date ASC, booking_time ASC'
     );
     $stmt->execute([':uid' => $userId]);
@@ -72,14 +73,36 @@ function fetch_bookings_for_user(int $userId): array
 }
 
 /**
- * @return list<array{id:int,user_id:int,client_name:string,client_email:string,service_category:string,service_name:string,booking_date:string,booking_time:string,status:string,created_at:string}>
+ * Link prior guest bookings (user_id NULL) to this account when guest_email matches (case-insensitive).
+ *
+ * @return int Number of rows updated
+ */
+function chb_attach_guest_bookings_to_user(int $userId, string $email): int
+{
+    $emailNorm = strtolower(trim($email));
+    if ($userId <= 0 || $emailNorm === '' || !filter_var($emailNorm, FILTER_VALIDATE_EMAIL)) {
+        return 0;
+    }
+    $pdo = db();
+    $stmt = $pdo->prepare(
+        'UPDATE bookings SET user_id = :uid
+         WHERE user_id IS NULL AND LOWER(TRIM(guest_email)) = :em'
+    );
+    $stmt->execute([':uid' => $userId, ':em' => $emailNorm]);
+
+    return $stmt->rowCount();
+}
+
+/**
+ * @return list<array{id:int,user_id:int,client_name:string,client_email:string,service_category:string,service_name:string,booking_date:string,booking_time:string,status:string,service_total_cents:int,deposit_due_cents:int,deposit_paid_cents:int,deposit_refunded_cents:int,payment_status:string,created_at:string}>
  */
 function fetch_all_bookings_for_admin(): array
 {
     $pdo = db();
     $stmt = $pdo->query(
         'SELECT b.id, b.user_id, COALESCE(u.name, b.guest_name) AS client_name, COALESCE(u.email, b.guest_email) AS client_email,
-                b.service_category, b.service_name, b.booking_date, b.booking_time, b.status, b.created_at
+                b.service_category, b.service_name, b.booking_date, b.booking_time, b.status,
+                b.service_total_cents, b.deposit_due_cents, b.deposit_paid_cents, b.deposit_refunded_cents, b.payment_status, b.created_at
          FROM bookings b
          LEFT JOIN users u ON u.id = b.user_id
          ORDER BY b.booking_date DESC, b.booking_time DESC, b.id DESC'
@@ -96,7 +119,8 @@ function fetch_booking_by_id(int $bookingId): ?array
     $pdo = db();
     $stmt = $pdo->prepare(
         'SELECT b.id, b.user_id, COALESCE(u.name, b.guest_name) AS client_name, COALESCE(u.email, b.guest_email) AS client_email,
-                b.guest_phone, b.service_category, b.service_name, b.booking_date, b.booking_time, b.status, b.created_at
+                b.guest_phone, b.service_category, b.service_name, b.booking_date, b.booking_time, b.status,
+                b.service_total_cents, b.deposit_due_cents, b.deposit_paid_cents, b.deposit_refunded_cents, b.payment_status, b.created_at
          FROM bookings b
          LEFT JOIN users u ON u.id = b.user_id
          WHERE b.id = :id LIMIT 1'
@@ -189,8 +213,17 @@ function create_booking(
     array $serviceLines,
     ?string $guestName = null,
     ?string $guestEmail = null,
-    ?string $guestPhone = null
+    ?string $guestPhone = null,
+    int $serviceTotalCents = 0,
+    int $depositDueCents = 0,
+    int $depositPaidCents = 0,
+    string $paymentStatus = 'none'
 ): array {
+    $serviceTotalCents = max(0, $serviceTotalCents);
+    $depositDueCents = max(0, $depositDueCents);
+    $depositPaidCents = max(0, $depositPaidCents);
+    $paymentStatus = trim($paymentStatus) === '' ? 'none' : trim($paymentStatus);
+
     $uid = $userId !== null && $userId > 0 ? $userId : null;
     $gName = null;
     $gEmail = null;
@@ -277,8 +310,8 @@ function create_booking(
 
     $pdo = db();
     $stmt = $pdo->prepare(
-        'INSERT INTO bookings (user_id, guest_name, guest_email, guest_phone, service_category, service_name, booking_date, booking_time, status)
-         VALUES (:uid, :gn, :ge, :gp, :sc, :sn, :d, :t, :st)'
+        'INSERT INTO bookings (user_id, guest_name, guest_email, guest_phone, service_category, service_name, booking_date, booking_time, status, service_total_cents, deposit_due_cents, deposit_paid_cents, payment_status)
+         VALUES (:uid, :gn, :ge, :gp, :sc, :sn, :d, :t, :st, :tot, :dd, :dp, :ps)'
     );
     try {
         $stmt->execute([
@@ -291,6 +324,10 @@ function create_booking(
             ':d' => $dateYmd,
             ':t' => $timeNorm,
             ':st' => CHB_BOOKING_CONFIRMED,
+            ':tot' => $serviceTotalCents,
+            ':dd' => $depositDueCents,
+            ':dp' => $depositPaidCents,
+            ':ps' => $paymentStatus,
         ]);
     } catch (PDOException $e) {
         if ((int) $e->errorInfo[1] === 1062) {

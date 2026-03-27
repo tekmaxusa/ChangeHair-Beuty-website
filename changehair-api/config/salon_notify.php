@@ -14,9 +14,6 @@ function chb_salon_notify_channels(): array
     if (chb_contact_recipient_email() !== '') {
         $c[] = 'mail';
     }
-    if (chb_google_script_url() !== '') {
-        $c[] = 'script';
-    }
 
     return $c;
 }
@@ -43,20 +40,7 @@ function chb_notify_contact_salon(string $name, string $email, string $phone, st
         $mailOk = chb_send_contact_message($name, $email, $phone, $message);
     }
 
-    $scriptOk = true;
-    if (in_array('script', $channels, true)) {
-        $scriptOk = chb_post_google_script_form([
-            'event' => 'contact',
-            'name' => $name,
-            'email' => $email,
-            'phone' => $phone !== '' ? $phone : '—',
-            'service' => 'Contact Request',
-            'date' => (new DateTimeImmutable('today'))->format('Y-m-d'),
-            'time' => $message,
-        ]);
-    }
-
-    return $mailOk || $scriptOk;
+    return $mailOk;
 }
 
 /**
@@ -97,43 +81,7 @@ function chb_notify_booking_created_all_channels(
         );
     }
 
-    $ts = strtotime($dateYmd . ' ' . $timeHi . ':00');
-    $timeLabel = $ts ? date('g:i A', $ts) : $timeHi;
-
-    $svcForScript = $serviceSummary;
-    if (function_exists('mb_strlen') && mb_strlen($svcForScript) > 500) {
-        $svcForScript = mb_substr($svcForScript, 0, 497) . '…';
-    } elseif (strlen($svcForScript) > 500) {
-        $svcForScript = substr($svcForScript, 0, 497) . '…';
-    }
-
-    $details = "NEW BOOKING (confirmed)\nClient: {$clientName}\nEmail: {$clientEmail}\nPhone: "
-        . ($clientPhone !== '' ? $clientPhone : '—') . "\nDate: {$dateYmd}\nTime: {$timeLabel}\nServices: {$serviceSummary}";
-    if (function_exists('mb_strlen') && mb_strlen($details) > 1800) {
-        $details = mb_substr($details, 0, 1797) . '…';
-    } elseif (strlen($details) > 1800) {
-        $details = substr($details, 0, 1797) . '…';
-    }
-
-    $scriptOk = true;
-    if (in_array('script', $channels, true)) {
-        $scriptOk = chb_post_google_script_form([
-            'event' => 'new_booking',
-            'name' => $clientName !== '' ? $clientName : '—',
-            'email' => $clientEmail !== '' ? $clientEmail : '—',
-            'phone' => $clientPhone !== '' ? $clientPhone : '—',
-            'service' => $svcForScript !== '' ? $svcForScript : '—',
-            'date' => $dateYmd,
-            'time' => $timeLabel,
-            'details' => $details,
-        ]);
-    }
-
-    if ($channels === []) {
-        return $clientMailOk;
-    }
-
-    return $mailOk || $scriptOk || $clientMailOk;
+    return $mailOk || $clientMailOk;
 }
 
 /**

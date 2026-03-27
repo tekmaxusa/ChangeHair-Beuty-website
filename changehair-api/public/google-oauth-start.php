@@ -5,12 +5,12 @@ declare(strict_types=1);
 require_once dirname(__DIR__) . '/config/session.php';
 require_once dirname(__DIR__) . '/auth/google_oauth.php';
 require_once __DIR__ . '/partials/redirect.php';
+require_once __DIR__ . '/_spa_redirect.php';
 
 session_bootstrap();
 
 if (!google_oauth_configured()) {
-    header('Location: /login?google_err=not_configured');
-    exit;
+    chb_redirect_spa('/login', ['google_err' => 'not_configured']);
 }
 
 $next = chb_safe_next((string) ($_GET['next'] ?? '/dashboard'));

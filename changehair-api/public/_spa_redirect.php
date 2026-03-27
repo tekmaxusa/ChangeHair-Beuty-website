@@ -10,7 +10,17 @@ require_once dirname(__DIR__) . '/config/env.php';
 function chb_spa_url(string $path = '/', array $query = []): string
 {
     $path = '/' . ltrim($path, '/');
-    $base = trim((string) env_get('CHB_APP_PUBLIC_URL', ''));
+    $base = chb_env_get('CHB_APP_PUBLIC_URL', '');
+    if ($base === '') {
+        $xfh = strtolower(trim((string) ($_SERVER['HTTP_X_FORWARDED_HOST'] ?? '')));
+        $host = $xfh !== '' ? trim(explode(',', $xfh)[0]) : strtolower((string) ($_SERVER['HTTP_HOST'] ?? ''));
+        if (preg_match('/^(localhost|127\.0\.0\.1):\d+$/', $host)) {
+            $port = (int) explode(':', $host, 2)[1];
+            if ($port === 8080 || $port === 80) {
+                $base = 'http://localhost:3000';
+            }
+        }
+    }
     $url = $base !== '' ? rtrim($base, '/') . $path : $path;
     if ($query !== []) {
         $qs = http_build_query($query);

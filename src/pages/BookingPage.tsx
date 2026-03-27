@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { apiFetch, apiJson } from '../lib/api';
@@ -25,6 +25,18 @@ interface SlotCell {
 
 type Step = 'choose' | 'review' | 'success';
 
+function parsePriceToCents(price: string): number {
+  const clean = price.replace(/[^0-9.]/g, '').trim();
+  if (!clean) return 0;
+  const value = Number.parseFloat(clean);
+  if (Number.isNaN(value)) return 0;
+  return Math.max(0, Math.round(value * 100));
+}
+
+function formatUsd(cents: number): string {
+  return `$${(Math.max(0, cents) / 100).toFixed(2)}`;
+}
+
 function formatYmdLong(ymd: string): string {
   const [y, m, d] = ymd.split('-').map((x) => parseInt(x, 10));
   if (!y || !m || !d) return ymd;
@@ -40,6 +52,32 @@ function formatTimeHm(hm: string): string {
   if (Number.isNaN(hh) || Number.isNaN(mm)) return hm;
   const d = new Date(2000, 0, 1, hh, mm, 0, 0);
   return d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+}
+
+/** booking-meta `paymentBypass` — accept bool, 1, or string (some proxies alter JSON). */
+function parsePaymentBypassFlag(v: unknown): boolean {
+  if (v === true || v === 1) return true;
+  if (typeof v === 'string') {
+    const s = v.toLowerCase().trim();
+    return s === '1' || s === 'true' || s === 'yes' || s === 'on';
+  }
+  return false;
+}
+
+function randomBookingIdempotencyKey(): string {
+  if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
+    return crypto.randomUUID();
+  }
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === 'x' ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
+interface PaymentTokenizerMeta {
+  iframeSrc: string;
+  allowedOrigin: string;
 }
 
 function ReviewSection({ label, children }: { label: string; children: React.ReactNode }) {
@@ -60,6 +98,11 @@ export default function BookingPage() {
   const [slotsByDate, setSlotsByDate] = useState<Record<string, SlotCell[]>>({});
   const [metaLoading, setMetaLoading] = useState(true);
   const [metaError, setMetaError] = useState('');
+  const [depositPercent, setDepositPercent] = useState(20);
+  /** Mirrors CHB_PAYMENT_SKIP on the API — no live card charge; hide card form in dev. */
+  const [paymentBypass, setPaymentBypass] = useState(false);
+  /** CardConnect Hosted iFrame Tokenizer (from booking-meta). */
+  const [paymentTokenizer, setPaymentTokenizer] = useState<PaymentTokenizerMeta | null>(null);
 
   const [step, setStep] = useState<Step>('choose');
   /** Single pick: `categoryId|serviceName` */
@@ -69,6 +112,19 @@ export default function BookingPage() {
   const [guestName, setGuestName] = useState('');
   const [guestEmail, setGuestEmail] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
+  const [billingName, setBillingName] = useState('');
+  const [billingAddress, setBillingAddress] = useState('');
+  const [billingCity, setBillingCity] = useState('');
+  const [billingState, setBillingState] = useState('');
+  const [billingCountry, setBillingCountry] = useState('US');
+  const [billingPostal, setBillingPostal] = useState('');
+  const [cardAccount, setCardAccount] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvv, setCardCvv] = useState('');
+  /** CardSecure token from iframe postMessage — never raw PAN on our origin. */
+  const [cardToken, setCardToken] = useState('');
+  const [tokenizerCssLoaded, setTokenizerCssLoaded] = useState(false);
+  const idempotencyKeyRef = useRef<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [msg, setMsg] = useState<{ ok: boolean; text: string; code?: string } | null>(null);
 
@@ -79,6 +135,9 @@ export default function BookingPage() {
     name: string;
     email: string;
     phone: string;
+    serviceTotalCents: number;
+    depositPaidCents: number;
+    remainingBalanceCents: number;
   } | null>(null);
 
   const isClientUser = user?.role === 'client';
@@ -112,11 +171,22 @@ export default function BookingPage() {
           ok: boolean;
           categories?: Category[];
           slotsByDate?: Record<string, SlotCell[]>;
+          depositPercent?: number;
+          paymentBypass?: boolean;
+          paymentTokenizer?: PaymentTokenizerMeta | null;
         }>('/api/client/booking-meta.php', { method: 'GET' });
         const cats = data.categories ?? [];
         setCategories(cats);
         const s: Record<string, SlotCell[]> = data.slotsByDate ?? {};
         setSlotsByDate(s);
+        setDepositPercent(typeof data.depositPercent === 'number' ? data.depositPercent : 20);
+        setPaymentBypass(parsePaymentBypassFlag(data.paymentBypass));
+        const tok = data.paymentTokenizer;
+        if (tok && typeof tok.iframeSrc === 'string' && typeof tok.allowedOrigin === 'string') {
+          setPaymentTokenizer(tok);
+        } else {
+          setPaymentTokenizer(null);
+        }
         const dates = Object.keys(s).sort();
 
         const draft = consumeBookingDraft();
@@ -159,6 +229,15 @@ export default function BookingPage() {
     el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }, [preselect, categories]);
 
+  useEffect(() => {
+    if (step !== 'review') return;
+    setBillingName((b) => {
+      if (b.trim()) return b;
+      if (isClientUser) return (user?.name ?? '').trim();
+      return guestName.trim();
+    });
+  }, [step, isClientUser, user?.name, guestName]);
+
   const pickService = (catId: string, svcName: string) => {
     const key = `${catId}|${svcName}`;
     setSelectedService((prev) => (prev === key ? null : key));
@@ -179,6 +258,76 @@ export default function BookingPage() {
     return cat ? [`${cat.name} — ${svcName}`] : [];
   }, [selectedService, categories]);
 
+  const selectedServicePriceCents = useMemo(() => {
+    if (!selectedService) return 0;
+    const [catId, svcName] = selectedService.split('|');
+    const cat = categories.find((c) => c.id === catId);
+    const svc = cat?.services.find((s) => s.name === svcName);
+    return svc ? parsePriceToCents(svc.price) : 0;
+  }, [selectedService, categories]);
+
+  const depositDueCents = useMemo(() => {
+    return Math.round(selectedServicePriceCents * (depositPercent / 100));
+  }, [selectedServicePriceCents, depositPercent]);
+
+  const remainingBalanceCents = useMemo(() => {
+    return Math.max(0, selectedServicePriceCents - depositDueCents);
+  }, [selectedServicePriceCents, depositDueCents]);
+
+  const needsCardPayment = depositDueCents > 0 && !paymentBypass;
+  const useCardIframe = Boolean(needsCardPayment && paymentTokenizer);
+
+  useEffect(() => {
+    if (step !== 'review') return;
+    if (!idempotencyKeyRef.current) {
+      idempotencyKeyRef.current = randomBookingIdempotencyKey();
+    }
+  }, [step]);
+
+  useEffect(() => {
+    if (step !== 'review' || !paymentTokenizer) {
+      if (step !== 'review') setTokenizerCssLoaded(false);
+      return;
+    }
+    setCardToken('');
+    setTokenizerCssLoaded(false);
+  }, [step, paymentTokenizer?.iframeSrc]);
+
+  useEffect(() => {
+    const tok = paymentTokenizer;
+    if (!tok) return;
+    const onMsg = (e: MessageEvent) => {
+      if (e.origin !== tok.allowedOrigin) return;
+      const raw = e.data;
+      const chunks = typeof raw === 'string' ? raw.split('^') : [raw];
+      for (let i = chunks.length - 1; i >= 0; i--) {
+        try {
+          const piece = chunks[i];
+          const parsed =
+            typeof piece === 'string' ? JSON.parse(piece) : (piece as Record<string, unknown>);
+          if (!parsed || typeof parsed !== 'object') continue;
+          if ('cssLoaded' in parsed && parsed.cssLoaded) {
+            setTokenizerCssLoaded(true);
+            return;
+          }
+          if ('validationError' in parsed && parsed.validationError) {
+            setCardToken('');
+            return;
+          }
+          const msgTok = parsed.message;
+          if (typeof msgTok === 'string' && /^[0-9A-Za-z]{12,32}$/.test(msgTok)) {
+            setCardToken(msgTok);
+            return;
+          }
+        } catch {
+          /* ignore */
+        }
+      }
+    };
+    window.addEventListener('message', onMsg);
+    return () => window.removeEventListener('message', onMsg);
+  }, [paymentTokenizer]);
+
   const snap = successSnapshot;
   const displayDate = snap?.date ?? date;
   const displayTime = snap?.time ?? time;
@@ -190,6 +339,9 @@ export default function BookingPage() {
       : guestName.trim();
   const customerDisplayEmail = snap ? snap.email : isClientUser ? (user?.email ?? '') : guestEmail.trim();
   const customerPhoneDisplay = snap ? snap.phone : guestPhone.trim();
+  const snapServiceTotalCents = snap?.serviceTotalCents ?? selectedServicePriceCents;
+  const snapDepositCents = snap?.depositPaidCents ?? depositDueCents;
+  const snapRemainingCents = snap?.remainingBalanceCents ?? remainingBalanceCents;
 
   const goReview = () => {
     setMsg(null);
@@ -213,17 +365,64 @@ export default function BookingPage() {
         return;
       }
     }
+    if (needsCardPayment) {
+      const nameOnCard = billingName.trim() || (isClientUser ? (user?.name ?? '').trim() : guestName.trim());
+      if (!nameOnCard) {
+        setMsg({ ok: false, text: 'Please enter the name on the card (or your full name above).' });
+        return;
+      }
+      if (!billingAddress.trim() || !billingCity.trim() || !billingState.trim()) {
+        setMsg({ ok: false, text: 'Please enter billing street, city, and state for card verification.' });
+        return;
+      }
+      if (!billingPostal.trim()) {
+        setMsg({ ok: false, text: 'Please provide billing ZIP/postal code.' });
+        return;
+      }
+      if (useCardIframe) {
+        if (!cardToken.trim()) {
+          setMsg({
+            ok: false,
+            text: 'Complete the secure card form above and wait until it is ready before submitting.',
+          });
+          return;
+        }
+      } else if (!cardAccount.trim() || !cardExpiry.trim() || !cardCvv.trim()) {
+        setMsg({ ok: false, text: 'Please enter card number, expiry, and CVV.' });
+        return;
+      }
+    }
     setSubmitting(true);
     try {
+      if (!idempotencyKeyRef.current) {
+        idempotencyKeyRef.current = randomBookingIdempotencyKey();
+      }
       const payload: Record<string, unknown> = {
         booking_date: date,
         booking_time: time,
         services: [selectedService],
+        idempotency_key: idempotencyKeyRef.current,
       };
       if (!isClientUser) {
         payload.guest_name = guestName.trim();
         payload.guest_email = guestEmail.trim();
         payload.guest_phone = guestPhone.trim();
+      }
+      if (needsCardPayment) {
+        const nameOnCard = billingName.trim() || (isClientUser ? (user?.name ?? '').trim() : guestName.trim());
+        payload.billing_name = nameOnCard;
+        payload.billing_address = billingAddress.trim();
+        payload.billing_city = billingCity.trim();
+        payload.billing_state = billingState.trim();
+        payload.billing_country = billingCountry.trim() || 'US';
+        payload.billing_postal = billingPostal.trim();
+        if (useCardIframe) {
+          payload.card_token = cardToken.trim();
+        } else {
+          payload.card_account = cardAccount.trim();
+          payload.card_expiry = cardExpiry.trim();
+          payload.card_cvv = cardCvv.trim();
+        }
       }
       const res = await apiFetch('/api/client/bookings.php', {
         method: 'POST',
@@ -235,12 +434,21 @@ export default function BookingPage() {
         message?: string;
         error?: string;
         code?: string;
+        amounts?: {
+          service_total_cents?: number;
+          deposit_paid_cents?: number;
+          remaining_balance_cents?: number;
+        };
       };
       if (!res.ok || !data.ok) {
+        const errCode = data.code;
+        if (errCode !== 'duplicate_request' && errCode !== 'booking_error_charge_pending') {
+          idempotencyKeyRef.current = randomBookingIdempotencyKey();
+        }
         setMsg({
           ok: false,
           text: data.error || 'Booking failed.',
-          code: data.code,
+          code: errCode,
         });
       } else {
         setMsg({ ok: true, text: data.message || 'Submitted.' });
@@ -251,12 +459,27 @@ export default function BookingPage() {
           name: isClientUser ? (user?.name ?? '') : guestName.trim(),
           email: isClientUser ? (user?.email ?? '') : guestEmail.trim(),
           phone: guestPhone.trim(),
+          serviceTotalCents: data.amounts?.service_total_cents ?? selectedServicePriceCents,
+          depositPaidCents: data.amounts?.deposit_paid_cents ?? depositDueCents,
+          remainingBalanceCents: data.amounts?.remaining_balance_cents ?? remainingBalanceCents,
         });
         setStep('success');
         setSelectedService(null);
+        setBillingName('');
+        setBillingAddress('');
+        setBillingCity('');
+        setBillingState('');
+        setBillingCountry('US');
+        setBillingPostal('');
+        setCardAccount('');
+        setCardExpiry('');
+        setCardCvv('');
+        setCardToken('');
+        idempotencyKeyRef.current = null;
         clearBookingDraft();
       }
     } catch {
+      idempotencyKeyRef.current = randomBookingIdempotencyKey();
       setMsg({ ok: false, text: 'Network error.' });
     } finally {
       setSubmitting(false);
@@ -285,6 +508,16 @@ export default function BookingPage() {
           <p className="font-medium">
             {formatYmdLong(displayDate)} · {formatTimeHm(displayTime)}
           </p>
+        </ReviewSection>
+        <ReviewSection label="Payment">
+          <p className="font-medium">Service total: {formatUsd(snapServiceTotalCents)}</p>
+          <p className="text-sm text-salon-ink/65 mt-1">Deposit due now ({depositPercent}%): {formatUsd(snapDepositCents)}</p>
+          {paymentBypass && snapDepositCents > 0 && (
+            <p className="text-sm text-amber-800/90 mt-1">
+              Dev mode: card payment is off (CHB_PAYMENT_SKIP). No charge — confirm to book.
+            </p>
+          )}
+          <p className="text-sm text-salon-ink/65 mt-1">Remaining balance in store: {formatUsd(snapRemainingCents)} (+ tip in Clover POS)</p>
         </ReviewSection>
         <ReviewSection label="Salon">
           <p className="font-medium">{SALON_NAME}</p>
@@ -506,12 +739,181 @@ export default function BookingPage() {
               </div>
             )}
 
+            <div className="bg-white border border-salon-ink/5 shadow-sm p-8 space-y-4">
+              <h3 className="text-sm font-medium text-salon-ink">
+                {needsCardPayment ? 'Deposit payment' : depositDueCents > 0 ? 'Deposit (dev bypass)' : 'Confirm'}
+              </h3>
+              {needsCardPayment ? (
+                <>
+                  <p className="text-xs text-salon-ink/55">
+                    Pay {formatUsd(depositDueCents)} now to reserve this slot. Remaining balance and tip are collected in store.
+                  </p>
+                  <p className="text-xs text-salon-ink/55">
+                    Use the same billing address your bank has on file — it helps verify your card.
+                  </p>
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-widest text-salon-ink/70 mb-1">Name on card</label>
+                    <input
+                      value={billingName}
+                      onChange={(e) => setBillingName(e.target.value)}
+                      className="w-full border-b border-salon-ink/20 py-2 focus:border-salon-gold outline-none bg-transparent"
+                      autoComplete="cc-name"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[10px] uppercase tracking-widest text-salon-ink/70 mb-1">Street address</label>
+                    <input
+                      value={billingAddress}
+                      onChange={(e) => setBillingAddress(e.target.value)}
+                      className="w-full border-b border-salon-ink/20 py-2 focus:border-salon-gold outline-none bg-transparent"
+                      autoComplete="street-address"
+                      required
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-widest text-salon-ink/70 mb-1">City</label>
+                      <input
+                        value={billingCity}
+                        onChange={(e) => setBillingCity(e.target.value)}
+                        className="w-full border-b border-salon-ink/20 py-2 focus:border-salon-gold outline-none bg-transparent"
+                        autoComplete="address-level2"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-widest text-salon-ink/70 mb-1">State / Province</label>
+                      <input
+                        value={billingState}
+                        onChange={(e) => setBillingState(e.target.value)}
+                        className="w-full border-b border-salon-ink/20 py-2 focus:border-salon-gold outline-none bg-transparent"
+                        autoComplete="address-level1"
+                        placeholder="CO"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-widest text-salon-ink/70 mb-1">Country (ISO)</label>
+                      <input
+                        value={billingCountry}
+                        onChange={(e) => setBillingCountry(e.target.value.toUpperCase())}
+                        className="w-full border-b border-salon-ink/20 py-2 focus:border-salon-gold outline-none bg-transparent"
+                        autoComplete="country"
+                        placeholder="US"
+                        maxLength={2}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-[10px] uppercase tracking-widest text-salon-ink/70 mb-1">ZIP / Postal</label>
+                      <input
+                        value={billingPostal}
+                        onChange={(e) => setBillingPostal(e.target.value)}
+                        className="w-full border-b border-salon-ink/20 py-2 focus:border-salon-gold outline-none bg-transparent"
+                        autoComplete="postal-code"
+                        required
+                      />
+                    </div>
+                  </div>
+                  {useCardIframe && paymentTokenizer ? (
+                    <div className="space-y-2">
+                      <label className="block text-[10px] uppercase tracking-widest text-salon-ink/70">
+                        Card (secure)
+                      </label>
+                      <p className="text-xs text-salon-ink/55">
+                        Card number, expiry, and CVV are entered on our processor&apos;s hosted form. Only a token is sent
+                        to our server.
+                      </p>
+                      {!tokenizerCssLoaded && (
+                        <p className="text-xs text-salon-ink/45">Loading secure card form…</p>
+                      )}
+                      <iframe
+                        title="Secure card entry"
+                        src={paymentTokenizer.iframeSrc}
+                        className="w-full max-w-[600px] border-0 bg-transparent"
+                        style={{ height: 200, minHeight: 165 }}
+                        allow="payment"
+                      />
+                      {cardToken ? (
+                        <p className="text-xs text-emerald-800">Card verified — you can submit.</p>
+                      ) : (
+                        <p className="text-xs text-salon-ink/50">Complete all fields in the form above, then submit.</p>
+                      )}
+                    </div>
+                  ) : (
+                    <>
+                      <div>
+                        <label className="block text-[10px] uppercase tracking-widest text-salon-ink/70 mb-1">
+                          Card number
+                        </label>
+                        <input
+                          value={cardAccount}
+                          onChange={(e) => setCardAccount(e.target.value)}
+                          className="w-full border-b border-salon-ink/20 py-2 focus:border-salon-gold outline-none bg-transparent"
+                          autoComplete="cc-number"
+                          inputMode="numeric"
+                          required
+                        />
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-[10px] uppercase tracking-widest text-salon-ink/70 mb-1">
+                            Expiry (MMYY)
+                          </label>
+                          <input
+                            value={cardExpiry}
+                            onChange={(e) => setCardExpiry(e.target.value)}
+                            className="w-full border-b border-salon-ink/20 py-2 focus:border-salon-gold outline-none bg-transparent"
+                            autoComplete="cc-exp"
+                            placeholder="1228"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[10px] uppercase tracking-widest text-salon-ink/70 mb-1">CVV</label>
+                          <input
+                            value={cardCvv}
+                            onChange={(e) => setCardCvv(e.target.value)}
+                            className="w-full border-b border-salon-ink/20 py-2 focus:border-salon-gold outline-none bg-transparent"
+                            autoComplete="cc-csc"
+                            inputMode="numeric"
+                            required
+                          />
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </>
+              ) : depositDueCents > 0 ? (
+                <>
+                  <p className="text-xs text-salon-ink/55">
+                    The server has <strong className="font-medium text-salon-ink/80">CHB_PAYMENT_SKIP</strong> enabled. Your
+                    deposit of {formatUsd(depositDueCents)} is recorded for testing only — no card is charged.
+                  </p>
+                  <p className="text-xs text-amber-900/80 bg-amber-50 border border-amber-200/80 rounded-lg px-3 py-2">
+                    Turn off CHB_PAYMENT_SKIP in <code className="text-[11px]">changehair-api/.env</code> and restart PHP for
+                    real payments.
+                  </p>
+                </>
+              ) : (
+                <p className="text-xs text-salon-ink/55">
+                  No deposit is required for this service. Submit to confirm your appointment.
+                </p>
+              )}
+            </div>
+
             <div className="flex flex-col-reverse sm:flex-row gap-3 sm:justify-between sm:items-center">
               <button
                 type="button"
                 onClick={() => {
                   setStep('choose');
                   setMsg(null);
+                  idempotencyKeyRef.current = null;
+                  setCardToken('');
+                  setTokenizerCssLoaded(false);
                 }}
                 className="flex items-center justify-center gap-2 text-sm uppercase tracking-widest text-salon-ink/60 hover:text-salon-ink py-3"
               >
@@ -520,7 +922,7 @@ export default function BookingPage() {
               <button type="submit" disabled={submitting} className="gold-button py-3 px-8 flex items-center justify-center gap-2 disabled:opacity-50">
                 {submitting ? 'Submitting…' : (
                   <>
-                    Confirm booking <ArrowRight className="w-4 h-4" />
+                    {needsCardPayment ? 'Pay deposit & confirm' : depositDueCents > 0 ? 'Confirm booking' : 'Confirm'} <ArrowRight className="w-4 h-4" />
                   </>
                 )}
               </button>

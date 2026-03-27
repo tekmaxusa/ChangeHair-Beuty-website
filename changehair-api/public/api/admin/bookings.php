@@ -53,9 +53,42 @@ if ($action === 'delete_many') {
     ]);
 }
 
+if ($action === 'refund_deposit') {
+    require_once dirname(__DIR__, 3) . '/payments/admin_deposit_refund.php';
+    $bidRefund = (int) ($body['booking_id'] ?? 0);
+    if ($bidRefund <= 0) {
+        chb_api_json_error('Invalid booking.', 400);
+    }
+    $amountRaw = $body['amount_cents'] ?? null;
+    $refundCents = null;
+    if ($amountRaw !== null && $amountRaw !== '') {
+        $refundCents = (int) $amountRaw;
+        if ($refundCents <= 0) {
+            chb_api_json_error('Refund amount must be positive.', 400);
+        }
+    }
+    $r = chb_admin_refund_booking_deposit($bidRefund, $refundCents);
+    if (!$r['ok']) {
+        chb_api_json_error($r['error'] ?? 'Refund failed.', 400);
+    }
+    $_SESSION['chb_csrf_admin'] = bin2hex(random_bytes(16));
+    chb_api_json([
+        'ok' => true,
+        'csrf' => (string) $_SESSION['chb_csrf_admin'],
+        'message' => 'Refund processed.',
+        'refund' => $r['refund'] ?? [],
+    ]);
+}
+
 $bid = (int) ($body['booking_id'] ?? 0);
 if ($bid <= 0 || $action !== 'cancel') {
     chb_api_json_error('Invalid request.', 400);
+}
+
+require_once dirname(__DIR__, 3) . '/payments/admin_deposit_refund.php';
+$rev = chb_admin_reverse_deposit_on_cancel($bid);
+if (!$rev['ok']) {
+    chb_api_json_error($rev['error'] ?? 'Could not reverse card deposit.', 400);
 }
 
 $r = admin_set_booking_status($bid, CHB_BOOKING_CANCELLED);
@@ -70,16 +103,48 @@ if ($old !== $new && $new === CHB_BOOKING_CANCELLED) {
     if ($row) {
         $timeHi = substr((string) $row['booking_time'], 0, 5);
         $summary = chb_booking_services_summary($row);
+        $emailDepositKind = null;
+        $emailDepositCents = null;
+        if (!empty($rev['method']) && ($rev['method'] === 'void' || $rev['method'] === 'refund')) {
+            $emailDepositKind = (string) $rev['method'];
+            $emailDepositCents = isset($rev['amount_cents']) ? (int) $rev['amount_cents'] : null;
+        } elseif (!empty($rev['skipped'])) {
+            $hadDeposit = (int) ($row['deposit_paid_cents'] ?? 0) > 0
+                && (int) ($row['deposit_refunded_cents'] ?? 0) < (int) ($row['deposit_paid_cents'] ?? 0);
+            if ($hadDeposit) {
+                $emailDepositKind = 'skipped';
+            }
+        }
         chb_send_booking_status_email_to_client(
             (string) $row['client_email'],
             (string) $row['client_name'],
             $new,
             (string) $row['booking_date'],
             $timeHi,
-            $summary
+            $summary,
+            $emailDepositKind,
+            $emailDepositCents,
+            (string) ($row['guest_phone'] ?? '')
         );
     }
 }
 
+$message = 'Booking cancelled.';
+if (!empty($rev['method']) && $rev['method'] === 'void') {
+    $message .= ' Deposit voided at CardConnect.';
+} elseif (!empty($rev['method']) && $rev['method'] === 'refund') {
+    $message .= ' Deposit refunded at CardConnect.';
+}
+
 $_SESSION['chb_csrf_admin'] = bin2hex(random_bytes(16));
-chb_api_json(['ok' => true, 'csrf' => (string) $_SESSION['chb_csrf_admin'], 'message' => 'Booking updated.']);
+$out = [
+    'ok' => true,
+    'csrf' => (string) $_SESSION['chb_csrf_admin'],
+    'message' => $message,
+];
+if (!empty($rev['method'])) {
+    $out['payment_reversal'] = $rev['method'];
+} elseif (!empty($rev['skipped'])) {
+    $out['payment_reversal'] = 'skipped';
+}
+chb_api_json($out);

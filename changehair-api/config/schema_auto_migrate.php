@@ -128,6 +128,40 @@ function db_ensure_schema(PDO $pdo): void
         $pdo->exec('ALTER TABLE bookings ADD KEY idx_bookings_status (status)');
     }
 
+    if (!$hasCol($pdo, $dbName, 'bookings', 'service_total_cents')) {
+        $pdo->exec(
+            "ALTER TABLE bookings ADD COLUMN service_total_cents INT UNSIGNED NOT NULL DEFAULT 0 AFTER status"
+        );
+    }
+    if (!$hasCol($pdo, $dbName, 'bookings', 'deposit_due_cents')) {
+        $pdo->exec(
+            "ALTER TABLE bookings ADD COLUMN deposit_due_cents INT UNSIGNED NOT NULL DEFAULT 0 AFTER service_total_cents"
+        );
+    }
+    if (!$hasCol($pdo, $dbName, 'bookings', 'deposit_paid_cents')) {
+        $pdo->exec(
+            "ALTER TABLE bookings ADD COLUMN deposit_paid_cents INT UNSIGNED NOT NULL DEFAULT 0 AFTER deposit_due_cents"
+        );
+    }
+    if (!$hasCol($pdo, $dbName, 'bookings', 'deposit_refunded_cents')) {
+        $pdo->exec(
+            "ALTER TABLE bookings ADD COLUMN deposit_refunded_cents INT UNSIGNED NOT NULL DEFAULT 0 AFTER deposit_paid_cents"
+        );
+    }
+    if (!$hasCol($pdo, $dbName, 'bookings', 'payment_status')) {
+        $pdo->exec(
+            "ALTER TABLE bookings ADD COLUMN payment_status VARCHAR(20) NOT NULL DEFAULT 'none' AFTER deposit_refunded_cents"
+        );
+    }
+    $stPayIdx = $pdo->prepare(
+        'SELECT 1 FROM information_schema.STATISTICS
+         WHERE TABLE_SCHEMA = :s AND TABLE_NAME = \'bookings\' AND INDEX_NAME = \'idx_bookings_payment_status\' LIMIT 1'
+    );
+    $stPayIdx->execute([':s' => $dbName]);
+    if (!$stPayIdx->fetchColumn()) {
+        $pdo->exec('ALTER TABLE bookings ADD KEY idx_bookings_payment_status (payment_status)');
+    }
+
     chb_migrate_drop_booking_slot_unique_if_exists($pdo, $dbName);
 
     if ($hasCol($pdo, $dbName, 'bookings', 'service_name')) {
@@ -179,6 +213,78 @@ function db_ensure_schema(PDO $pdo): void
                 KEY idx_password_resets_user (user_id),
                 KEY idx_password_resets_expires (expires_at),
                 CONSTRAINT fk_password_resets_user FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci'
+        );
+    }
+
+    if (!$hasTable($pdo, $dbName, 'booking_payments')) {
+        $pdo->exec(
+            'CREATE TABLE booking_payments (
+                id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                booking_id INT UNSIGNED NULL,
+                orderid VARCHAR(80) NOT NULL,
+                merchid VARCHAR(32) NOT NULL DEFAULT \'\',
+                amount_cents INT UNSIGNED NOT NULL DEFAULT 0,
+                currency VARCHAR(3) NOT NULL DEFAULT \'USD\',
+                status VARCHAR(20) NOT NULL DEFAULT \'declined\',
+                respstat VARCHAR(8) NOT NULL DEFAULT \'\',
+                respcode VARCHAR(16) NOT NULL DEFAULT \'\',
+                resptext VARCHAR(255) NOT NULL DEFAULT \'\',
+                retref VARCHAR(32) NOT NULL DEFAULT \'\',
+                account_last4 VARCHAR(8) NOT NULL DEFAULT \'\',
+                booking_date DATE NULL,
+                booking_time TIME NULL,
+                raw_response_json TEXT NULL,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                UNIQUE KEY uq_booking_payments_orderid (orderid),
+                KEY idx_booking_payments_booking (booking_id),
+                KEY idx_booking_payments_retref (retref),
+                KEY idx_booking_payments_status (status),
+                CONSTRAINT fk_booking_payments_booking FOREIGN KEY (booking_id) REFERENCES bookings (id) ON DELETE SET NULL
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci'
+        );
+    }
+
+    if (!$hasTable($pdo, $dbName, 'booking_refunds')) {
+        $pdo->exec(
+            'CREATE TABLE booking_refunds (
+                id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+                booking_id INT UNSIGNED NOT NULL,
+                reversal_kind VARCHAR(8) NOT NULL DEFAULT \'refund\',
+                amount_cents INT UNSIGNED NOT NULL DEFAULT 0,
+                orig_retref VARCHAR(32) NOT NULL DEFAULT \'\',
+                retref VARCHAR(32) NOT NULL DEFAULT \'\',
+                orderid VARCHAR(80) NOT NULL DEFAULT \'\',
+                respstat VARCHAR(8) NOT NULL DEFAULT \'\',
+                respcode VARCHAR(16) NOT NULL DEFAULT \'\',
+                resptext VARCHAR(255) NOT NULL DEFAULT \'\',
+                raw_response_json TEXT NULL,
+                created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                PRIMARY KEY (id),
+                KEY idx_booking_refunds_booking (booking_id),
+                CONSTRAINT fk_booking_refunds_booking FOREIGN KEY (booking_id) REFERENCES bookings (id) ON DELETE CASCADE
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci'
+        );
+    }
+
+    if ($hasTable($pdo, $dbName, 'booking_refunds') && !$hasCol($pdo, $dbName, 'booking_refunds', 'reversal_kind')) {
+        $pdo->exec(
+            "ALTER TABLE booking_refunds ADD COLUMN reversal_kind VARCHAR(8) NOT NULL DEFAULT 'refund' AFTER booking_id"
+        );
+    }
+
+    if (!$hasTable($pdo, $dbName, 'booking_idempotency')) {
+        $pdo->exec(
+            'CREATE TABLE booking_idempotency (
+                idempotency_key VARCHAR(64) NOT NULL,
+                state VARCHAR(16) NOT NULL DEFAULT \'processing\',
+                http_code SMALLINT UNSIGNED NULL,
+                response_json MEDIUMTEXT NULL,
+                started_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                completed_at TIMESTAMP NULL DEFAULT NULL,
+                PRIMARY KEY (idempotency_key),
+                KEY idx_booking_idempotency_state_started (state, started_at)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci'
         );
     }

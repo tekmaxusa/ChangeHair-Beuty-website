@@ -1,0 +1,13 @@
+{
+    "name": "changehair/changehair-api",
+    "description": "ChangeHair API",
+    "type": "project",
+    "authors": [
+        {
+            "name": "ChangeHair"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^7.0"
+    }
+}

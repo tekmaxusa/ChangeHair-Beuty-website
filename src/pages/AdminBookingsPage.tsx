@@ -28,7 +28,29 @@ interface BookingRow {
   booking_date: string;
   booking_time: string;
   status: string;
+  service_total_cents: number;
+  deposit_due_cents: number;
+  deposit_paid_cents: number;
+  deposit_refunded_cents?: number;
+  payment_status: string;
   created_at: string;
+}
+
+function centsToUsd(cents: number): string {
+  return `$${(Math.max(0, Number(cents || 0)) / 100).toFixed(2)}`;
+}
+
+/** Net deposit kept after refunds (for balance math). */
+function netDepositCents(b: BookingRow): number {
+  const paid = Number(b.deposit_paid_cents || b.deposit_due_cents || 0);
+  const ref = Number(b.deposit_refunded_cents || 0);
+  return Math.max(0, paid - ref);
+}
+
+function canRefundDeposit(b: BookingRow): boolean {
+  const ps = b.payment_status || '';
+  if (ps !== 'deposit_paid' && ps !== 'deposit_partially_refunded') return false;
+  return netDepositCents(b) > 0;
 }
 
 export default function AdminBookingsPage() {
@@ -37,6 +59,7 @@ export default function AdminBookingsPage() {
   const [rows, setRows] = useState<BookingRow[]>([]);
   const [csrf, setCsrf] = useState('');
   const [error, setError] = useState('');
+  const [info, setInfo] = useState('');
   const [busyId, setBusyId] = useState<number | null>(null);
   const [bulkBusy, setBulkBusy] = useState(false);
   const [page, setPage] = useState(1);
@@ -165,22 +188,37 @@ export default function AdminBookingsPage() {
     return <Navigate to="/admin/login" replace />;
   }
 
-  const act = async (bookingId: number, action: 'cancel') => {
-    setBusyId(bookingId);
+  const actCancel = async (b: BookingRow) => {
+    let msg = `Cancel booking #${b.id}? The client will be emailed.`;
+    if (canRefundDeposit(b) && netDepositCents(b) > 0) {
+      msg += ` The card deposit (${centsToUsd(netDepositCents(b))}) will be reversed via CardConnect: void if still allowed, otherwise refund.`;
+    }
+    if (!window.confirm(msg)) {
+      return;
+    }
+    setBusyId(b.id);
     setError('');
+    setInfo('');
     try {
       const res = await apiFetch('/api/admin/bookings.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ csrf, action, booking_id: bookingId }),
+        body: JSON.stringify({ csrf, action: 'cancel', booking_id: b.id }),
       });
-      const data = (await res.json()) as { ok?: boolean; csrf?: string; error?: string };
+      const data = (await res.json()) as {
+        ok?: boolean;
+        csrf?: string;
+        error?: string;
+        message?: string;
+        payment_reversal?: string;
+      };
       if (!res.ok || !data.ok) {
         setError(data.error || 'Update failed');
       } else {
         if (data.csrf) {
           setCsrf(data.csrf);
         }
+        setInfo(data.message || 'Booking cancelled.');
         await load();
       }
     } catch {
@@ -205,6 +243,7 @@ export default function AdminBookingsPage() {
     }
     setBulkBusy(true);
     setError('');
+    setInfo('');
     try {
       const res = await apiFetch('/api/admin/bookings.php', {
         method: 'POST',
@@ -326,6 +365,7 @@ export default function AdminBookingsPage() {
         </header>
 
         {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
+        {info && !error && <p className="text-emerald-800 text-sm mb-4">{info}</p>}
 
         {rows.length > 0 && (
           <div className="flex flex-wrap items-center gap-3 mb-4">
@@ -362,6 +402,10 @@ export default function AdminBookingsPage() {
                 <th className="p-3">Service</th>
                 <th className="p-3">Date</th>
                 <th className="p-3">Time</th>
+                <th className="p-3">Total</th>
+                <th className="p-3">Deposit</th>
+                <th className="p-3">Remaining</th>
+                <th className="p-3">Pay status</th>
                 <th className="p-3 min-w-[140px]">Order placed</th>
                 <th className="p-3">Actions</th>
               </tr>
@@ -369,7 +413,7 @@ export default function AdminBookingsPage() {
             <tbody>
               {rows.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="p-8 text-center text-salon-ink/50">
+                  <td colSpan={14} className="p-8 text-center text-salon-ink/50">
                     No bookings yet.
                   </td>
                 </tr>
@@ -396,20 +440,39 @@ export default function AdminBookingsPage() {
                     <td className="p-3 max-w-[200px]">{b.service_name}</td>
                     <td className="p-3">{b.booking_date}</td>
                     <td className="p-3">{String(b.booking_time).slice(0, 5)}</td>
+                    <td className="p-3 whitespace-nowrap">{centsToUsd(b.service_total_cents)}</td>
+                    <td className="p-3 whitespace-nowrap">
+                      <span>{centsToUsd(netDepositCents(b))}</span>
+                      {Number(b.deposit_refunded_cents || 0) > 0 && (
+                        <span className="block text-[10px] text-salon-ink/45">
+                          refunded {centsToUsd(Number(b.deposit_refunded_cents || 0))}
+                        </span>
+                      )}
+                    </td>
+                    <td className="p-3 whitespace-nowrap">
+                      {centsToUsd(
+                        Math.max(0, Number(b.service_total_cents || 0) - netDepositCents(b)),
+                      )}
+                    </td>
+                    <td className="p-3 capitalize">
+                      {(b.payment_status || 'none').replace(/_/g, ' ')}
+                    </td>
                     <td className="p-3 text-salon-ink/60 text-xs whitespace-nowrap">
                       {formatBookingPlacedAt(b.created_at)}
                     </td>
-                    <td className="p-3 space-x-2">
-                      {(b.status === 'confirmed' || b.status === 'pending') && (
-                        <button
-                          type="button"
-                          disabled={busyId === b.id}
-                          onClick={() => void act(b.id, 'cancel')}
-                          className="text-xs uppercase tracking-wider text-red-600 hover:underline"
-                        >
-                          Cancel
-                        </button>
-                      )}
+                    <td className="p-3 align-top">
+                      <div className="flex flex-col gap-2 min-w-[9.5rem]">
+                        {(b.status === 'confirmed' || b.status === 'pending') && (
+                          <button
+                            type="button"
+                            disabled={busyId === b.id}
+                            onClick={() => void actCancel(b)}
+                            className="inline-flex justify-center items-center w-full px-3 py-2 rounded-lg border border-red-200 bg-white text-red-700 text-[11px] font-semibold uppercase tracking-wide shadow-sm hover:bg-red-50 hover:border-red-300 hover:shadow transition-all disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:shadow-sm"
+                          >
+                            Cancel
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))

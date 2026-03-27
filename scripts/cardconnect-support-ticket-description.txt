@@ -1,0 +1,26 @@
+Subject (if separate field): API authorizations declining with 512 Service not allowed (RPCT) despite ecomind E
+
+---
+
+We are integrating the CardPointe Gateway REST API and CardSecure tokenization for ecommerce (future website checkout).
+
+Environment:
+- REST base URL: https://fts.cardconnect.com
+- Merchant ID (MID): 498527798884
+- CardSecure: POST /cardsecure/api/v1/ccn/tokenize — succeeds, returns token
+- Gateway: POST /cardconnect/rest/auth — HTTP 200 but transaction declined
+
+Issue:
+- Authorization responses: respstat C, respcode 512, resptext "Service not allowed", respproc RPCT.
+- Earlier tests without ecomind showed Entry Method "Telephone" / MOTO. We now send ecomind "E" with postal code; CardPointe Reporting correctly shows Entry Method "E-Commerce", but we still receive 512 Service not allowed.
+
+Sample declined transactions (for your lookup):
+- Transaction #: R082841285173 — Order ID chb-curl-1774323573 (MOTO entry before ecomind)
+- Transaction #: R082930785638 — Order ID chb-ecom-1774324037 (E-Commerce entry, ecomind E, postal 80124, token from CardSecure, Visa test PAN 4111…1111 via token)
+
+Questions:
+1. Is ecommerce / card-not-present API processing fully enabled for MID 498527798884 on the RPCT processor path? If not, what is required to enable it?
+2. Are we expected to use a UAT/sandbox host (e.g. fts-uat) and separate credentials for testing instead of test cards on the live fts host?
+3. Is there a specific test card or amount we should use for approval testing on this MID?
+
+Thank you.

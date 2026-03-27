@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/session.php';
+require_once __DIR__ . '/../booking/booking.php';
 
 /**
  * @return array{ok: bool, error?: string}
@@ -31,10 +32,13 @@ function login_user(string $email, string $password): array
     }
 
     session_regenerate_id(true);
-    $_SESSION['user_id'] = (int) $row['id'];
+    $uid = (int) $row['id'];
+    $_SESSION['user_id'] = $uid;
     $_SESSION['user_name'] = $row['name'];
     $_SESSION['user_email'] = $row['email'];
     $_SESSION['user_role'] = ((string) ($row['role'] ?? '')) === 'admin' ? 'admin' : 'client';
+
+    chb_attach_guest_bookings_to_user($uid, $email);
 
     return ['ok' => true];
 }

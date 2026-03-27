@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../config/session.php';
+require_once __DIR__ . '/../booking/booking.php';
 
 function google_oauth_env(string $key): string
 {
@@ -218,6 +219,8 @@ function login_or_register_google_user(string $googleSub, string $email, string 
             $dispRole = 'client';
         }
     }
+
+    chb_attach_guest_bookings_to_user($userId, $email);
 
     session_regenerate_id(true);
     $_SESSION['user_id'] = $userId;
