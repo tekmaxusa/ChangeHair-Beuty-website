@@ -153,12 +153,12 @@ export default function AdminUsersPage() {
   };
 
   return (
-    <div className="min-h-screen bg-salon-beige pt-28 pb-20 px-6">
-      <div className="max-w-6xl mx-auto">
-        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
-          <div>
+    <div className="min-h-screen bg-salon-beige pt-24 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 overflow-x-hidden">
+      <div className="max-w-6xl mx-auto min-w-0">
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 sm:mb-10">
+          <div className="min-w-0">
             <p className="text-[10px] uppercase tracking-widest text-salon-gold">Merchant</p>
-            <h1 className="text-3xl font-serif">Accounts</h1>
+            <h1 className="text-2xl sm:text-3xl font-serif">Accounts</h1>
             <p className="text-sm text-salon-ink/60">{user.email}</p>
             <div className="mt-2 flex flex-col gap-1">
               {notifPerm === 'default' && (
@@ -223,7 +223,7 @@ export default function AdminUsersPage() {
 
         {error && <p className="text-red-600 text-sm mb-4">{error}</p>}
 
-        <div className="bg-white border border-salon-ink/5 shadow-sm p-8 mb-10 max-w-lg">
+        <div className="bg-white border border-salon-ink/5 shadow-sm p-6 sm:p-8 mb-8 sm:mb-10 w-full max-w-lg min-w-0">
           <h2 className="font-serif text-lg mb-4">Create client account</h2>
           <p className="text-xs text-salon-ink/50 mb-4">
             Merchant admins are not created here — use <code className="text-[10px]">.env</code> or the database.
@@ -260,14 +260,19 @@ export default function AdminUsersPage() {
           </form>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="bg-white border border-salon-ink/5 p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          <div className="bg-white border border-salon-ink/5 p-4 sm:p-6 min-w-0">
             <h3 className="font-medium mb-4">Clients</h3>
             <ul className="text-sm space-y-3">
               {clients.map((c) => (
-                <li key={c.id} className="flex flex-wrap items-baseline justify-between gap-2 border-b border-salon-ink/5 pb-2">
-                  <span>
-                    {c.name} — {c.email}
+                <li
+                  key={c.id}
+                  className="flex flex-col sm:flex-row sm:flex-wrap sm:items-baseline sm:justify-between gap-2 border-b border-salon-ink/5 pb-3 sm:pb-2"
+                >
+                  <span className="min-w-0 break-words">
+                    <span className="font-medium">{c.name}</span>
+                    <span className="text-salon-ink/60"> — </span>
+                    <span className="break-all">{c.email}</span>
                   </span>
                   <button
                     type="button"
@@ -281,12 +286,14 @@ export default function AdminUsersPage() {
               ))}
             </ul>
           </div>
-          <div className="bg-white border border-salon-ink/5 p-6">
+          <div className="bg-white border border-salon-ink/5 p-4 sm:p-6 min-w-0">
             <h3 className="font-medium mb-4">Admins</h3>
             <ul className="text-sm space-y-2">
               {admins.map((a) => (
-                <li key={a.id}>
-                  {a.name} — {a.email}
+                <li key={a.id} className="break-words">
+                  <span className="font-medium">{a.name}</span>
+                  <span className="text-salon-ink/60"> — </span>
+                  <span className="break-all">{a.email}</span>
                 </li>
               ))}
             </ul>

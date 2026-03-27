@@ -12,6 +12,8 @@ This contains everything you need to run your app locally..
 
 **Ongoing deployment reference:** [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md). The SPA lives at the repo root; the PHP API is in **`api/`**.
 
+**Production UI (cPanel):** `https://tekmaxhosting.com/bookings/changehair/`
+
 View your app in AI Studio: https://ai.studio/apps/a9bc5ac8-eeed-46e3-ac1e-5b8f40d38839
 
 ## Run Locally
@@ -43,6 +45,8 @@ A local helper is included at `scripts/deploy-cpanel.sh` to sync updated files v
 export CPANEL_SSH_HOST=tekmaxhosting.com
 export CPANEL_SSH_USER=YOUR_USER
 export CPANEL_SSH_IDENTITY_FILE="$PWD/cpanel_deploy_key"
+export VITE_BASE=/bookings/changehair/
+export VITE_API_URL=https://tekmaxhosting.com/bookings/changehair/public
 bash ./scripts/deploy-cpanel.sh all --build
 ```
 

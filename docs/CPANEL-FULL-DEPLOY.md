@@ -1,8 +1,10 @@
 # Full stack on cPanel (SPA + PHP API, same site)
 
+**This deployment — public UI:** `https://tekmaxhosting.com/bookings/changehair/` (API under `…/bookings/changehair/public/`).
+
 Host the **Vite build** (`dist/`) and the **PHP API** (`api/`) under the **same hostname** so login and refresh cookies work reliably (first-party cookies, no GitHub Pages ↔ API cross-site issues).
 
-Replace `https://YOURDOMAIN.com` and path segments with your real domain and cPanel folder names.
+Elsewhere in this doc, replace `https://YOURDOMAIN.com` with your real host if it differs.
 
 ---
 

@@ -278,12 +278,12 @@ export default function AdminBookingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-salon-beige pt-28 pb-20 px-6">
-      <div className="max-w-6xl mx-auto">
-        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-10">
+    <div className="min-h-screen bg-salon-beige pt-24 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 overflow-x-hidden">
+      <div className="max-w-6xl mx-auto min-w-0">
+        <header className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 sm:mb-10">
           <div>
             <p className="text-[10px] uppercase tracking-widest text-salon-gold">Merchant</p>
-            <h1 className="text-3xl font-serif">Bookings</h1>
+            <h1 className="text-2xl sm:text-3xl font-serif">Bookings</h1>
             <p className="text-sm text-salon-ink/60">{user.email}</p>
             <div className="flex flex-col gap-1 mt-2">
               <div className="flex flex-wrap gap-x-4 gap-y-1">
@@ -372,14 +372,99 @@ export default function AdminBookingsPage() {
               type="button"
               disabled={selectedIds.length === 0 || bulkBusy || busyId !== null}
               onClick={() => void bulkDeleteSelected()}
-              className="text-xs uppercase tracking-wider px-3 py-2 border border-red-200 text-red-700 rounded hover:bg-red-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="text-xs uppercase tracking-wider px-3 py-2 border border-red-200 text-red-700 rounded hover:bg-red-50 disabled:opacity-40 disabled:cursor-not-allowed w-full sm:w-auto text-center"
             >
               {bulkBusy ? 'Deleting…' : `Delete selected (${selectedIds.length})`}
             </button>
           </div>
         )}
 
-        <div className="bg-white border border-salon-ink/5 shadow-sm overflow-x-auto">
+        {/* Narrow viewports: stacked cards — no horizontal scroll */}
+        <div className="xl:hidden space-y-4">
+          {rows.length === 0 ? (
+            <div className="bg-white border border-salon-ink/5 shadow-sm p-8 text-center text-salon-ink/50 text-sm">
+              No bookings yet.
+            </div>
+          ) : (
+            paginatedRows.map((b) => (
+              <article
+                key={b.id}
+                className="bg-white border border-salon-ink/5 shadow-sm rounded-lg p-4 space-y-3 min-w-0"
+              >
+                <div className="flex items-start gap-3 min-w-0">
+                  <input
+                    type="checkbox"
+                    className="rounded border-salon-ink/30 mt-1 shrink-0"
+                    checked={selectedIds.includes(b.id)}
+                    onChange={() => toggleOne(b.id)}
+                    disabled={bulkBusy}
+                    aria-label={`Select booking ${b.id}`}
+                  />
+                  <div className="flex-1 min-w-0 space-y-2">
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                      <span className="font-medium text-salon-ink">#{b.id}</span>
+                      <span className="text-[10px] uppercase tracking-wider px-2 py-0.5 rounded bg-salon-beige capitalize">
+                        {b.status}
+                      </span>
+                      <span className="text-[10px] uppercase tracking-wider text-salon-ink/45">
+                        {(b.payment_status || 'none').replace(/_/g, ' ')}
+                      </span>
+                    </div>
+                    <div>
+                      <p className="font-medium text-salon-ink break-words">{b.client_name}</p>
+                      <p className="text-xs text-salon-ink/50 break-all">{b.client_email}</p>
+                    </div>
+                    <p className="text-sm text-salon-ink/80 break-words">{b.service_name}</p>
+                    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                      <div>
+                        <span className="text-[10px] uppercase tracking-wider text-salon-ink/45 block">Date</span>
+                        {b.booking_date}
+                      </div>
+                      <div>
+                        <span className="text-[10px] uppercase tracking-wider text-salon-ink/45 block">Time</span>
+                        {String(b.booking_time).slice(0, 5)}
+                      </div>
+                      <div>
+                        <span className="text-[10px] uppercase tracking-wider text-salon-ink/45 block">Total</span>
+                        {centsToUsd(b.service_total_cents)}
+                      </div>
+                      <div>
+                        <span className="text-[10px] uppercase tracking-wider text-salon-ink/45 block">Deposit</span>
+                        {centsToUsd(netDepositCents(b))}
+                        {Number(b.deposit_refunded_cents || 0) > 0 && (
+                          <span className="block text-[10px] text-salon-ink/45">
+                            refunded {centsToUsd(Number(b.deposit_refunded_cents || 0))}
+                          </span>
+                        )}
+                      </div>
+                      <div className="col-span-2">
+                        <span className="text-[10px] uppercase tracking-wider text-salon-ink/45 block">Remaining</span>
+                        {centsToUsd(Math.max(0, Number(b.service_total_cents || 0) - netDepositCents(b)))}
+                      </div>
+                      <div className="col-span-2 text-xs text-salon-ink/55">
+                        <span className="text-[10px] uppercase tracking-wider text-salon-ink/45 block">Placed</span>
+                        {formatBookingPlacedAt(b.created_at)}
+                      </div>
+                    </div>
+                    {(b.status === 'confirmed' || b.status === 'pending') && (
+                      <button
+                        type="button"
+                        disabled={busyId === b.id}
+                        onClick={() => void actCancel(b)}
+                        className="w-full px-3 py-2.5 rounded-lg border border-red-200 bg-white text-red-700 text-[11px] font-semibold uppercase tracking-wide hover:bg-red-50 disabled:opacity-40"
+                      >
+                        {busyId === b.id ? 'Working…' : 'Cancel booking'}
+                      </button>
+                    )}
+                  </div>
+                </div>
+              </article>
+            ))
+          )}
+        </div>
+
+        {/* Wide screens: full table */}
+        <div className="hidden xl:block bg-white border border-salon-ink/5 shadow-sm rounded-lg overflow-hidden">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b text-left text-[10px] uppercase tracking-widest text-salon-ink/50">
@@ -397,8 +482,8 @@ export default function AdminBookingsPage() {
                 </th>
                 <th className="p-3">ID</th>
                 <th className="p-3">Status</th>
-                <th className="p-3">Client</th>
-                <th className="p-3">Service</th>
+                <th className="p-3 w-[14%]">Client</th>
+                <th className="p-3 w-[12%]">Service</th>
                 <th className="p-3">Date</th>
                 <th className="p-3">Time</th>
                 <th className="p-3">Total</th>
@@ -436,7 +521,7 @@ export default function AdminBookingsPage() {
                       <br />
                       <span className="text-salon-ink/50 text-xs">{b.client_email}</span>
                     </td>
-                    <td className="p-3 max-w-[200px]">{b.service_name}</td>
+                    <td className="p-3 break-words">{b.service_name}</td>
                     <td className="p-3">{b.booking_date}</td>
                     <td className="p-3">{String(b.booking_time).slice(0, 5)}</td>
                     <td className="p-3 whitespace-nowrap">{centsToUsd(b.service_total_cents)}</td>

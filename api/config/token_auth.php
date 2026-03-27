@@ -136,26 +136,60 @@ function chb_refresh_cookie_name(): string
     return 'CHBRT';
 }
 
+/**
+ * Path for CHBRT cookie — must prefix-match browser requests to .../api/auth/*.php.
+ * Optional override: CHB_REFRESH_COOKIE_PATH in api/.env.
+ */
+function chb_refresh_cookie_path(): string
+{
+    $fromEnv = chb_env_get('CHB_REFRESH_COOKIE_PATH', '');
+    if ($fromEnv !== '') {
+        $p = '/' . ltrim($fromEnv, '/');
+
+        return str_ends_with($p, '/') ? $p : ($p . '/');
+    }
+
+    $sn = (string) ($_SERVER['SCRIPT_NAME'] ?? '');
+    if (preg_match('#^(.*)/api/auth/[^/]+$#', $sn, $m)) {
+        return $m[1] . '/api/auth/';
+    }
+    if (preg_match('#^(.*)/public/[^/]+\.php$#', $sn, $m)) {
+        return $m[1] . '/public/api/auth/';
+    }
+
+    return '/api/auth/';
+}
+
+function chb_refresh_cookie_samesite(): string
+{
+    $cross = chb_env_get('CHB_SESSION_CROSS_SITE', '');
+    $crossSite = $cross === '1' || strtolower($cross) === 'true';
+
+    return $crossSite ? 'None' : 'Lax';
+}
+
 function chb_set_refresh_cookie(string $token, int $ttlSeconds = 2592000): void
 {
     $exp = time() + max(3600, $ttlSeconds);
+    $path = chb_refresh_cookie_path();
     setcookie(chb_refresh_cookie_name(), $token, [
         'expires' => $exp,
-        'path' => '/api/auth/',
+        'path' => $path,
         'secure' => true,
         'httponly' => true,
-        'samesite' => 'None',
+        'samesite' => chb_refresh_cookie_samesite(),
     ]);
 }
 
 function chb_clear_refresh_cookie(): void
 {
+    $path = chb_refresh_cookie_path();
     setcookie(chb_refresh_cookie_name(), '', [
         'expires' => time() - 3600,
-        'path' => '/api/auth/',
+        'path' => $path,
         'secure' => true,
         'httponly' => true,
-        'samesite' => 'None',
+        'samesite' => chb_refresh_cookie_samesite(),
     ]);
 }
 

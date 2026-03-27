@@ -160,7 +160,7 @@ export default function MerchantBookingNotifier() {
       {toast && (
         <div
           role="status"
-          className="fixed bottom-6 right-6 z-[100] max-w-md rounded-2xl border border-salon-ink/10 bg-white shadow-[0_12px_40px_-18px_rgba(0,0,0,0.2)] border-l-4 border-l-salon-gold p-4 sm:p-5"
+          className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:max-w-md z-[100] rounded-2xl border border-salon-ink/10 bg-white shadow-[0_12px_40px_-18px_rgba(0,0,0,0.2)] border-l-4 border-l-salon-gold p-4 sm:p-5 min-w-0"
         >
           <p className="text-[10px] uppercase tracking-[0.2em] text-salon-gold mb-2">New booking</p>
           <p className="text-sm text-salon-ink leading-relaxed mb-4">{toast}</p>

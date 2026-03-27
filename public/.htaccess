@@ -1,0 +1,12 @@
+# SPA client-side routing (React Router): serve index.html for paths that are not real files/dirs.
+# Required for direct URLs and refresh on routes like /bookings/changehair/dashboard.
+# Deployed with dist/ to cPanel next to index.html. Depends on mod_rewrite + AllowOverride.
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . index.html [L]
+</IfModule>
+
+DirectoryIndex index.html

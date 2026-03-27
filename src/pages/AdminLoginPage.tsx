@@ -27,13 +27,13 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-salon-beige pt-28 pb-20 px-6">
-      <div className="max-w-md mx-auto bg-white p-10 shadow-lg border border-salon-ink/5">
+    <div className="min-h-screen bg-salon-beige pt-24 sm:pt-28 pb-12 sm:pb-20 px-4 sm:px-6 overflow-x-hidden">
+      <div className="max-w-md mx-auto w-full min-w-0 bg-white p-6 sm:p-10 shadow-lg border border-salon-ink/5">
         <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-2">Merchant</p>
         <h1 className="text-2xl font-serif text-salon-ink mb-2">Sign in</h1>
-        <p className="text-sm text-salon-ink/55 mb-6">
+        <p className="text-sm text-salon-ink/55 mb-6 break-words">
           Merchant sign-in only — client accounts cannot use this page. Use the admin email and password from your server (
-          <code className="text-xs">ADMIN_EMAIL</code> / <code className="text-xs">ADMIN_INITIAL_PASSWORD</code>).
+          <code className="text-xs break-all">ADMIN_EMAIL</code> / <code className="text-xs break-all">ADMIN_INITIAL_PASSWORD</code>).
         </p>
         {error && <p className="text-sm text-red-600 mb-4">{error}</p>}
         <form onSubmit={onSubmit} className="space-y-6">
