@@ -13,18 +13,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Rsync to cPanel over SSH
         uses: burnett01/rsync-deployments@7.0.1
         with:
           switches: -avzr --delete
+          args: --exclude sql/ --exclude .env --exclude .dockerignore
           path: api/
           remote_path: ${{ secrets.CPANEL_REMOTE_PATH }}
           remote_host: ${{ secrets.CPANEL_SSH_HOST }}
           remote_user: ${{ secrets.CPANEL_SSH_USER }}
           remote_key: ${{ secrets.CPANEL_SSH_KEY }}
-          exclude: |
-            sql/
-            .env
-            .dockerignore
