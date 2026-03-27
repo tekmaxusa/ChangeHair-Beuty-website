@@ -9,8 +9,7 @@ require_once dirname(__DIR__, 3) . '/config/database.php';
 chb_api_require_admin_json();
 
 $method = $_SERVER['REQUEST_METHOD'] ?? '';
-$authz = (string) ($_SERVER['HTTP_AUTHORIZATION'] ?? '');
-$usingBearer = stripos($authz, 'Bearer ') === 0;
+$usingBearer = chb_auth_user_from_bearer() !== null;
 
 if ($method === 'GET') {
     if (!$usingBearer && (empty($_SESSION['chb_csrf_admin']) || !is_string($_SESSION['chb_csrf_admin']))) {

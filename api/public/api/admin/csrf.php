@@ -7,8 +7,7 @@ require_once dirname(__DIR__) . '/_init.php';
 chb_api_require_method('GET');
 chb_api_require_admin_json();
 
-$authz = (string) ($_SERVER['HTTP_AUTHORIZATION'] ?? '');
-$usingBearer = stripos($authz, 'Bearer ') === 0;
+$usingBearer = chb_auth_user_from_bearer() !== null;
 
 if (!$usingBearer && (empty($_SESSION['chb_csrf_admin']) || !is_string($_SESSION['chb_csrf_admin']))) {
     $_SESSION['chb_csrf_admin'] = bin2hex(random_bytes(16));
