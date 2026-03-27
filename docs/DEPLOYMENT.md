@@ -1,5 +1,7 @@
 # Deployment guide — Change Hair & Beauty
 
+**First-time from scratch?** Use the full checklist: **[INITIAL-SETUP.md](INITIAL-SETUP.md)** (MySQL import, cPanel paths, GitHub secrets, OAuth, verification).
+
 One place for the **three production targets**: GitHub Pages (frontend), cPanel (PHP API), cPanel MySQL.
 
 **Layout:** Vite/React SPA at **repo root** (`src/`, `index.html`, `vite.config.ts`) · **`api/`** = PHP API · **`api/sql/`** = schema/migrations.
