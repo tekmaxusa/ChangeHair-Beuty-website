@@ -57,10 +57,6 @@ export default function LoginPage() {
 
   const signupWithNextHref = `/signup?next=${encodeURIComponent(nextInternal)}`;
 
-  if (!loading && user) {
-    return <Navigate to={nextToReactRoute(nextInternal)} replace />;
-  }
-
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -98,6 +94,10 @@ export default function LoginPage() {
       navigate(nextToReactRoute(nextInternal), { replace: true });
     });
   }, [oauthToken, refreshMe, navigate, nextInternal, setSearchParams]);
+
+  if (!loading && user) {
+    return <Navigate to={nextToReactRoute(nextInternal)} replace />;
+  }
 
   return (
     <div className="min-h-screen bg-salon-beige pt-28 pb-20 px-6">
