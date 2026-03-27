@@ -68,7 +68,10 @@ function chb_api_send_cors(): void
  */
 function chb_api_auth_user(): ?array
 {
-    $tokUser = chb_auth_user_from_bearer();
+    $tokUser = null;
+    if (function_exists('chb_auth_user_from_bearer')) {
+        $tokUser = chb_auth_user_from_bearer();
+    }
     if ($tokUser !== null && $tokUser['id'] > 0) {
         return $tokUser;
     }
@@ -84,6 +87,22 @@ function chb_api_auth_user(): ?array
     }
 
     return null;
+}
+
+function chb_api_has_bearer_token(): bool
+{
+    $hdr = (string) ($_SERVER['HTTP_AUTHORIZATION'] ?? '');
+    if ($hdr === '') {
+        $hdr = (string) ($_SERVER['REDIRECT_HTTP_AUTHORIZATION'] ?? '');
+    }
+    if ($hdr === '' && function_exists('getallheaders')) {
+        $all = getallheaders();
+        if (is_array($all)) {
+            $hdr = (string) ($all['Authorization'] ?? $all['authorization'] ?? '');
+        }
+    }
+
+    return (bool) preg_match('/^\s*Bearer\s+.+\s*$/i', $hdr);
 }
 
 function chb_api_init(): void

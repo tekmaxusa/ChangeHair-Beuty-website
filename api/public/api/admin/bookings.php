@@ -9,13 +9,19 @@ require_once dirname(__DIR__, 3) . '/config/contact_mail.php';
 chb_api_require_admin_json();
 
 $method = $_SERVER['REQUEST_METHOD'] ?? '';
-$usingBearer = chb_auth_user_from_bearer() !== null;
+$usingBearer = function_exists('chb_auth_user_from_bearer')
+    ? (chb_auth_user_from_bearer() !== null)
+    : chb_api_has_bearer_token();
 
 if ($method === 'GET') {
     if (!$usingBearer && (empty($_SESSION['chb_csrf_admin']) || !is_string($_SESSION['chb_csrf_admin']))) {
         $_SESSION['chb_csrf_admin'] = bin2hex(random_bytes(16));
     }
-    $rows = fetch_all_bookings_for_admin();
+    try {
+        $rows = fetch_all_bookings_for_admin();
+    } catch (Throwable $e) {
+        chb_api_json_error('Could not load bookings: ' . $e->getMessage(), 500);
+    }
     chb_api_json([
         'ok' => true,
         'csrf' => $usingBearer ? '' : (string) ($_SESSION['chb_csrf_admin'] ?? ''),
@@ -93,7 +99,11 @@ if ($bid <= 0 || $action !== 'cancel') {
 }
 
 require_once dirname(__DIR__, 3) . '/payments/admin_deposit_refund.php';
-$rev = chb_admin_reverse_deposit_on_cancel($bid);
+try {
+    $rev = chb_admin_reverse_deposit_on_cancel($bid);
+} catch (Throwable $e) {
+    chb_api_json_error('Could not cancel booking: ' . $e->getMessage(), 500);
+}
 if (!$rev['ok']) {
     chb_api_json_error($rev['error'] ?? 'Could not reverse card deposit.', 400);
 }

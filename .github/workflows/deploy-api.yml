@@ -18,7 +18,7 @@ jobs:
       - name: Rsync to cPanel over SSH
         uses: burnett01/rsync-deployments@7.0.1
         with:
-          switches: -avzr --delete
+          switches: -avzr
           args: --exclude sql/ --exclude .env --exclude .dockerignore
           path: api/
           remote_path: ${{ secrets.CPANEL_REMOTE_PATH }}

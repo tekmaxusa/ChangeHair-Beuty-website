@@ -33,6 +33,26 @@ The site deploys to GitHub Pages when you push to **`main`** or **`payment`** (s
 4. After the workflow finishes, your site will be at:  
    `https://<your-username>.github.io/<repository-name>/`
 
+## Deploy to cPanel (manual script)
+
+A local helper is included at `scripts/deploy-cpanel.sh` to sync updated files via SSH/rsync.
+
+```bash
+CPANEL_SSH_HOST=tekmaxhosting.com CPANEL_SSH_USER=YOUR_USER \
+bash ./scripts/deploy-cpanel.sh all --build
+```
+
+Defaults:
+- Frontend `dist/` -> `public_html/bookings/changehair`
+- API `api/` -> `public_html/bookings/changehair-api`
+
+You can also deploy one side only:
+
+```bash
+bash ./scripts/deploy-cpanel.sh frontend --build
+bash ./scripts/deploy-cpanel.sh api
+```
+
 ## Deploy to Vercel (auto-deploy on every GitHub push)
 
 Connect this repo to Vercel once; after that, **every push to `main` will deploy the site to Vercel automatically**.

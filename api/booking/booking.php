@@ -99,16 +99,32 @@ function chb_attach_guest_bookings_to_user(int $userId, string $email): int
 function fetch_all_bookings_for_admin(): array
 {
     $pdo = db();
-    $stmt = $pdo->query(
-        'SELECT b.id, b.user_id, COALESCE(u.name, b.guest_name) AS client_name, COALESCE(u.email, b.guest_email) AS client_email,
-                b.service_category, b.service_name, b.booking_date, b.booking_time, b.status,
-                b.service_total_cents, b.deposit_due_cents, b.deposit_paid_cents, b.deposit_refunded_cents, b.payment_status, b.created_at
-         FROM bookings b
-         LEFT JOIN users u ON u.id = b.user_id
-         ORDER BY b.booking_date DESC, b.booking_time DESC, b.id DESC'
-    );
+    try {
+        $stmt = $pdo->query(
+            'SELECT b.id, b.user_id, COALESCE(u.name, b.guest_name) AS client_name, COALESCE(u.email, b.guest_email) AS client_email,
+                    b.service_category, b.service_name, b.booking_date, b.booking_time, b.status,
+                    b.service_total_cents, b.deposit_due_cents, b.deposit_paid_cents, b.deposit_refunded_cents, b.payment_status, b.created_at
+             FROM bookings b
+             LEFT JOIN users u ON u.id = b.user_id
+             ORDER BY b.booking_date DESC, b.booking_time DESC, b.id DESC'
+        );
 
-    return $stmt->fetchAll();
+        return $stmt->fetchAll();
+    } catch (PDOException $e) {
+        // Legacy schema fallback: guest_* and/or deposit_refunded_cents may not exist yet.
+        $stmt = $pdo->query(
+            "SELECT b.id, b.user_id, u.name AS client_name, u.email AS client_email,
+                    b.service_category, b.service_name, b.booking_date, b.booking_time, b.status,
+                    b.service_total_cents, b.deposit_due_cents, b.deposit_paid_cents,
+                    0 AS deposit_refunded_cents,
+                    COALESCE(b.payment_status, 'none') AS payment_status, b.created_at
+             FROM bookings b
+             LEFT JOIN users u ON u.id = b.user_id
+             ORDER BY b.booking_date DESC, b.booking_time DESC, b.id DESC"
+        );
+
+        return $stmt->fetchAll();
+    }
 }
 
 /**
@@ -117,18 +133,35 @@ function fetch_all_bookings_for_admin(): array
 function fetch_booking_by_id(int $bookingId): ?array
 {
     $pdo = db();
-    $stmt = $pdo->prepare(
-        'SELECT b.id, b.user_id, COALESCE(u.name, b.guest_name) AS client_name, COALESCE(u.email, b.guest_email) AS client_email,
-                b.guest_phone, b.service_category, b.service_name, b.booking_date, b.booking_time, b.status,
-                b.service_total_cents, b.deposit_due_cents, b.deposit_paid_cents, b.deposit_refunded_cents, b.payment_status, b.created_at
-         FROM bookings b
-         LEFT JOIN users u ON u.id = b.user_id
-         WHERE b.id = :id LIMIT 1'
-    );
-    $stmt->execute([':id' => $bookingId]);
-    $row = $stmt->fetch();
+    try {
+        $stmt = $pdo->prepare(
+            'SELECT b.id, b.user_id, COALESCE(u.name, b.guest_name) AS client_name, COALESCE(u.email, b.guest_email) AS client_email,
+                    b.guest_phone, b.service_category, b.service_name, b.booking_date, b.booking_time, b.status,
+                    b.service_total_cents, b.deposit_due_cents, b.deposit_paid_cents, b.deposit_refunded_cents, b.payment_status, b.created_at
+             FROM bookings b
+             LEFT JOIN users u ON u.id = b.user_id
+             WHERE b.id = :id LIMIT 1'
+        );
+        $stmt->execute([':id' => $bookingId]);
+        $row = $stmt->fetch();
 
-    return $row ?: null;
+        return $row ?: null;
+    } catch (PDOException $e) {
+        // Legacy schema fallback.
+        $stmt = $pdo->prepare(
+            "SELECT b.id, b.user_id, u.name AS client_name, u.email AS client_email,
+                    '' AS guest_phone, b.service_category, b.service_name, b.booking_date, b.booking_time, b.status,
+                    b.service_total_cents, b.deposit_due_cents, b.deposit_paid_cents,
+                    0 AS deposit_refunded_cents, COALESCE(b.payment_status, 'none') AS payment_status, b.created_at
+             FROM bookings b
+             LEFT JOIN users u ON u.id = b.user_id
+             WHERE b.id = :id LIMIT 1"
+        );
+        $stmt->execute([':id' => $bookingId]);
+        $row = $stmt->fetch();
+
+        return $row ?: null;
+    }
 }
 
 function is_slot_taken(string $dateYmd, string $timeHi): bool
