@@ -82,6 +82,18 @@ async function tryRefreshToken(): Promise<boolean> {
   }
 }
 
+/**
+ * After a full page reload the in-memory access token is empty. If the browser
+ * still has a refresh-token cookie, exchange it for an access token before GET /me.
+ * (Option A: me.php stays 200 + user null when truly logged out.)
+ */
+export async function ensureAccessTokenFromRefreshCookie(): Promise<boolean> {
+  if (accessTokenMemory) {
+    return true;
+  }
+  return tryRefreshToken();
+}
+
 export function setAccessToken(token: string): void {
   accessTokenMemory = token.trim();
 }

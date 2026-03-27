@@ -1,5 +1,11 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { apiFetch, apiJson, clearAccessToken, setAccessToken } from '../lib/api';
+import {
+  apiFetch,
+  apiJson,
+  clearAccessToken,
+  ensureAccessTokenFromRefreshCookie,
+  setAccessToken,
+} from '../lib/api';
 
 export type UserRole = 'client' | 'admin';
 
@@ -30,6 +36,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshMe = useCallback(async () => {
     try {
+      await ensureAccessTokenFromRefreshCookie();
       const data = await apiJson<MeResponse>('/api/auth/me.php', { method: 'GET' });
       setUser(data.user ?? null);
     } catch {
