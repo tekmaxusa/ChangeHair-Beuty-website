@@ -1,6 +1,7 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { apiLogin, useAuth } from '../context/AuthContext';
+import { setAccessToken } from '../lib/api';
 import { nextToReactRoute, validatedInternalNext } from '../lib/nextRoute';
 
 function apiOriginForOAuth(): string {
@@ -46,6 +47,7 @@ export default function LoginPage() {
 
   const googleErrParam = searchParams.get('google_err');
   const googleErrMsg = googleErrParam ? googleErrorMessage(googleErrParam) : '';
+  const oauthToken = searchParams.get('oauth_token') || '';
 
   const apiOrigin = apiOriginForOAuth();
   const googleStart =
@@ -83,6 +85,19 @@ export default function LoginPage() {
   };
 
   const showGoogleFallback = apiOrigin === '';
+
+  useEffect(() => {
+    if (!oauthToken) return;
+    setAccessToken(oauthToken);
+    void refreshMe().then(() => {
+      setSearchParams((prev) => {
+        const p = new URLSearchParams(prev);
+        p.delete('oauth_token');
+        return p;
+      });
+      navigate(nextToReactRoute(nextInternal), { replace: true });
+    });
+  }, [oauthToken, refreshMe, navigate, nextInternal, setSearchParams]);
 
   return (
     <div className="min-h-screen bg-salon-beige pt-28 pb-20 px-6">

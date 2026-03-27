@@ -3,6 +3,7 @@
  * Local dev: leave unset and use Vite proxy → PHP container (see vite.config.ts).
  */
 const rawBase = (import.meta.env.VITE_API_URL as string | undefined) || '';
+let accessTokenMemory = '';
 
 export function apiUrl(path: string): string {
   const p = path.startsWith('/') ? path : `/${path}`;
@@ -13,13 +14,35 @@ export function apiUrl(path: string): string {
 }
 
 export async function apiFetch(path: string, init?: RequestInit): Promise<Response> {
-  return fetch(apiUrl(path), {
+  const headers: Record<string, string> = {
+    ...(init?.headers as Record<string, string>),
+  };
+  if (accessTokenMemory) {
+    headers.Authorization = `Bearer ${accessTokenMemory}`;
+  }
+
+  let res = await fetch(apiUrl(path), {
     ...init,
     credentials: 'include',
-    headers: {
-      ...(init?.headers as Record<string, string>),
-    },
+    headers,
   });
+  if (res.status === 401 && !path.includes('/api/auth/refresh.php')) {
+    const refreshed = await tryRefreshToken();
+    if (refreshed) {
+      const retryHeaders: Record<string, string> = {
+        ...(init?.headers as Record<string, string>),
+      };
+      if (accessTokenMemory) {
+        retryHeaders.Authorization = `Bearer ${accessTokenMemory}`;
+      }
+      res = await fetch(apiUrl(path), {
+        ...init,
+        credentials: 'include',
+        headers: retryHeaders,
+      });
+    }
+  }
+  return res;
 }
 
 export async function apiJson<T>(path: string, init?: RequestInit): Promise<T> {
@@ -30,4 +53,39 @@ export async function apiJson<T>(path: string, init?: RequestInit): Promise<T> {
 
 export async function apiReadJsonBody<T>(res: Response): Promise<T> {
   return res.json() as Promise<T>;
+}
+
+interface RefreshResponse {
+  ok?: boolean;
+  accessToken?: string;
+}
+
+async function tryRefreshToken(): Promise<boolean> {
+  try {
+    const res = await fetch(apiUrl('/api/auth/refresh.php'), {
+      method: 'POST',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}',
+    });
+    if (!res.ok) {
+      return false;
+    }
+    const data = (await res.json()) as RefreshResponse;
+    if (!data.ok || !data.accessToken) {
+      return false;
+    }
+    accessTokenMemory = data.accessToken;
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function setAccessToken(token: string): void {
+  accessTokenMemory = token.trim();
+}
+
+export function clearAccessToken(): void {
+  accessTokenMemory = '';
 }

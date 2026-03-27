@@ -1,5 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { apiFetch, apiJson } from '../lib/api';
+import { apiFetch, apiJson, clearAccessToken, setAccessToken } from '../lib/api';
 
 export type UserRole = 'client' | 'admin';
 
@@ -65,9 +65,12 @@ export async function apiLogin(email: string, password: string): Promise<AuthUse
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
   });
-  const data = (await res.json()) as { ok?: boolean; user?: AuthUser; error?: string };
+  const data = (await res.json()) as { ok?: boolean; user?: AuthUser; accessToken?: string; error?: string };
   if (!res.ok || !data.ok || !data.user) {
     throw new Error(data.error || 'Login failed');
+  }
+  if (data.accessToken) {
+    setAccessToken(data.accessToken);
   }
   return data.user;
 }
@@ -78,9 +81,12 @@ export async function apiAdminLogin(email: string, password: string): Promise<Au
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ email, password }),
   });
-  const data = (await res.json()) as { ok?: boolean; user?: AuthUser; error?: string };
+  const data = (await res.json()) as { ok?: boolean; user?: AuthUser; accessToken?: string; error?: string };
   if (!res.ok || !data.ok || !data.user) {
     throw new Error(data.error || 'Login failed');
+  }
+  if (data.accessToken) {
+    setAccessToken(data.accessToken);
   }
   return data.user;
 }
@@ -92,9 +98,12 @@ export async function apiSignup(name: string, email: string, password: string): 
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ name, email, password }),
   });
-  const data = (await res.json()) as { ok?: boolean; user?: AuthUser; error?: string };
+  const data = (await res.json()) as { ok?: boolean; user?: AuthUser; accessToken?: string; error?: string };
   if (!res.ok || !data.ok || !data.user) {
     throw new Error(data.error || 'Sign up failed');
+  }
+  if (data.accessToken) {
+    setAccessToken(data.accessToken);
   }
   return data.user;
 }
@@ -111,4 +120,5 @@ export async function apiLogout(): Promise<void> {
   } catch {
     /* still clear client state below */
   }
+  clearAccessToken();
 }

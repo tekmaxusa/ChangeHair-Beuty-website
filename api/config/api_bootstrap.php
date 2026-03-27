@@ -13,6 +13,7 @@ if (!defined('CHB_API_JSON_REQUEST')) {
 
 require_once __DIR__ . '/env.php';
 require_once __DIR__ . '/session.php';
+require_once __DIR__ . '/token_auth.php';
 
 /**
  * @return list<string>
@@ -58,8 +59,31 @@ function chb_api_send_cors(): void
         // Echo requested headers so browser preflight succeeds for no-cache polling headers.
         header('Access-Control-Allow-Headers: ' . $reqHeaders);
     } else {
-        header('Access-Control-Allow-Headers: Content-Type, Cache-Control, Pragma');
+        header('Access-Control-Allow-Headers: Content-Type, Cache-Control, Pragma, Authorization');
     }
+}
+
+/**
+ * @return array{id:int,name:string,email:string,role:string}|null
+ */
+function chb_api_auth_user(): ?array
+{
+    $tokUser = chb_auth_user_from_bearer();
+    if ($tokUser !== null && $tokUser['id'] > 0) {
+        return $tokUser;
+    }
+
+    session_bootstrap();
+    if (!empty($_SESSION['user_id'])) {
+        return [
+            'id' => current_user_id(),
+            'name' => current_user_name(),
+            'email' => current_user_email(),
+            'role' => current_user_role(),
+        ];
+    }
+
+    return null;
 }
 
 function chb_api_init(): void
@@ -126,27 +150,27 @@ function chb_api_read_json(): array
 
 function chb_api_require_login(): void
 {
-    session_bootstrap();
-    if (empty($_SESSION['user_id'])) {
+    $u = chb_api_auth_user();
+    if ($u === null || $u['id'] <= 0) {
         chb_api_json_error('Unauthorized', 401);
     }
 }
 
 function chb_api_require_client(): void
 {
-    session_bootstrap();
-    if (empty($_SESSION['user_id'])) {
+    $u = chb_api_auth_user();
+    if ($u === null || $u['id'] <= 0) {
         chb_api_json_error('Unauthorized', 401);
     }
-    if (is_admin_session()) {
+    if ($u['role'] === 'admin') {
         chb_api_json_error('Use client account', 403);
     }
 }
 
 function chb_api_require_admin_json(): void
 {
-    session_bootstrap();
-    if (empty($_SESSION['user_id']) || (string) ($_SESSION['user_role'] ?? '') !== 'admin') {
+    $u = chb_api_auth_user();
+    if ($u === null || $u['id'] <= 0 || $u['role'] !== 'admin') {
         chb_api_json_error('Forbidden', 403);
     }
 }

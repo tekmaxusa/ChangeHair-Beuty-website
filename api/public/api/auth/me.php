@@ -6,17 +6,17 @@ require_once dirname(__DIR__) . '/_init.php';
 
 chb_api_require_method('GET');
 
-session_bootstrap();
-if (empty($_SESSION['user_id'])) {
+$u = chb_api_auth_user();
+if ($u === null || $u['id'] <= 0) {
     chb_api_json(['ok' => true, 'user' => null]);
 }
 
 chb_api_json([
     'ok' => true,
     'user' => [
-        'id' => current_user_id(),
-        'name' => current_user_name(),
-        'email' => current_user_email(),
-        'role' => current_user_role(),
+        'id' => $u['id'],
+        'name' => $u['name'],
+        'email' => $u['email'],
+        'role' => $u['role'],
     ],
 ]);
