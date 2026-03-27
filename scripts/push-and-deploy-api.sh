@@ -35,8 +35,17 @@ if [[ -f "$ROOT_DIR/.cpanel-deploy.env" ]]; then
   set +a
 fi
 
-echo "==> git push ${GIT_ARGS[*]}"
+if [[ ${#GIT_ARGS[@]} -eq 0 ]]; then
+  echo "==> git push (default upstream)"
+else
+  echo "==> git push ${GIT_ARGS[*]}"
+fi
 git push "${GIT_ARGS[@]}"
 
 echo "==> Deploy API to cPanel"
-exec bash "$ROOT_DIR/scripts/deploy-cpanel.sh" api "${DEPLOY_EXTRA[@]}"
+# With set -u, "${empty_array[@]}" can error on older Bash — branch instead.
+if [[ ${#DEPLOY_EXTRA[@]} -gt 0 ]]; then
+  exec bash "$ROOT_DIR/scripts/deploy-cpanel.sh" api "${DEPLOY_EXTRA[@]}"
+else
+  exec bash "$ROOT_DIR/scripts/deploy-cpanel.sh" api
+fi
