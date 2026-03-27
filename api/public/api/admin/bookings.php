@@ -9,15 +9,17 @@ require_once dirname(__DIR__, 3) . '/config/contact_mail.php';
 chb_api_require_admin_json();
 
 $method = $_SERVER['REQUEST_METHOD'] ?? '';
+$authz = (string) ($_SERVER['HTTP_AUTHORIZATION'] ?? '');
+$usingBearer = stripos($authz, 'Bearer ') === 0;
 
 if ($method === 'GET') {
-    if (empty($_SESSION['chb_csrf_admin']) || !is_string($_SESSION['chb_csrf_admin'])) {
+    if (!$usingBearer && (empty($_SESSION['chb_csrf_admin']) || !is_string($_SESSION['chb_csrf_admin']))) {
         $_SESSION['chb_csrf_admin'] = bin2hex(random_bytes(16));
     }
     $rows = fetch_all_bookings_for_admin();
     chb_api_json([
         'ok' => true,
-        'csrf' => (string) $_SESSION['chb_csrf_admin'],
+        'csrf' => $usingBearer ? '' : (string) ($_SESSION['chb_csrf_admin'] ?? ''),
         'bookings' => $rows,
     ]);
 }
@@ -27,10 +29,12 @@ if ($method !== 'POST') {
 }
 
 $body = chb_api_read_json();
-$csrf = (string) ($body['csrf'] ?? '');
-$sessionCsrf = (string) ($_SESSION['chb_csrf_admin'] ?? '');
-if ($sessionCsrf === '' || !hash_equals($sessionCsrf, $csrf)) {
-    chb_api_json_error('Invalid session token.', 400);
+if (!$usingBearer) {
+    $csrf = (string) ($body['csrf'] ?? '');
+    $sessionCsrf = (string) ($_SESSION['chb_csrf_admin'] ?? '');
+    if ($sessionCsrf === '' || !hash_equals($sessionCsrf, $csrf)) {
+        chb_api_json_error('Invalid session token.', 400);
+    }
 }
 
 $action = (string) ($body['action'] ?? '');
@@ -44,10 +48,12 @@ if ($action === 'delete_many') {
     if (!$r['ok']) {
         chb_api_json_error($r['error'] ?? 'Delete failed.', 400);
     }
-    $_SESSION['chb_csrf_admin'] = bin2hex(random_bytes(16));
+    if (!$usingBearer) {
+        $_SESSION['chb_csrf_admin'] = bin2hex(random_bytes(16));
+    }
     chb_api_json([
         'ok' => true,
-        'csrf' => (string) $_SESSION['chb_csrf_admin'],
+        'csrf' => $usingBearer ? '' : (string) ($_SESSION['chb_csrf_admin'] ?? ''),
         'message' => 'Bookings removed.',
         'deleted' => (int) ($r['deleted'] ?? 0),
     ]);
@@ -71,10 +77,12 @@ if ($action === 'refund_deposit') {
     if (!$r['ok']) {
         chb_api_json_error($r['error'] ?? 'Refund failed.', 400);
     }
-    $_SESSION['chb_csrf_admin'] = bin2hex(random_bytes(16));
+    if (!$usingBearer) {
+        $_SESSION['chb_csrf_admin'] = bin2hex(random_bytes(16));
+    }
     chb_api_json([
         'ok' => true,
-        'csrf' => (string) $_SESSION['chb_csrf_admin'],
+        'csrf' => $usingBearer ? '' : (string) ($_SESSION['chb_csrf_admin'] ?? ''),
         'message' => 'Refund processed.',
         'refund' => $r['refund'] ?? [],
     ]);
@@ -136,10 +144,12 @@ if (!empty($rev['method']) && $rev['method'] === 'void') {
     $message .= ' Deposit refunded at CardConnect.';
 }
 
-$_SESSION['chb_csrf_admin'] = bin2hex(random_bytes(16));
+if (!$usingBearer) {
+    $_SESSION['chb_csrf_admin'] = bin2hex(random_bytes(16));
+}
 $out = [
     'ok' => true,
-    'csrf' => (string) $_SESSION['chb_csrf_admin'],
+    'csrf' => $usingBearer ? '' : (string) ($_SESSION['chb_csrf_admin'] ?? ''),
     'message' => $message,
 ];
 if (!empty($rev['method'])) {

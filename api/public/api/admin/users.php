@@ -9,9 +9,11 @@ require_once dirname(__DIR__, 3) . '/config/database.php';
 chb_api_require_admin_json();
 
 $method = $_SERVER['REQUEST_METHOD'] ?? '';
+$authz = (string) ($_SERVER['HTTP_AUTHORIZATION'] ?? '');
+$usingBearer = stripos($authz, 'Bearer ') === 0;
 
 if ($method === 'GET') {
-    if (empty($_SESSION['chb_csrf_admin']) || !is_string($_SESSION['chb_csrf_admin'])) {
+    if (!$usingBearer && (empty($_SESSION['chb_csrf_admin']) || !is_string($_SESSION['chb_csrf_admin']))) {
         $_SESSION['chb_csrf_admin'] = bin2hex(random_bytes(16));
     }
     $pdo = db();
@@ -23,7 +25,7 @@ if ($method === 'GET') {
     )->fetchAll();
     chb_api_json([
         'ok' => true,
-        'csrf' => (string) $_SESSION['chb_csrf_admin'],
+        'csrf' => $usingBearer ? '' : (string) ($_SESSION['chb_csrf_admin'] ?? ''),
         'clients' => $clients,
         'admins' => $admins,
     ]);
@@ -34,10 +36,12 @@ if ($method !== 'POST') {
 }
 
 $body = chb_api_read_json();
-$csrf = (string) ($body['csrf'] ?? '');
-$sessionCsrf = (string) ($_SESSION['chb_csrf_admin'] ?? '');
-if ($sessionCsrf === '' || !hash_equals($sessionCsrf, $csrf)) {
-    chb_api_json_error('Invalid session token.', 400);
+if (!$usingBearer) {
+    $csrf = (string) ($body['csrf'] ?? '');
+    $sessionCsrf = (string) ($_SESSION['chb_csrf_admin'] ?? '');
+    if ($sessionCsrf === '' || !hash_equals($sessionCsrf, $csrf)) {
+        chb_api_json_error('Invalid session token.', 400);
+    }
 }
 
 $action = (string) ($body['action'] ?? '');
@@ -48,8 +52,10 @@ if ($action === 'delete_client') {
     if (!$r['ok']) {
         chb_api_json_error($r['error'] ?? 'Could not delete account.', 400);
     }
-    $_SESSION['chb_csrf_admin'] = bin2hex(random_bytes(16));
-    chb_api_json(['ok' => true, 'csrf' => (string) $_SESSION['chb_csrf_admin'], 'message' => 'Client account removed.']);
+    if (!$usingBearer) {
+        $_SESSION['chb_csrf_admin'] = bin2hex(random_bytes(16));
+    }
+    chb_api_json(['ok' => true, 'csrf' => $usingBearer ? '' : (string) ($_SESSION['chb_csrf_admin'] ?? ''), 'message' => 'Client account removed.']);
 }
 
 if ($action !== 'create_user') {
@@ -69,5 +75,7 @@ if (!$r['ok']) {
     chb_api_json_error($r['error'] ?? 'Could not create account.', 400);
 }
 
-$_SESSION['chb_csrf_admin'] = bin2hex(random_bytes(16));
-chb_api_json(['ok' => true, 'csrf' => (string) $_SESSION['chb_csrf_admin'], 'message' => 'Account created.']);
+if (!$usingBearer) {
+    $_SESSION['chb_csrf_admin'] = bin2hex(random_bytes(16));
+}
+chb_api_json(['ok' => true, 'csrf' => $usingBearer ? '' : (string) ($_SESSION['chb_csrf_admin'] ?? ''), 'message' => 'Account created.']);
