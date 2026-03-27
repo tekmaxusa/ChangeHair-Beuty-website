@@ -113,28 +113,28 @@ Prices show **“+”** (starting from). Final price may vary by hair length and
 #### Accounts: sign up, log in, Google
 
 **Sign up (create account)**  
-- Path: **`/signup.php`** → `https://YOUR-DOMAIN.com/signup.php`  
+- Path: **`/signup`** → `https://YOUR-DOMAIN.com/signup`  
 - Or click **SIGN UP** in the header.  
 - Enter **Name**, **Email**, **Password** (minimum **8 characters**). Submit **Sign up**.  
 - After success, the site asks them to **log in**.
 
 **Log in**  
-- Path: **`/login.php`**  
+- Path: **`/login`**  
 - Or **LOG IN** in the header.  
 - Email + password, button **Continue**.  
 - Optional: **Continue with Google** — only works if the salon has configured **Google OAuth** on the server. If the button looks disabled or shows a configuration message, use **email and password** instead.
 
 **After login**  
-- Users are typically sent to **`/dashboard/`** (client dashboard), especially when they came from **Book** / **Book online** / **Client dashboard** links.
+- Users are typically sent to **`/dashboard`** (client dashboard), especially when they came from **Book** / **Book online** / **Client dashboard** links.
 
 **Logged-in header**  
-- Navigation can show **CLIENT DASHBOARD** (or similar) pointing to `/dashboard/`.
+- Navigation can show **CLIENT DASHBOARD** (or similar) pointing to `/dashboard`.
 
 ---
 
 #### Online booking (client dashboard)
 
-**URL:** `https://YOUR-DOMAIN.com/dashboard/` — **must be logged in.**
+**URL:** `https://YOUR-DOMAIN.com/dashboard` — **must be logged in.**
 
 **Book appointment block**  
 1. **Step 1 — Service:** Check **one or more** services (multiple categories allowed, e.g. Cut + Color).  
@@ -186,9 +186,9 @@ Create one shortcut per row; in the “trigger” field, add **every variant** T
 
 | Topic | Example visitor phrases | Core answer (paste into Tawk; expand if you want) |
 |-------|-------------------------|-----------------------------------------------------|
-| Sign up | create account, register, sign up, new account | Click **SIGN UP** or go to `/signup.php`. Enter name, email, password (8+ characters), then sign up and **log in**. |
-| Log in | login, log in, sign in, how to access dashboard | **LOG IN** or `/login.php` — email and password, or **Continue with Google** if enabled. |
-| Book | book, booking, appointment, schedule, reserve | Log in → `/dashboard/` → pick **one or more services** → **date** and **time** → **Confirm booking**. 30-minute slots; one booking per slot. |
+| Sign up | create account, register, sign up, new account | Click **SIGN UP** or go to `/signup`. Enter name, email, password (8+ characters), then sign up and **log in**. |
+| Log in | login, log in, sign in, how to access dashboard | **LOG IN** or `/login` — email and password, or **Continue with Google** if enabled. |
+| Book | book, booking, appointment, schedule, reserve | Log in → `/dashboard` → pick **one or more services** → **date** and **time** → **Confirm booking**. 30-minute slots; one booking per slot. |
 | Prices | how much, cost, price, menu | Use the **Our Services** prices on the site: CUT (Women $35+, Men $25+, Kids $25+), COLOR, PERM, STYLE as in the knowledge article. |
 | Hours | open, hours, closed monday, sunday | Full weekly hours in **Contact**; **Monday closed**; Sat 10–7, Sun 1–6, Tue–Fri 10–7. |
 | Address / directions | where, location, address, maps | **The Vista**, 2405 S Stemmons Fwy Ste 1126, Lewisville, TX 75067 — map on **`#contact`**. |

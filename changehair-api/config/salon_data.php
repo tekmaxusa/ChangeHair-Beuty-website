@@ -113,6 +113,6 @@ return [
         'Thursday: 10 AM – 7 PM',
         'Friday: 10 AM – 7 PM',
     ],
-    'map_embed' => 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3350.789!2d-97.006!3d33.046!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x864c3e5d8e8e8e8e%3A0x0!2s2405%20S%20Stemmons%20Fwy%20%231126%2C%20Lewisville%2C%20TX%2075067!5e0!3m2!1sen!2sus',
+    'map_embed' => 'https://www.google.com/maps?q=2405+S+Stemmons+Fwy+Ste+1126,+Lewisville,+TX+75067&output=embed',
     'map_search' => 'https://www.google.com/maps/search/2405+S+Stemmons+Fwy+Ste+1126+Lewisville+TX+75067',
 ];

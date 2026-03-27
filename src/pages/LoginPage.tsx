@@ -155,12 +155,15 @@ export default function LoginPage() {
         {showGoogleFallback && (
           <p className="text-xs text-salon-ink/50 mt-2">Set VITE_API_URL for Google sign-in through this site.</p>
         )}
-        <p className="text-sm text-salon-ink/60 mt-8">
-          No account?{' '}
-          <Link to={signupWithNextHref} className="text-salon-gold hover:underline">
-            Sign up
+        <div className="mt-8 rounded-lg border border-salon-gold/40 bg-salon-gold/10 px-4 py-4">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-salon-ink/55 mb-2">New here?</p>
+          <Link
+            to={signupWithNextHref}
+            className="block w-full text-center border border-salon-gold bg-white py-3 text-sm uppercase tracking-[0.2em] text-salon-ink hover:bg-salon-gold/10 transition-colors"
+          >
+            Create account
           </Link>
-        </p>
+        </div>
         <p className="text-sm mt-4">
           <Link to="/" className="text-salon-ink/50 hover:text-salon-gold">
             ← Back to site

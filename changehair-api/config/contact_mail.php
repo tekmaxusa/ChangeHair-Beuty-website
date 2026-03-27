@@ -101,6 +101,29 @@ function chb_booking_format_date_pretty(string $dateYmd): string
     return $ts ? date('l, F j, Y', $ts) : $dateYmd;
 }
 
+/**
+ * Collapse repeated category prefixes like "Cut — Cut — Kids" -> "Cut — Kids".
+ */
+function chb_normalize_service_summary(string $summary): string
+{
+    $s = trim($summary);
+    if ($s === '' || strpos($s, ' — ') === false) {
+        return $s;
+    }
+    [$cat, $svc] = explode(' — ', $s, 2);
+    $cat = trim($cat);
+    $svc = trim($svc);
+    if ($cat === '' || $svc === '') {
+        return $s;
+    }
+    $prefix = $cat . ' — ';
+    if (stripos($svc, $prefix) === 0) {
+        return $cat . ' — ' . trim(substr($svc, strlen($prefix)));
+    }
+
+    return $s;
+}
+
 /** @return array{location:string,address:string,phone:string} */
 function chb_email_salon_venue_bits(): array
 {
@@ -398,7 +421,7 @@ function chb_email_salon_visit_strip_html(): string
 /**
  * @param 'merchant'|'client' $audience
  */
-function chb_email_brand_wrap(string $preheader, string $innerHtml, string $audience = 'client'): string
+function chb_email_brand_wrap(string $preheader, string $innerHtml, string $audience = 'client', ?string $title = null): string
 {
     $pre = chb_h($preheader);
     $year = (string) (int) date('Y');
@@ -415,6 +438,11 @@ function chb_email_brand_wrap(string $preheader, string $innerHtml, string $audi
         . 'font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Helvetica,Arial,sans-serif;">'
         . '&copy; ' . chb_h($year) . ' Change Hair & Beauty</p>';
 
+    $heading = trim((string) $title);
+    if ($heading === '') {
+        $heading = $audience === 'merchant' ? 'Booking notification' : 'Appointment update';
+    }
+
     $header = '<tr><td style="padding:0;background-color:#ffffff;border-radius:18px 18px 0 0;border:1px solid #efe7dd;border-bottom:none;">'
         . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>'
         . '<td style="height:6px;background:linear-gradient(90deg,#f1d7a3 0%,#c59b3a 50%,#f1d7a3 100%);font-size:0;line-height:0;border-radius:18px 18px 0 0;">&nbsp;</td></tr>'
@@ -422,7 +450,7 @@ function chb_email_brand_wrap(string $preheader, string $innerHtml, string $audi
         . '<p style="margin:0 0 6px 0;font-size:11px;font-weight:800;letter-spacing:0.28em;text-transform:uppercase;'
         . 'color:#8a6a2b;font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Helvetica,Arial,sans-serif;">Change Hair & Beauty</p>'
         . '<p style="margin:0;font-size:24px;line-height:1.15;color:#221913;font-family:Georgia,\'Times New Roman\',serif;font-weight:400;">'
-        . ($audience === 'merchant' ? 'Booking notification' : 'Appointment update') . '</p>'
+        . chb_h($heading) . '</p>'
         . '<p style="margin:12px 0 0 0;font-size:13px;line-height:1.6;color:#6b5f55;'
         . 'font-family:-apple-system,BlinkMacSystemFont,\'Segoe UI\',Helvetica,Arial,sans-serif;">'
         . $sub . '</p>'
@@ -522,7 +550,7 @@ function chb_send_booking_request_email(
             'Services' => $servicesSummary,
         ], 'merchant');
 
-    $html = chb_email_brand_wrap('New confirmed booking — calendar.', $inner, 'merchant');
+    $html = chb_email_brand_wrap('New confirmed booking — calendar.', $inner, 'merchant', 'New booking confirmed');
 
     return chb_mail_send_multipart($to, $subject, $plain, $html, $clientEmail);
 }
@@ -543,10 +571,11 @@ function chb_send_booking_confirmation_to_client_email(
     $datePretty = chb_booking_format_date_pretty($dateYmd);
     $timePretty = chb_booking_format_time_pretty($dateYmd, $timeHi);
 
+    $serviceLine = chb_normalize_service_summary($servicesSummary);
     $subject = 'You are booked — Change Hair & Beauty';
     $plain = "Hi {$clientName},\r\n\r\n";
     $plain .= "Thank you for booking with Change Hair & Beauty. Your appointment is confirmed.\r\n\r\n";
-    $plain .= "Date: {$datePretty}\r\nTime: {$timePretty}\r\nServices: {$servicesSummary}\r\n\r\n";
+    $plain .= "Date: {$datePretty}\r\nTime: {$timePretty}\r\nServices: {$serviceLine}\r\n\r\n";
     $plain .= "If you need to make a change, please contact the salon as soon as possible.\r\n";
 
     $inner = '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:14px;">'
@@ -555,11 +584,16 @@ function chb_send_booking_confirmation_to_client_email(
         . 'Hi ' . chb_h($clientName) . ', your appointment is confirmed.</p>'
         . chb_email_featured_datetime_html($datePretty, $timePretty, 'client')
         . chb_email_detail_rows_html([
-            'Service' => $servicesSummary,
+            'Service' => $serviceLine,
         ], 'client')
         . chb_email_salon_visit_strip_html();
 
-    $html = chb_email_brand_wrap('Your appointment is confirmed. We look forward to seeing you.', $inner, 'client');
+    $html = chb_email_brand_wrap(
+        'Your appointment is confirmed. We look forward to seeing you.',
+        $inner,
+        'client',
+        'Appointment confirmed'
+    );
 
     return chb_mail_send_multipart($clientEmail, $subject, $plain, $html, $replyTo);
 }
@@ -621,10 +655,11 @@ function chb_send_booking_status_email_to_client(
             . '</td></tr></table>';
     }
 
+    $serviceLine = chb_normalize_service_summary($servicesSummary);
     $subject = 'Appointment cancelled — Change Hair & Beauty';
     $plain = "Hi {$clientName},\r\n\r\n";
     $plain .= "Your appointment has been cancelled by the salon.\r\n\r\n";
-    $plain .= "Was scheduled for: {$datePretty} at {$timePretty}\r\nServices: {$servicesSummary}\r\n\r\n";
+    $plain .= "Was scheduled for: {$datePretty} at {$timePretty}\r\nServices: {$serviceLine}\r\n\r\n";
     if ($depositPlain !== '') {
         $plain .= $depositPlain;
     }
@@ -639,7 +674,7 @@ function chb_send_booking_status_email_to_client(
         . chb_email_featured_datetime_html($datePretty, $timePretty, 'client')
         . chb_email_section_rule('Previous reservation')
         . chb_email_detail_rows_html([
-            'Service' => $servicesSummary,
+            'Service' => $serviceLine,
         ], 'client')
         . $depositHtml
         . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-top:28px;">'
@@ -649,7 +684,7 @@ function chb_send_booking_status_email_to_client(
         . '</td></tr></table>'
         . chb_email_salon_visit_strip_html();
 
-    $html = chb_email_brand_wrap('Update regarding your appointment.', $inner, 'client');
+    $html = chb_email_brand_wrap('Update regarding your appointment.', $inner, 'client', 'Appointment cancelled');
 
     return chb_mail_send_multipart($clientEmail, $subject, $plain, $html, $replyTo);
 }
@@ -684,7 +719,7 @@ function chb_send_password_reset_email(string $clientEmail, string $clientName, 
         . '<p style="margin:0;font-size:13px;line-height:1.65;color:#475569;font-family:\'Segoe UI\',Tahoma,Geneva,Verdana,sans-serif;">'
         . '<strong style="color:#1e293b;">You did not ask for this?</strong> No action needed — your password will remain unchanged.</p></td></tr></table>';
 
-    $html = chb_email_brand_wrap('Reset your password securely.', $inner, 'client');
+    $html = chb_email_brand_wrap('Reset your password securely.', $inner, 'client', 'Password reset');
 
     return chb_mail_send_multipart($clientEmail, $subject, $plain, $html, $replyTo);
 }

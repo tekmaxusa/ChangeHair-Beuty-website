@@ -28,13 +28,13 @@ try {
     echo "  OK — connected.\n";
 } catch (Throwable $e) {
     echo '  FAILED — ' . $e->getMessage() . "\n";
-    echo "  Docker: ensure `db` is up (`docker compose up db -d`). XAMPP: use DB_HOST=127.0.0.1 and DB_PORT=3307 in .env.\n";
+    echo "  Docker: ensure `db` is up (`docker compose up db -d`). From host tools use DB_HOST=127.0.0.1 and DB_PORT=3307.\n";
 }
 
 $base = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http')
     . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost');
 echo "\nRoutes (same Docker web container — DocumentRoot is public/):\n";
-echo "  Public site:     {$base}/\n";
-echo "  Client login:    {$base}/login.php\n";
-echo "  Client dashboard: {$base}/dashboard/\n";
-echo "  Merchant admin:  {$base}/admin/login.php  →  {$base}/admin/\n";
+echo "  API base:        {$base}/api/\n";
+echo "  OAuth start:     {$base}/google-oauth-start.php\n";
+echo "  OAuth callback:  {$base}/google-oauth-callback.php\n";
+echo "  Logout route:    {$base}/logout.php\n";

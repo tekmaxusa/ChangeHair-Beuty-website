@@ -30,7 +30,7 @@ function require_login(): void
 {
     session_bootstrap();
     if (empty($_SESSION['user_id'])) {
-        header('Location: /login.php', true, 302);
+        header('Location: /login', true, 302);
         exit;
     }
 }

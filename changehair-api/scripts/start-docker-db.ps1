@@ -1,4 +1,4 @@
-# Start MySQL container only (XAMPP + Docker DB workflow)
+# Start MySQL + phpMyAdmin containers
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 # scripts/ → repo root (changehair-api)
@@ -9,5 +9,5 @@ if (-not (Test-Path (Join-Path $root 'docker-compose.yml'))) {
 Set-Location $root
 docker compose up db phpmyadmin -d
 Write-Host 'MySQL + phpMyAdmin (Docker) are running.'
-Write-Host '  From PC/XAMPP PHP: DB_HOST=127.0.0.1  DB_PORT=3307  (see .env.xampp.example)'
+Write-Host '  From host tools: DB_HOST=127.0.0.1  DB_PORT=3307'
 Write-Host '  phpMyAdmin: http://127.0.0.1:8081  (login: salon_user / salon_secret or root / DB_ROOT_PASSWORD)'

@@ -51,7 +51,7 @@ function require_admin(): void
 {
     session_bootstrap();
     if (empty($_SESSION['user_id']) || (string) ($_SESSION['user_role'] ?? '') !== 'admin') {
-        header('Location: /admin/login.php', true, 302);
+        header('Location: /admin/login', true, 302);
         exit;
     }
 }

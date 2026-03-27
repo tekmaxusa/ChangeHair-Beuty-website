@@ -25,9 +25,9 @@ docker compose ps
 Write-Host ""
 Write-Host "Expected URLs (default ports):" -ForegroundColor Green
 Write-Host "  App:        http://localhost:8080"
-Write-Host "  Merchant:   http://localhost:8080/admin/login.php  (dashboard /admin/, bookings, users)"
+Write-Host "  Merchant:   http://localhost:8080/admin/login  (dashboard /admin/, bookings, users)"
 Write-Host "  status+DB:  http://localhost:8080/status.php"
 Write-Host "  phpMyAdmin: http://localhost:8081  (run `docker compose up phpmyadmin -d` if missing from ps)"
-Write-Host "  MySQL host: 127.0.0.1  port 3307  (from PC / XAMPP .env)"
+Write-Host "  MySQL host: 127.0.0.1  port 3307  (from host tools)"
 Write-Host ""
 Write-Host "Not working?  docker compose up -d" -ForegroundColor DarkGray

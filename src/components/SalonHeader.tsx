@@ -69,7 +69,7 @@ export default function SalonHeader() {
     : 'text-xs uppercase tracking-[0.2em] border border-salon-ink px-5 py-2 hover:bg-salon-ink hover:text-white transition-colors';
 
   const logoClass = heroMode
-    ? 'text-base md:text-lg font-serif tracking-[0.15em] uppercase flex flex-col leading-tight bg-white/95 px-4 py-2'
+    ? 'text-base md:text-lg font-serif tracking-[0.15em] uppercase flex flex-col leading-tight'
     : `text-base md:text-lg font-serif tracking-[0.15em] uppercase flex flex-col leading-tight ${ink}`;
 
 
@@ -81,9 +81,9 @@ export default function SalonHeader() {
           className={logoClass}
           aria-label="Change Hair & Beauty home"
         >
-          <span className={heroMode ? 'text-salon-ink' : undefined}>CHANGE HAIR</span>
+          <span className={heroMode ? 'text-white' : undefined}>CHANGE HAIR</span>
           <span
-            className={`text-[8px] md:text-[9px] tracking-[0.3em] mt-1 ${heroMode ? 'text-salon-ink/55' : 'opacity-50'}`}
+            className={`text-[8px] md:text-[9px] tracking-[0.3em] mt-1 ${heroMode ? 'text-white/70' : 'opacity-50'}`}
           >
             &amp; BEAUTY
           </span>
@@ -99,14 +99,9 @@ export default function SalonHeader() {
             Menu
           </button>
           {!loading && !user && (
-            <>
-              <Link to={loginHref} className={quietClass}>
-                Log in
-              </Link>
-              <Link to="/signup" className={quietClass}>
-                Sign up
-              </Link>
-            </>
+            <Link to={loginHref} className={quietClass}>
+              Log in
+            </Link>
           )}
           {!loading && user && (
             <button type="button" onClick={() => void onLogout()} className={quietClass}>
@@ -149,14 +144,9 @@ export default function SalonHeader() {
               Menu
             </button>
             {!loading && !user && (
-              <>
-                <Link to={loginHref} onClick={() => setDrawerOpen(false)} className="text-xl uppercase tracking-[0.25em] font-serif text-salon-gold">
-                  Log in
-                </Link>
-                <Link to="/signup" onClick={() => setDrawerOpen(false)} className="text-xl uppercase tracking-[0.25em] font-serif">
-                  Sign up
-                </Link>
-              </>
+              <Link to={loginHref} onClick={() => setDrawerOpen(false)} className="text-xl uppercase tracking-[0.25em] font-serif text-salon-gold">
+                Log in
+              </Link>
             )}
             {!loading && user && (
               <button type="button" onClick={() => void onLogout()} className="text-xl uppercase tracking-[0.25em] font-serif">

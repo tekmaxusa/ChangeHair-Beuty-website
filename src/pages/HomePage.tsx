@@ -161,7 +161,7 @@ const LOCATION_HOURS = [
   'Thursday: 10 AM – 7 PM',
   'Friday: 10 AM – 7 PM',
 ];
-const MAP_EMBED_URL = 'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3350.789!2d-97.006!3d33.046!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x864c3e5d8e8e8e8e%3A0x0!2s2405%20S%20Stemmons%20Fwy%20%231126%2C%20Lewisville%2C%20TX%2075067!5e0!3m2!1sen!2sus';
+const MAP_EMBED_URL = 'https://www.google.com/maps?q=2405+S+Stemmons+Fwy+Ste+1126,+Lewisville,+TX+75067&output=embed';
 const MAP_SEARCH_URL = 'https://www.google.com/maps/search/2405+S+Stemmons+Fwy+Ste+1126+Lewisville+TX+75067';
 
 const BLOG_POSTS = [
@@ -221,7 +221,7 @@ const BlogView = () => {
         </div>
         <div className="w-full mb-8">
             <p className="text-[10px] uppercase tracking-widest text-salon-gold mb-3">Location</p>
-            <div className="relative w-full rounded border border-salon-ink/10 overflow-hidden bg-salon-ink/5 grayscale hover:grayscale-0 opacity-95 hover:opacity-100 transition-all duration-500" style={{ height: 400 }}>
+            <div className="relative w-full rounded border border-salon-ink/10 overflow-hidden bg-salon-ink/5" style={{ height: 400 }}>
               <iframe
                 title="Change Hair & Beauty location - Blog"
                 src={MAP_EMBED_URL}
@@ -885,9 +885,6 @@ const Testimonials = () => {
 };
 
 
-// Google Apps Script Web App URL for Book Appointment form (override with VITE_GOOGLE_SCRIPT_URL if needed)
-const GOOGLE_SCRIPT_URL = import.meta.env.VITE_GOOGLE_SCRIPT_URL || 'https://script.google.com/macros/s/AKfycbx3hh9Cx_6q20r8Al0Soso2Ou8MInz-INHhJ8SpaSQQrP2Pt3oe4_LFzEbXV3OAWaf1pw/exec';
-
 const ContactForm = () => {
   const [formData, setFormData] = useState({
     name: '',
@@ -928,30 +925,6 @@ const ContactForm = () => {
       setFormData({ name: '', email: '', phone: '', message: '' });
       setTimeout(() => setStatus('idle'), 5000);
     } catch (err) {
-      if (GOOGLE_SCRIPT_URL) {
-        try {
-          const body = new URLSearchParams({
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            service: 'Contact Request',
-            date: new Date().toISOString().split('T')[0],
-            time: formData.message
-          }).toString();
-          await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body
-          });
-          setStatus('success');
-          setFormData({ name: '', email: '', phone: '', message: '' });
-          setTimeout(() => setStatus('idle'), 5000);
-          return;
-        } catch {
-          /* fall through */
-        }
-      }
       setStatus('error');
       setErrorMessage(err instanceof Error ? err.message : 'Failed to send.');
     }
@@ -1042,7 +1015,7 @@ const Contact = () => (
           </div>
         </div>
 
-        <div className="relative w-full mt-8 overflow-hidden border border-salon-ink/10 bg-salon-ink/5 grayscale hover:grayscale-0 opacity-95 hover:opacity-100 transition-all duration-500" style={{ height: 500 }}>
+        <div className="relative w-full mt-8 overflow-hidden border border-salon-ink/10 bg-salon-ink/5" style={{ height: 500 }}>
           <iframe 
             title="Change Hair & Beauty - Contact"
             src={MAP_EMBED_URL}

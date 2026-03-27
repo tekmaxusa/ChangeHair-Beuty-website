@@ -1,10 +1,8 @@
--- Tekmax-style demo DB for XAMPP — tekmax_app with users / customers / bookings
+-- Tekmax-style demo DB — tekmax_app with users / customers / bookings
 -- ------------------------------------------------------------------------------
--- Before import: run sql/xampp_db_user.sql first (creates `salon_user`).
--- Import as root in XAMPP phpMyAdmin (SQL or Import), or: mysql -u root < sql/tekmax_app_full.sql
---
--- Then in Docker phpMyAdmin (host → XAMPP): open http://localhost:8082 — login salon_user / salon_secret;
--- database tekmax_app appears (same data as XAMPP phpMyAdmin).
+-- Ensure `salon_user` exists before import, then run:
+--   mysql -u root < sql/tekmax_app_full.sql
+-- You can inspect the database in Docker phpMyAdmin on http://localhost:8081.
 
 CREATE DATABASE IF NOT EXISTS tekmax_app
     CHARACTER SET utf8mb4

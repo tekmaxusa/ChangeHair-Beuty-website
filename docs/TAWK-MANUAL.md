@@ -24,7 +24,7 @@ The embed URL is built as:
 ### 2.2 Widget script (every page that loads chat)
 
 - **File:** `changehair-api/public/partials/tawk.php`
-- **Included from:** `public/index.php`, `public/login.php`, `public/signup.php`, `public/dashboard/index.php` (before `</body>`).
+- **Current routing note:** legacy PHP page wrappers were removed; user-facing routes are now SPA routes such as `/`, `/login`, `/signup`, and `/dashboard`.
 - **Behavior:**
   - Loads the Tawk embed from `salon_data.php`.
   - **Logged-in users:** after the widget loads, sets visitor **name** and **email** via `Tawk_API.setAttributes` (from the PHP session) so agents see who is chatting.
@@ -32,7 +32,7 @@ The embed URL is built as:
     - `marketing-site` — home / marketing pages
     - `auth-login` — login page
     - `auth-signup` — signup page
-    - `client-dashboard`, `online-booking` — `/dashboard/` (booking)
+    - `client-dashboard`, `online-booking` — `/dashboard` (booking)
     - `logged-in` — whenever a session user is detected
 
 Optional extra tags: set `$GLOBALS['chbTawkExtraTags'] = ['custom-tag'];` **before** `require` of `tawk.php` on a specific page.
@@ -106,7 +106,7 @@ To cover **most common questions** about the site: (1) paste the **master articl
 |-------|----------------|
 | No bubble | Hard refresh. Confirm `tawk.php` is required on that page. Console for script errors. |
 | Wrong property | `salon_data.php` IDs vs Tawk embed snippet. |
-| Links always open new tab | `site.js` must load (`defer` on login/signup/home/dashboard). |
+| Links always open new tab | `site.js` (or equivalent frontend hook) must load on the active SPA route. |
 | Agent doesn’t see name/email | User must be **logged in**; session must have `user_email` / `user_name`. |
 | Apollo / AI doesn’t know login, signup, booking | Import the text from **`docs/TAWK-APOLLO-KNOWLEDGE.md`** into the Tawk Knowledge Base and enable it as an AI data source; see §5.4. |
 | Third-party cookie warnings | Often harmless; chat can still work. |

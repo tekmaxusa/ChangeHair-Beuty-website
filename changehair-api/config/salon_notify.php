@@ -3,7 +3,6 @@
 declare(strict_types=1);
 
 require_once __DIR__ . '/contact_mail.php';
-require_once __DIR__ . '/google_script_notify.php';
 
 /**
  * @return list<string> e.g. ['mail', 'script']
@@ -24,7 +23,7 @@ function chb_salon_notify_configured(): bool
 }
 
 /**
- * Contact form: mail + optional Google Script (reference sends message in `time`, service = Contact Request).
+ * Contact form via mail channel.
  *
  * @return bool true if at least one configured channel succeeds
  */
@@ -44,10 +43,9 @@ function chb_notify_contact_salon(string $name, string $email, string $phone, st
 }
 
 /**
- * New confirmed booking: merchant email + client email (PHP mail) + optional Google Apps Script webhook.
- * Script receives event=new_booking so you can send both messages from Apps Script (MailApp) if desired.
+ * New confirmed booking: merchant email + client email (mail channel).
  *
- * @return bool true if at least one configured channel succeeds (mail and/or script)
+ * @return bool true if at least one configured channel succeeds
  */
 function chb_notify_booking_created_all_channels(
     string $clientName,
